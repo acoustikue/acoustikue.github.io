@@ -1,6 +1,6 @@
 # Site settings
 title: Another Blog
-url: "http://dev-acoustikue.github.io"    # the protocol and hostname of your site, eg. `http://laobubu.github.io`
+url: "https://dev-acoustikue.github.io"    # the protocol and hostname of your site, eg. `http://laobubu.github.io`
 # modded by acoustikue
 baseurl: "" # the prefix of your site uri, eg. `"/jekyll-theme-EasyBook"` or empty string `""`
 #timezone: Asia/Chongqing
@@ -31,7 +31,7 @@ header:
     About: /about/
     Category: /category/
     # Donate: https://laobubu.net/donate.html
-	# modded by acoustikue
+    # modded by acoustikue
 
 permalink: /archivers/:title
 plugins:
