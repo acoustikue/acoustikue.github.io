@@ -1,5 +1,5 @@
 # Site settings
-title: Another Blog
+title: "dev.log();"
 url: "https://dev-acoustikue.github.io"    # the protocol and hostname of your site, eg. `http://laobubu.github.io`
 # modded by acoustikue
 baseurl: "" # the prefix of your site uri, eg. `"/jekyll-theme-EasyBook"` or empty string `""`
@@ -13,16 +13,15 @@ author: acoustikue # modded by acoustikue
 avatar: "//www.gravatar.com/avatar/your_email_md5?d=mm&s=135"
 profile: One sentence introducing yourself.
 #twitter_username: twitter_username
-#github_username:  github_username
+github_username:  dev-acoustikue
 profile_links:
   Email: "mailto:acoustikue@gmail.com"
   GitHub: "https://github.com/dev-acoustikue"
   # You can add more profile links above, or edit _includes/sidebar.html 
 
-# Comment Service (Disqus or 多说)
+# Comment Service (Disqus)
 #  choose one and un-comment the line to active it
 #disqus_shortname: xxx   # get one: https://disqus.com/admin/signup/
-#duoshuo_shortname: xxx  # get one: http://duoshuo.com/create-site/
 
 excerpt_separator: <!--more-->
 
