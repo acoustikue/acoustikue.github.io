@@ -5,7 +5,7 @@ url: "https://dev-acoustikue.github.io"    # the protocol and hostname of your s
 baseurl: "" # the prefix of your site uri, eg. `"/jekyll-theme-EasyBook"` or empty string `""`
 #timezone: Asia/Chongqing
 description: >
-  One or more sentences introducing this blog.
+  Personal playground, the little-greedy engineer dreamer.
 
 # Your information
 email: acoustikue@gmail.com # modded by acoustikue
@@ -13,7 +13,7 @@ author: acoustikue # modded by acoustikue
 avatar: "//www.gravatar.com/avatar/your_email_md5?d=mm&s=135"
 profile: One sentence introducing yourself.
 #twitter_username: twitter_username
-github_username:  dev-acoustikue
+#github_username:  dev-acoustikue
 profile_links:
   Email: "mailto:acoustikue@gmail.com"
   GitHub: "https://github.com/dev-acoustikue"
@@ -28,7 +28,10 @@ excerpt_separator: <!--more-->
 header:
   links:             # Links on the header. Link to in-site page with a slash as prefix
     About: /about/
-    Category: /category/
+    C/C++: /category/
+    Python: /category/
+    EE: /category/
+    Link(OICW): /category/
     # Donate: https://laobubu.net/donate.html
     # modded by acoustikue
 
