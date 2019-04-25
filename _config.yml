@@ -7,11 +7,11 @@ baseurl: "" # the prefix of your site uri, eg. `"/jekyll-theme-EasyBook"` or emp
 description: >
   Personal playground, the little-greedy engineer dreamer.
 
-# Your information
+# modded by acoustikue
 email: acoustikue@gmail.com # modded by acoustikue
 author: acoustikue # modded by acoustikue
 avatar: "//www.gravatar.com/avatar/your_email_md5?d=mm&s=135"
-profile: One sentence introducing yourself.
+profile: Personal playground, the little-greedy engineer dreamer.
 #twitter_username: twitter_username
 #github_username:  dev-acoustikue
 profile_links:
