@@ -28,10 +28,10 @@ excerpt_separator: <!--more-->
 header:
   links:             # Links on the header. Link to in-site page with a slash as prefix
     About: /about/
-    C/C++: /category/
-    Python: /category/
-    EE: /category/
-    Link(OICW): /category/
+    Category: /category/
+    # Python: /category/
+    # EE: /category/
+    # Link(OICW): /category/
     # Donate: https://laobubu.net/donate.html
     # modded by acoustikue
 
