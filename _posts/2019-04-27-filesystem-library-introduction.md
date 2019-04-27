@@ -38,9 +38,9 @@ categories: C/C++
 
 path.txt라는 파일에 경로를 모두 적어두고, 그 경로를 읽고, 파일을 열고, 변수 하나를 선언하여 카운팅합니다.
 
-```
+
 (이미지)
-```
+
 뭐, 대략적인 소스는 아래와 같습니다.
 
 <pre><code>
@@ -54,7 +54,7 @@ int main() {
 	std::ifstream openFile_("path.txt"); // Write down all paths of files. Those can be found in properties menu.
 	std::ofstream resultFile_("result.csv");
 	
-	_jcode::LineCounter conter_("");
+	_jcode::LineCounter counter_("");
 
 	if(openFile_) {
 	
@@ -65,7 +65,6 @@ int main() {
 	// 생략
 }
 </code></pre>
-
 
 오래 전에 작성한 코드라 기억이 가물가물 하군요. 일단 path.txt를 열어둡니다. 그리고 라인을 하나씩 읽어서 [주소][파일명]을 문자열 형식으로 std::vector<string> 형 변수 pathList_에 추가하고 있네요.
 
