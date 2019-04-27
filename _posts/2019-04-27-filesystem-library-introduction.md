@@ -104,7 +104,7 @@ C++17에는 공식적으로 <filesystem> 라이브러리가 추가되었습니�
 
 ----------------------------------------------------------------------
 
-## Hello <filesystem>
+## Hello filesystem
 
 일단 <filesystem> 라이브러리를 봅시다. 
 
@@ -201,9 +201,9 @@ std::filesystem::directory_entry 요소를 순회하는 반복자네요. 그렇�
 그림과 같은 폴더가 있다고 합시다. E:\프로젝트\Line_Counter_ 라는 경로를 제시하면, directory_iterator는 E:\프로젝트\Line_Counter_ 바로 밑의 폴더를 훑습니다. 이를 출력하면 하위 폴더의 요소들이 폴더인지, 일반 파일인지 등을 구분하지 않고 말이죠. 분기 없이 단순히 
 
 ```c++
-	for(auto& file_name : fs::directory_iterator(RootDirName)) {
-		COUT << file_name << ENDL;
-	}
+for(auto& file_name : fs::directory_iterator(RootDirName)) {
+	COUT << file_name << ENDL;
+}
 ```
 
 라고 적은 후 컴파일 하고 실행 시켰다면, 
