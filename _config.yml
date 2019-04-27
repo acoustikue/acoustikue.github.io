@@ -1,17 +1,17 @@
 # Site settings
-title: "acoustikue dev-playground"
+title: "dev-playground"
 url: "https://dev-acoustikue.github.io"    # the protocol and hostname of your site, eg. `http://laobubu.github.io`
 # modded by acoustikue
 baseurl: "" # the prefix of your site uri, eg. `"/jekyll-theme-EasyBook"` or empty string `""`
 #timezone: Asia/Chongqing
 description: >
-  Personal playground, the little-greedy engineer dreamer.
+  The little-greedy engineer dreamer.
 
 # modded by acoustikue
 email: acoustikue@gmail.com # modded by acoustikue
 author: acoustikue # modded by acoustikue
 avatar: "//www.gravatar.com/avatar/your_email_md5?d=mm&s=135"
-profile: Personal playground, the little-greedy engineer dreamer.
+profile: The little-greedy engineer dreamer.
 #twitter_username: twitter_username
 #github_username:  dev-acoustikue
 profile_links:

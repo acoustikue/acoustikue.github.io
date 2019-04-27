@@ -172,7 +172,8 @@ std::string FileExtensions = "";
 
 제가 생각해도 직관적인 변수 명입니다. 설명은 생략하겠습니다. 
 
-```cpp
+```c
+
 #include <iostream>
 
 #ifndef CONSOLE_OUT_SERIES
