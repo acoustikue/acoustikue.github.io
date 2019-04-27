@@ -144,8 +144,12 @@ filesystem 헤더 안에 정의되고 네임스페이스는 filesystem 이랍니
 
 filesystem만 문제가 있습니다. 윈도우라 표준을 따르지 않는다, 실험적이므로 알아서 잘 써라 이런 건가 보네요. 어쨌든 저는 요 놈이 필요하니 쓰려면 어쩔 수 없습니다. 
 
-```
-(이미지)
+```c++
+#include <filesystem> // experimental since C++17, VS2017
+
+// experimental? since C++17
+// using namespace std::experimental::filesystem;
+namespace fs = std::experimental::filesystem;
 ```
 
 까라면 까야 됩니다. 이 놈을 fs라 선언해두고 씁시다. 다시 돌아가서, 
@@ -154,30 +158,102 @@ filesystem만 문제가 있습니다. 윈도우라 표준을 따르지 않는다
 
 이 짓을 하고 싶습니다. 파일 시스템 표준 라이브러리도 있겠다, 한번 해 봅시다. 
 
+
+## 본격적으로 디자인 해 보자!
+
 우선, 이 놈의 목적을 위한 첫 번째 단계는, 어느 특정 폴더(그 하위의 무수히 많은 폴더 포함) 안에 있는 파일을 읽어 와야 한다는 것입니다. 어차피 파일을 열어서 라인 수를 세고, 닫고, 또 다시 열고 세고, 닫고 하는 데에는 [절대경로][파일명]이 필요하니 문자열로 받아 std::vector<std::string> 이나 std::list<std::string>에 담아 두는 것으로 합시다. 
   
 그러려면 최상위 루트 폴더, 즉 프로젝트 폴더 명을 지정 할 수 있어야 겠지요. 간단히 std::string 인스턴스에 받아 둡니다. 
 
-```
-(이미지)
+```c++
+std::string DirectoryName = "";
+std::string FileExtensions = "";
 ```
 
 제가 생각해도 직관적인 변수 명입니다. 설명은 생략하겠습니다. 
 
-```
-(이미지)
+```c++
+#include <iostream>
+
+#ifndef CONSOLE_OUT_SERIES
+#define CONSOLE_OUT_SERIES
+#endif
+
+#define COUT std::cout
+#define CIN std::cin
+#define ENDL std::endl
+
+#ifdef CONSOLE_OUT_SERIES
+
+#define CONSOLE_OUT(MSG) \
+   do { COUT << MSG << ENDL; } while (0)
+#define CONSOLE_OUT_SYSTEM(SYS_MSG) \
+   do { COUT << "SYSTEM: " << SYS_MSG << ENDL; } while (0)
+#define CONSOLE_OUT_MESSAGE(MSG) \
+   do { COUT << "MESSAGE: " << MSG << ENDL; } while (0)
+
+#endif
+
+// 생략
+
+namespace _jcode {
+
+   class ExtensionFinder final {
+      // This code is tested in Windows 7 32-bit system.
+   private:
+      std::string RootDirName; // Must be initialized.
+      std::list<std::string> DirUnderRootList;
+
+      std::vector<std::string> TargetFileExtension; // used when finding a specific extension of files.
+      
+      // Exception catcher
+      // class!!
+      class ExtensionFinderException final {
+      private:
+         std::string ExceptionMessage;
+
+      public:
+         // ctor
+         // ExtensionFinderException() = default;
+         ExtensionFinderException(const char*);
+         ExtensionFinderException(std::string&);
+
+         // dtor
+         virtual ~ExtensionFinderException() = default;
+
+         // interface
+         inline const std::string isError() {
 ```
 
-ExtensionFinder라는 클래스가 있군요. 제가 작성한겁니다. 여담이지만 간단한 프로그램이라도 저는 래핑 작업을 좋아합니다. 둘러 싸는 작업이죠. 이유는 묻지 마세요. ExtensonFinder를 보면, 
+ExtensionFinder라는 클래스가 있군요. 제가 작성한겁니다. 여담이지만 간단한 프로그램이라도 저는 래핑 작업을 좋아합니다. 둘러 싸는 작업이죠. 이유는 묻지 마세요. 
 
-```
-(이미지)
-```
+ExtensonFinder를 보면 매크로로 뭐라뭐라 정의해 두었고 _jcode 라는 네임스페이스에 정의해 두었습니다. 딱 봐도 직관적이군요. RootDirName은 최상위 폴더 명, DirUnderRootList는 최상위 폴더 아래에 있는 폴더들의 리스트 일테고, TargetFileExtension은 조금 이따가 설명하도록 하지요. 
 
-매크로로 뭐라뭐라 정의해 두었고 _jcode 라는 네임스페이스에 정의해 두었습니다. 딱 봐도 직관적이군요. RootDirName은 최상위 폴더 명, DirUnderRootList는 최상위 폴더 아래에 있는 폴더들의 리스트 일테고, TargetFileExtension은 조금 이따가 설명하도록 하지요. 
+```c++
+void _jcode::ExtensionFinder::showConsoleRootFolderFileList() const {
 
-```
-(이미지)
+   try {
+
+      for (auto& file_name : fs::directory_iterator(RootDirName)) {
+
+         if (fs::is_regular_file(file_name))
+            COUT << "\t(REG)FILE: " << file_name << ENDL;
+
+         else if (fs::is_other(file_name))
+            COUT << "\t(OTH)FILE: " << file_name << ENDL;
+
+         else if (fs::is_directory(file_name))
+            ; // should be filtered at showConsoleRootFolderList() function.
+
+         else
+            CONSOLE_OUT_SYSTEM("Unknown case detected.");
+      }
+   
+   } catch (std::exception& argException) {
+      CONSOLE_OUT_SYSTEM(argException.what());
+   };
+
+};
 ```
 
 하위 폴더에 있는 파일을 보려면 최상위 폴더 아래에 있는 폴더 들 또한 순회해야 합니다. 여기서부터 filesystem 라이브러리가 도와 줄 겁니다. 순회하는 방법은 아래와 같습니다. 
@@ -292,3 +368,30 @@ bool _jcode::ExtensionFinder::isTargetExtension(const std::string& argAddr)
 
 너무너무 간단한 코드이니 설명은 생략합니다.
 
+우리는 확장자의 목록을 한 줄로 입력받을 겁니다. 스페이스 바 기준으로 단어를 뽀개서 std::vector에다 넣읍시다. 간단하네요.
+
+```c++
+
+```
+
+여기서 TargetFileExtension은 우리가 선택할 확장자가 문자열로 들어갈 std::vector<std::string>형 멤버 변수입니다. std::istringstream으로 뽁뽁뽁 밀어주면서 분리시키면 됩니다. 
+
+그러면 거의 다 되어 가는군요. 이제 비교해야죠??
+
+```c++
+
+```
+
+아까 작성해 두었던 폴더 명의 리스트가 있었지요. 그 리스트를 돌면서 선택한 확장자와 비교하고, is_directory로 폴더인지 구분하여 파일의 절대경로를 2차원 vector 형식으로 저장합니다. 물론, directory_iterator() 가 쓰였으니 당연히 path().string()으로 push_back() 해 주어야 겠지요. 
+
+제가 디자인한 ExtensionFinder 클래스의 최종 목표는 여기까지입니다. getFileAddrListExtension 함수가 메인이라고 할 수 있겠네요. 파일의 절대경로를 2차원 vector 형식으로 저장했으니, 이 목록의 파일을 열어서, 읽어주면 끝이군요!! 읽는건 간단하니 설명 없이 코드만 보겠습니다.
+
+```c++
+
+```
+
+요약 하자면, 초기 라인 카운터와는 다르게, path.txt를 직접 작성하는 역할을 ExtensionFinder 클래스가 담당하고 있는 구조입니다. 최상위 폴더만 지정하면 아래 폴더를 순회하며 읽어들이죠. filesystem 라이브러리도 쓸만 하네요.
+
+실험해 봅시다. C:\Users\Administrator\Desktop\[ERITER]WRS_Sys\source\final\WRS_Sys 을 최상위 폴더로 지정하고, .xml 확장자만 뽑아 라인 카운팅 하면, 
+
+음!! 잘 되네요. 
