@@ -371,7 +371,25 @@ bool _jcode::ExtensionFinder::isTargetExtension(const std::string& argAddr)
 우리는 확장자의 목록을 한 줄로 입력받을 겁니다. 스페이스 바 기준으로 단어를 뽀개서 std::vector에다 넣읍시다. 간단하네요.
 
 ```cpp
+void _jcode::ExtensionFinder::setFileTargetExtension(const char* argExtensionStr) {
+   
+   std::string Wrapper(argExtensionStr);
+   std::istringstream iss(Wrapper); // temporary wrapper
 
+   try {
+
+      // Tokenizing, and inserting to list<string>
+      std::copy(
+         std::istream_iterator<std::string>(iss),
+         std::istream_iterator<std::string>(),
+         std::back_inserter(TargetFileExtension));
+
+   } catch (std::exception argException) {
+      
+      CONSOLE_OUT_SYSTEM("Problem occurred when tokenizing.");
+   }
+
+};
 ```
 
 여기서 TargetFileExtension은 우리가 선택할 확장자가 문자열로 들어갈 std::vector<std::string>형 멤버 변수입니다. std::istringstream으로 뽁뽁뽁 밀어주면서 분리시키면 됩니다. 
@@ -379,7 +397,36 @@ bool _jcode::ExtensionFinder::isTargetExtension(const std::string& argAddr)
 그러면 거의 다 되어 가는군요. 이제 비교해야죠??
 
 ```cpp
+// getFileAddressListExtensionOf
+std::vector<std::vector<std::string>> _jcode::ExtensionFinder::getFileAddrListExtension() {
+   
+   std::vector<std::vector<std::string>> AddrList;
+   int _x = 0x00;
+   
+   CONSOLE_OUT_SYSTEM("Filtered file lists.");
 
+   for (auto& extensionItor : TargetFileExtension) { // first reiterates with extension list.
+
+      AddrList.push_back(std::vector<std::string>()); // make some space!
+
+      for (auto& folderItor : DirUnderRootList) {
+         for (auto& item_name : fs::directory_iterator(folderItor)) {
+
+            if (isTargetExtension(item_name.path().string(), extensionItor)
+               && !fs::is_directory(item_name)
+               ) {
+            
+               AddrList.at(_x).push_back(item_name.path().string());
+               CONSOLE_OUT("\t" + item_name.path().string()); // shows what have been pushed.
+            }
+         }
+      }
+
+      _x++;
+   };
+
+   return AddrList;
+};
 ```
 
 아까 작성해 두었던 폴더 명의 리스트가 있었지요. 그 리스트를 돌면서 선택한 확장자와 비교하고, is_directory로 폴더인지 구분하여 파일의 절대경로를 2차원 vector 형식으로 저장합니다. 물론, directory_iterator() 가 쓰였으니 당연히 path().string()으로 push_back() 해 주어야 겠지요. 
@@ -387,7 +434,27 @@ bool _jcode::ExtensionFinder::isTargetExtension(const std::string& argAddr)
 제가 디자인한 ExtensionFinder 클래스의 최종 목표는 여기까지입니다. getFileAddrListExtension 함수가 메인이라고 할 수 있겠네요. 파일의 절대경로를 2차원 vector 형식으로 저장했으니, 이 목록의 파일을 열어서, 읽어주면 끝이군요!! 읽는건 간단하니 설명 없이 코드만 보겠습니다.
 
 ```cpp
+long long _jcode::CounterAdv::countListOf(const std::vector<std::vector<std::string>>& argAddrList) {
 
+   std::ifstream Target_File;
+   std::string _T;
+   
+   long long Lines = 0;
+   
+   for (auto& extension_itor : argAddrList) {
+      for (auto& addr_itor : extension_itor) {
+
+         Target_File.open(addr_itor); // open it up!
+
+         if (Target_File)
+            while (std::getline(Target_File, _T)) Lines++; // Counting..
+
+         Target_File.close(); // must be closed.
+      }
+   };
+
+   return Lines;
+};
 ```
 
 요약 하자면, 초기 라인 카운터와는 다르게, path.txt를 직접 작성하는 역할을 ExtensionFinder 클래스가 담당하고 있는 구조입니다. 최상위 폴더만 지정하면 아래 폴더를 순회하며 읽어들이죠. filesystem 라이브러리도 쓸만 하네요.
