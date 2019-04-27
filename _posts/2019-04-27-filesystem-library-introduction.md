@@ -328,12 +328,12 @@ else if (fs::is_directory(file_name))
 요로코롬 분기 해 주면 되겠네요. 많은 옵션이 있지만, 파일과 폴더(디렉토리)만 구분되면 되기 때문에 일차적으로 걸러 줍니다. 
 
 폴더와 파일을 구분하는 법을 알았습니다. 그러면 폴더 내에 하위 폴더, 그리고 파일들이 있을 테니, 일단 폴더들의 절대 경로만 우선적으로 뽑아내야죠. 무식한 이중 for문을 씁시다. 그러면, 
-
+ 
 ```cpp
 void _jcode::ExtensionFinder::findUnderRootDirAddr() {
 
- #ifdef CONSOLE_DEBUG_ON
-	CONSOLE_OUT_SYSTEM("ExtensonFinder::findUnderRootDirAddr()");
+#ifdef CONSOLE_DEBUG_ON
+CONSOLE_OUT_SYSTEM("ExtensonFinder::findUnderRootDirAddr()");
 #endif
 
 	DirUnderRootList.push_back(this->RootDirName);
