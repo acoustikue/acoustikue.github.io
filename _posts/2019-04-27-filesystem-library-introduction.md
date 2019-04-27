@@ -64,6 +64,9 @@ int main() {
 		while(std::getline(openFile_, _T))
 		pathList_.push_back(_T);
 	}
+	
+	// 생략
+}
 </code></pre>
 
 
