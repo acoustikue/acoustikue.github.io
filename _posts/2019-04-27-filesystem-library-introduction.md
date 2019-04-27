@@ -16,14 +16,14 @@ categories: C/C++
 
 개발실 병사라고 다 개발하는 사람만 있는 것도 아니고, 그건 영외자도 마찬가지이지만, 어쨌든 여기 개발실에 있다보면 별 황당한 소리를 다 들을 수 있습니다. 코드 라인 수가 많으면 좋은 코드라니. 그렇다면 긴 문장은 좋은 글인가라는 의문을 품게 합니다. 
  
-<pre><code>
+```c++
 더군다나 
 이렇게
 글을 써도 
 라인 수는
 늘어나기 
 마련인데
-</code></pre>
+```
 
 ----------------------------------------------------------------------
 ## 내 코드를 세어 보자!
@@ -105,3 +105,190 @@ C++17에는 공식적으로 <filesystem> 라이브러리가 추가되었습니�
 ----------------------------------------------------------------------
 
 ## Hello <filesystem>
+
+일단 <filesystem> 라이브러리를 봅시다. 
+
+```
+(이미지)
+```
+
+공식 레퍼런스에도 있네요? 한번 들어가 봅시다. 
+
+```
+(이미지)
+```
+
+<filesystem> 헤더 안에 정의되고 네임스페이스는 filesystem 이랍니다. 바로 추가합시다.
+
+```
+(이미지)
+```
+
+일단 에러는 없습니다. 네임스페이스 filesystem 안에 정의되어 있다 하니 fs로 간단하게 쓰게끔 using으로 선언해둡시다. 그러면, 
+
+```
+(이미지)
+```
+
+에러가 뜹니다!! 이상하네요. 분명히 filesystem 네임스페이스 안에 정의되어 있다고 공식 레퍼런스에도 써 있건만. 어쩔 수 없으니 헤더를 열어 봅시다. 
+
+```
+(이미지)
+```
+
+엥? C++17인데 experimental 이라고?? 믿을 수가 없군요. 샘플로 다른 문서도 열어봅시다. C++17에서 지원하는 것 라이브러리 다른 것들도 열어 보죠 뭐. <variant>, <any>, <optional>을 추가 해보면,
+
+```
+(이미지)
+```
+
+filesystem만 문제가 있습니다. 윈도우라 표준을 따르지 않는다, 실험적이므로 알아서 잘 써라 이런 건가 보네요. 어쨌든 저는 요 놈이 필요하니 쓰려면 어쩔 수 없습니다. 
+
+```
+(이미지)
+```
+
+까라면 까야 됩니다. 이 놈을 fs라 선언해두고 씁시다. 다시 돌아가서, 
+
+1. 폴더 명을 지정했을 때, 하위 폴더에 있는 모든 파일을 보고 싶다. 
+
+이 짓을 하고 싶습니다. 파일 시스템 표준 라이브러리도 있겠다, 한번 해 봅시다. 
+
+우선, 이 놈의 목적을 위한 첫 번째 단계는, 어느 특정 폴더(그 하위의 무수히 많은 폴더 포함) 안에 있는 파일을 읽어 와야 한다는 것입니다. 어차피 파일을 열어서 라인 수를 세고, 닫고, 또 다시 열고 세고, 닫고 하는 데에는 [절대경로][파일명]이 필요하니 문자열로 받아 std::vector<std::string> 이나 std::list<std::string>에 담아 두는 것으로 합시다. 
+  
+그러려면 최상위 루트 폴더, 즉 프로젝트 폴더 명을 지정 할 수 있어야 겠지요. 간단히 std::string 인스턴스에 받아 둡니다. 
+
+```
+(이미지)
+```
+
+제가 생각해도 직관적인 변수 명입니다. 설명은 생략하겠습니다. 
+
+```
+(이미지)
+```
+
+ExtensionFinder라는 클래스가 있군요. 제가 작성한겁니다. 여담이지만 간단한 프로그램이라도 저는 래핑 작업을 좋아합니다. 둘러 싸는 작업이죠. 이유는 묻지 마세요. ExtensonFinder를 보면, 
+
+```
+(이미지)
+```
+
+매크로로 뭐라뭐라 정의해 두었고 _jcode 라는 네임스페이스에 정의해 두었습니다. 딱 봐도 직관적이군요. RootDirName은 최상위 폴더 명, DirUnderRootList는 최상위 폴더 아래에 있는 폴더들의 리스트 일테고, TargetFileExtension은 조금 이따가 설명하도록 하지요. 
+
+```
+(이미지)
+```
+
+하위 폴더에 있는 파일을 보려면 최상위 폴더 아래에 있는 폴더 들 또한 순회해야 합니다. 여기서부터 <filesystem> 라이브러리가 도와 줄 겁니다. 순회하는 방법은 아래와 같습니다. 
+
+```
+(이미지)
+```
+
+showConsoleRootFolderFileList 함수는 단순히 출력만 하는 디버깅용 함수입니다. 여기서 집중해야 할 부분은 붉게 표시한 부분입니다. 레퍼런스를 보면, 
+
+```
+(이미지)
+```
+
+std::filesystem::directory_entry 요소를 순회하는 반복자네요. 그렇지만 하위 폴더에 있는 놈들은 순회하지 않는다고 합니다. 예를 들어, 
+
+```
+(이미지)
+```
+
+그림과 같은 폴더가 있다고 합시다. E:\프로젝트\Line_Counter_ 라는 경로를 제시하면, directory_iterator는 E:\프로젝트\Line_Counter_ 바로 밑의 폴더를 훑습니다. 이를 출력하면 하위 폴더의 요소들이 폴더인지, 일반 파일인지 등을 구분하지 않고 말이죠. 분기 없이 단순히 
+
+```c++
+	for(auto& file_name : fs::directory_iterator(RootDirName)) {
+		COUT << file_name << ENDL;
+	}
+```
+
+라고 적은 후 컴파일 하고 실행 시켰다면, 
+
+```
+E:\프로젝트\Line_Counter_\Debug
+E:\프로젝트\Line_Counter_\Line_Counter_
+E:\프로젝트\Line_Counter_\Release
+E:\프로젝트\Line_Counter_\Line_Counter_.sdf
+E:\프로젝트\Line_Counter_\Line_Counter_.sln
+E:\프로젝트\Line_Counter_\Line_Counter_.v12.suo
+```
+
+가 출력됩니다.
+
+저는 파일을 구분해야만 합니다. 폴더는 읽을 수도 없을뿐더러 하위 폴더 경로는 확실히 구분을 해 두어야 순회가 가능하니까요. 이를 위해 라이브러리는 다음과 같은 함수를 제공합니다. 
+
+
+```
+(이미지)
+```
+
+File type을 알 수 있는 is_ 시리즈가 있군요. 저는 이 놈이 폴더인지, 일반 파일인지 체크를 해야 하니, 
+
+
+```
+(이미지)
+```
+
+std::filesystem::is_directory() 요 놈을 써 봅시다. 이 함수는 “Checks if the given file status or path corresponds to a directory.” 이네요. 디렉토리인지 아닌지 구분해 주는 놈입니다. 함수의 인자로 들어가는 std::filesystem::path 형은 std::string형와 변환이 가능합니다. 그러면 아까의 코드로 돌아가서, 
+
+
+```c++
+
+if (fs::is_regular_file(file_name))
+	COUT << "/t(REG)FILE: " << file_name << ENDL;
+	
+else if (fs::is_other(file_name))
+	COUT << "/t(OTH)FILE: " << file_name << ENDL;
+
+else if (fs::is_directory(file_name))
+	; // should be filtered at showConsoleRootFolderFileList() function.
+```
+
+요로코롬 분기 해 주면 되겠네요. 많은 옵션이 있지만, 파일과 폴더(디렉토리)만 구분되면 되기 때문에 일차적으로 걸러 줍니다. 
+
+폴더와 파일을 구분하는 법을 알았습니다. 그러면 폴더 내에 하위 폴더, 그리고 파일들이 있을 테니, 일단 폴더들의 절대 경로만 우선적으로 뽑아내야죠. 무식한 이중 for문을 씁시다. 그러면, 
+
+```c++
+void _jcode::ExtensionFinder::findUnderRootDirAddr() {
+
+#ifdef CONSOLE_DEBUG_ON
+	CONSOLE_OUT_SYSTEM("ExtensonFinder::findUnderRootDirAddr()");
+#endif
+
+	DirUnderRootList.push_back(this->RootDirName);
+		// Will start from here.
+		// This variable contains itself. (root)
+		
+	for(auto& iterator : DirUnderRootList) {
+		for(auto& dir_name : fs::directory_iterator(iterator)) {
+		
+		if(fs::is_directory(dir_name))
+			DirUnderRootList.push_back(dir_name.path().string());
+		
+		else
+			;
+		}	
+	}
+}
+```
+
+std::list 형식의 DirUnderRootList에 **폴더의 절대경로**만 계속적으로 밀어 넣습니다. std::filesystem::directory_iterator는 const path& 형식을 반환합니다. 따라서 이는 일반 std::string형으로 변환되지 않으므로 dir_name.path().string()으로 변환하여 구겨 넣습니다. 
+
+여기까지 제가 설정한 최상위 폴더 안에 있는 모든 폴더의 절대경로를 뽑았습니다. 여기서 끝나면 안됩니다. 하위 폴더의 모든 소스 파일을 열어 라인을 세는 것이 목적이므로 이번에는 각 폴더 안의 파일의 절대경로를 뽑습니다. 방식은 동일합니다. 단지 is_regular_file() 함수로 걸러주면 되겠죠. 
+
+하기 전에, 저는 소스파일만 보고 싶습니다. 소스 파일이라는게 다 좋은데, 형식이 많죠. 자바스크립트 파일, C++ 소스, 헤더, CSS, JSP, 자바 등등등... 이 놈들을 개발자들은 확장자로 구분합니다. 즉, 선택적으로 확장자를 뽑아 그 파일만 열어 읽어주면 됩니다. 
+
+간단하네요. 확장자를 문자열로 받고, 파싱. 파일의 절대경로를 뽑는 법은 알고 있으니 리스트의 확장자가 맡는지 비교해 주면 되겠죠. 일단 비교구문입니다. 
+
+```c++
+bool _jcode::ExtensionFinder::isTargetExtension(const std::string& argAddr)
+
+// 추가 필요
+```
+
+너무너무 간단한 코드이니 설명은 생략합니다.
+
