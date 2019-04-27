@@ -34,7 +34,7 @@ categories: C/C++
 
 당시는 급하게 만든 나머지 파일 하나하나를 읽어 들여 라인을 세는 방식이었습니다. 예를 들면, 
 
-(이미지)
+![Alt text](/img/2019-04-27-01.jpg)
 
 path.txt라는 파일에 경로를 모두 적어두고, 그 경로를 읽고, 파일을 열고, 변수 하나를 선언하여 카운팅합니다.
 
@@ -234,7 +234,7 @@ ExtensonFinder를 보면 매크로로 뭐라뭐라 정의해 두었고 _jcode �
 
 하위 폴더에 있는 파일을 보려면 최상위 폴더 아래에 있는 폴더 들 또한 순회해야 합니다. 여기서부터 filesystem 라이브러리가 도와 줄 겁니다. 순회하는 방법은 아래와 같습니다. 
 
-```
+```cpp
 void _jcode::ExtensionFinder::showConsoleRootFolderFileList() const {
 
    try {
