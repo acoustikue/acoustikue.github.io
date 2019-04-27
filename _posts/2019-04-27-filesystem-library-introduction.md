@@ -256,6 +256,8 @@ void _jcode::ExtensionFinder::showConsoleRootFolderFileList() const {
 };
 ```
 
+## 파일 구분
+
 하위 폴더에 있는 파일을 보려면 최상위 폴더 아래에 있는 폴더 들 또한 순회해야 합니다. 여기서부터 filesystem 라이브러리가 도와 줄 겁니다. 순회하는 방법은 아래와 같습니다. 
 
 ```
@@ -313,7 +315,6 @@ std::filesystem::is_directory() 요 놈을 써 봅시다. 이 함수는 “Check
 
 
 ```cpp
-
 if (fs::is_regular_file(file_name))
 	COUT << "/t(REG)FILE: " << file_name << ENDL;
 	
@@ -331,7 +332,7 @@ else if (fs::is_directory(file_name))
 ```cpp
 void _jcode::ExtensionFinder::findUnderRootDirAddr() {
 
-#ifdef CONSOLE_DEBUG_ON
+&#9839;ifdef CONSOLE_DEBUG_ON
 	CONSOLE_OUT_SYSTEM("ExtensonFinder::findUnderRootDirAddr()");
 #endif
 
