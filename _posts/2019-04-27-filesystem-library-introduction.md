@@ -43,7 +43,7 @@ path.txt라는 파일에 경로를 모두 적어두고, 그 경로를 읽고, �
 
 뭐, 대략적인 소스는 아래와 같습니다.
 
-<pre><code>
+```c++
 int main() {
 
 	long long Accumulator_ = 0;
@@ -64,7 +64,7 @@ int main() {
 	
 	// 생략
 }
-</code></pre>
+```
 
 오래 전에 작성한 코드라 기억이 가물가물 하군요. 일단 path.txt를 열어둡니다. 그리고 라인을 하나씩 읽어서 [주소][파일명]을 문자열 형식으로 std::vector<string> 형 변수 pathList_에 추가하고 있네요.
 
