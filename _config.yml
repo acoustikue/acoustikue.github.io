@@ -1,5 +1,5 @@
 # Site settings
-title: "dev.log();"
+title: "acoustikue dev-playground"
 url: "https://dev-acoustikue.github.io"    # the protocol and hostname of your site, eg. `http://laobubu.github.io`
 # modded by acoustikue
 baseurl: "" # the prefix of your site uri, eg. `"/jekyll-theme-EasyBook"` or empty string `""`
@@ -32,7 +32,7 @@ header:
     # Python: /category/
     # EE: /category/
     # Link(OICW): /category/
-    # Donate: https://laobubu.net/donate.html
+    # Donate: https://laobubu.net/donate.html 
     # modded by acoustikue
 
 permalink: /archivers/:title
