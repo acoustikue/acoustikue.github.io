@@ -171,7 +171,7 @@ std::string FileExtensions = "";
 
 제가 생각해도 직관적인 변수 명입니다. 설명은 생략하겠습니다. 
 
-```c
+```cpp
 
 #include <iostream>
 
@@ -229,7 +229,12 @@ ExtensionFinder라는 클래스가 있군요. 제가 작성한겁니다. 여담�
 
 ExtensonFinder를 보면 매크로로 뭐라뭐라 정의해 두었고 _jcode 라는 네임스페이스에 정의해 두었습니다. 딱 봐도 직관적이군요. RootDirName은 최상위 폴더 명, DirUnderRootList는 최상위 폴더 아래에 있는 폴더들의 리스트 일테고, TargetFileExtension은 조금 이따가 설명하도록 하지요. 
 
-```cpp
+
+## 폴더 순회
+
+하위 폴더에 있는 파일을 보려면 최상위 폴더 아래에 있는 폴더 들 또한 순회해야 합니다. 여기서부터 filesystem 라이브러리가 도와 줄 겁니다. 순회하는 방법은 아래와 같습니다. 
+
+```
 void _jcode::ExtensionFinder::showConsoleRootFolderFileList() const {
 
    try {
@@ -254,14 +259,6 @@ void _jcode::ExtensionFinder::showConsoleRootFolderFileList() const {
    };
 
 };
-```
-
-## 파일 구분
-
-하위 폴더에 있는 파일을 보려면 최상위 폴더 아래에 있는 폴더 들 또한 순회해야 합니다. 여기서부터 filesystem 라이브러리가 도와 줄 겁니다. 순회하는 방법은 아래와 같습니다. 
-
-```
-(이미지)
 ```
 
 showConsoleRootFolderFileList 함수는 단순히 출력만 하는 디버깅용 함수입니다. 여기서 집중해야 할 부분은 붉게 표시한 부분입니다. 레퍼런스를 보면, 
@@ -296,6 +293,9 @@ E:\프로젝트\Line_Counter_\Line_Counter_.v12.suo
 ```
 
 가 출력됩니다.
+
+
+## 파일 구분
 
 저는 파일을 구분해야만 합니다. 폴더는 읽을 수도 없을뿐더러 하위 폴더 경로는 확실히 구분을 해 두어야 순회가 가능하니까요. 이를 위해 라이브러리는 다음과 같은 함수를 제공합니다. 
 
@@ -356,6 +356,9 @@ CONSOLE_OUT_SYSTEM("ExtensonFinder::findUnderRootDirAddr()");
 std::list 형식의 DirUnderRootList에 **폴더의 절대경로**만 계속적으로 밀어 넣습니다. std::filesystem::directory_iterator는 const path& 형식을 반환합니다. 따라서 이는 일반 std::string형으로 변환되지 않으므로 dir_name.path().string()으로 변환하여 구겨 넣습니다. 
 
 여기까지 제가 설정한 최상위 폴더 안에 있는 모든 폴더의 절대경로를 뽑았습니다. 여기서 끝나면 안됩니다. 하위 폴더의 모든 소스 파일을 열어 라인을 세는 것이 목적이므로 이번에는 각 폴더 안의 파일의 절대경로를 뽑습니다. 방식은 동일합니다. 단지 is_regular_file() 함수로 걸러주면 되겠죠. 
+
+
+## 확장자 구분
 
 하기 전에, 저는 소스파일만 보고 싶습니다. 소스 파일이라는게 다 좋은데, 형식이 많죠. 자바스크립트 파일, C++ 소스, 헤더, CSS, JSP, 자바 등등등... 이 놈들을 개발자들은 확장자로 구분합니다. 즉, 선택적으로 확장자를 뽑아 그 파일만 열어 읽어주면 됩니다. 
 
@@ -432,6 +435,9 @@ std::vector<std::vector<std::string>> _jcode::ExtensionFinder::getFileAddrListEx
 
 아까 작성해 두었던 폴더 명의 리스트가 있었지요. 그 리스트를 돌면서 선택한 확장자와 비교하고, is_directory로 폴더인지 구분하여 파일의 절대경로를 2차원 vector 형식으로 저장합니다. 물론, directory_iterator() 가 쓰였으니 당연히 path().string()으로 push_back() 해 주어야 겠지요. 
 
+
+## 라인 카운팅
+
 제가 디자인한 ExtensionFinder 클래스의 최종 목표는 여기까지입니다. getFileAddrListExtension 함수가 메인이라고 할 수 있겠네요. 파일의 절대경로를 2차원 vector 형식으로 저장했으니, 이 목록의 파일을 열어서, 읽어주면 끝이군요!! 읽는건 간단하니 설명 없이 코드만 보겠습니다.
 
 ```cpp
@@ -457,6 +463,8 @@ long long _jcode::CounterAdv::countListOf(const std::vector<std::vector<std::str
    return Lines;
 };
 ```
+
+## 실행해보자!
 
 요약 하자면, 초기 라인 카운터와는 다르게, path.txt를 직접 작성하는 역할을 ExtensionFinder 클래스가 담당하고 있는 구조입니다. 최상위 폴더만 지정하면 아래 폴더를 순회하며 읽어들이죠. filesystem 라이브러리도 쓸만 하네요.
 
