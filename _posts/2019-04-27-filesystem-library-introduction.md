@@ -332,7 +332,7 @@ else if (fs::is_directory(file_name))
 ```cpp
 void _jcode::ExtensionFinder::findUnderRootDirAddr() {
 
-&#9839;ifdef CONSOLE_DEBUG_ON
+ #ifdef CONSOLE_DEBUG_ON
 	CONSOLE_OUT_SYSTEM("ExtensonFinder::findUnderRootDirAddr()");
 #endif
 
