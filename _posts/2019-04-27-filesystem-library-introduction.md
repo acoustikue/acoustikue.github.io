@@ -5,7 +5,7 @@ date:   2019-04-27 09:00:00
 categories: C/C++
 ---
 
-# C++17 Filesystem Library Introduction (작성중)
+# 간단한 filesystem(C++17) 맛보기(작성중)
 
 
 > 필자는 공군 작전정보통신단 체계개발실에서 복무('17~'19)하였습니다. 이 포스트는 작전정보통신단 병사 **프로그래밍 동아리(LINK)** 에서의 활동을 바탕으로 작성한 내용입니다.
@@ -43,7 +43,7 @@ path.txt라는 파일에 경로를 모두 적어두고, 그 경로를 읽고, �
 
 뭐, 대략적인 소스는 아래와 같습니다.
 
-```c++
+```cpp
 int main() {
 
 	long long Accumulator_ = 0;
@@ -144,7 +144,7 @@ filesystem 헤더 안에 정의되고 네임스페이스는 filesystem 이랍니
 
 filesystem만 문제가 있습니다. 윈도우라 표준을 따르지 않는다, 실험적이므로 알아서 잘 써라 이런 건가 보네요. 어쨌든 저는 요 놈이 필요하니 쓰려면 어쩔 수 없습니다. 
 
-```c++
+```cpp
 #include <filesystem> // experimental since C++17, VS2017
 
 // experimental? since C++17
@@ -165,14 +165,14 @@ namespace fs = std::experimental::filesystem;
   
 그러려면 최상위 루트 폴더, 즉 프로젝트 폴더 명을 지정 할 수 있어야 겠지요. 간단히 std::string 인스턴스에 받아 둡니다. 
 
-```c++
+```cpp
 std::string DirectoryName = "";
 std::string FileExtensions = "";
 ```
 
 제가 생각해도 직관적인 변수 명입니다. 설명은 생략하겠습니다. 
 
-```c++
+```cpp
 #include <iostream>
 
 #ifndef CONSOLE_OUT_SERIES
@@ -229,7 +229,7 @@ ExtensionFinder라는 클래스가 있군요. 제가 작성한겁니다. 여담�
 
 ExtensonFinder를 보면 매크로로 뭐라뭐라 정의해 두었고 _jcode 라는 네임스페이스에 정의해 두었습니다. 딱 봐도 직관적이군요. RootDirName은 최상위 폴더 명, DirUnderRootList는 최상위 폴더 아래에 있는 폴더들의 리스트 일테고, TargetFileExtension은 조금 이따가 설명하도록 하지요. 
 
-```c++
+```cpp
 void _jcode::ExtensionFinder::showConsoleRootFolderFileList() const {
 
    try {
@@ -276,7 +276,7 @@ std::filesystem::directory_entry 요소를 순회하는 반복자네요. 그렇�
 
 그림과 같은 폴더가 있다고 합시다. E:\프로젝트\Line_Counter_ 라는 경로를 제시하면, directory_iterator는 E:\프로젝트\Line_Counter_ 바로 밑의 폴더를 훑습니다. 이를 출력하면 하위 폴더의 요소들이 폴더인지, 일반 파일인지 등을 구분하지 않고 말이죠. 분기 없이 단순히 
 
-```c++
+```cpp
 for(auto& file_name : fs::directory_iterator(RootDirName)) {
 	COUT << file_name << ENDL;
 }
@@ -312,7 +312,7 @@ File type을 알 수 있는 is_ 시리즈가 있군요. 저는 이 놈이 폴더
 std::filesystem::is_directory() 요 놈을 써 봅시다. 이 함수는 “Checks if the given file status or path corresponds to a directory.” 이네요. 디렉토리인지 아닌지 구분해 주는 놈입니다. 함수의 인자로 들어가는 std::filesystem::path 형은 std::string형와 변환이 가능합니다. 그러면 아까의 코드로 돌아가서, 
 
 
-```c++
+```cpp
 
 if (fs::is_regular_file(file_name))
 	COUT << "/t(REG)FILE: " << file_name << ENDL;
@@ -328,7 +328,7 @@ else if (fs::is_directory(file_name))
 
 폴더와 파일을 구분하는 법을 알았습니다. 그러면 폴더 내에 하위 폴더, 그리고 파일들이 있을 테니, 일단 폴더들의 절대 경로만 우선적으로 뽑아내야죠. 무식한 이중 for문을 씁시다. 그러면, 
 
-```c++
+```cpp
 void _jcode::ExtensionFinder::findUnderRootDirAddr() {
 
 #ifdef CONSOLE_DEBUG_ON
@@ -342,11 +342,11 @@ void _jcode::ExtensionFinder::findUnderRootDirAddr() {
 	for(auto& iterator : DirUnderRootList) {
 		for(auto& dir_name : fs::directory_iterator(iterator)) {
 		
-		if(fs::is_directory(dir_name))
-			DirUnderRootList.push_back(dir_name.path().string());
-		
-		else
-			;
+			if(fs::is_directory(dir_name))
+				DirUnderRootList.push_back(dir_name.path().string());
+
+			else
+				;
 		}	
 	}
 }
@@ -360,7 +360,7 @@ std::list 형식의 DirUnderRootList에 **폴더의 절대경로**만 계속적�
 
 간단하네요. 확장자를 문자열로 받고, 파싱. 파일의 절대경로를 뽑는 법은 알고 있으니 리스트의 확장자가 맡는지 비교해 주면 되겠죠. 일단 비교구문입니다. 
 
-```c++
+```cpp
 bool _jcode::ExtensionFinder::isTargetExtension(const std::string& argAddr)
 
 // 추가 필요
@@ -370,7 +370,7 @@ bool _jcode::ExtensionFinder::isTargetExtension(const std::string& argAddr)
 
 우리는 확장자의 목록을 한 줄로 입력받을 겁니다. 스페이스 바 기준으로 단어를 뽀개서 std::vector에다 넣읍시다. 간단하네요.
 
-```c++
+```cpp
 
 ```
 
@@ -378,7 +378,7 @@ bool _jcode::ExtensionFinder::isTargetExtension(const std::string& argAddr)
 
 그러면 거의 다 되어 가는군요. 이제 비교해야죠??
 
-```c++
+```cpp
 
 ```
 
@@ -386,7 +386,7 @@ bool _jcode::ExtensionFinder::isTargetExtension(const std::string& argAddr)
 
 제가 디자인한 ExtensionFinder 클래스의 최종 목표는 여기까지입니다. getFileAddrListExtension 함수가 메인이라고 할 수 있겠네요. 파일의 절대경로를 2차원 vector 형식으로 저장했으니, 이 목록의 파일을 열어서, 읽어주면 끝이군요!! 읽는건 간단하니 설명 없이 코드만 보겠습니다.
 
-```c++
+```cpp
 
 ```
 
