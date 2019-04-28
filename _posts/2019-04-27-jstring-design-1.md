@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "JString Design"
+title:  "JString Design[1]"
 date:   2019-04-27 09:00:00
 categories: LINK(OICW)
 ---
