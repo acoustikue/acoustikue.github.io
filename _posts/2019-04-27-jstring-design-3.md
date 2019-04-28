@@ -14,7 +14,7 @@ categories: LINK(OICW)
 
 이제 본격적으로 JString 클래스의 동작을 정의해 줄 때입니다. 우선 at() 부터 만들기로 합시다.
 
-## ** ① at()**
+## ① at()
 
 함수를 만들어 봅시다. 레퍼런스를 보면, 
 
@@ -80,7 +80,7 @@ PRINT_NORMAL_MSG(life_is_a_highway_lyrics_2.at(3);
 
 짜자자잔, 정상 작동 확인 완료했습니다. 
 
-## ** ② operator[] () **
+## ② operator[] ()
 
   STL의 vector에서는 멤버에 접근할 때 at() 뿐만 아니라 vector_thing[45]처럼 사용하기도 합니다. JString도 이렇게 사용하고 싶네요. 예를 들어, 
 
@@ -178,7 +178,71 @@ const char* _jcode::JString::c_str() const noexcept {
 
 먼저 data()를 정성들여 만들어 줍니다. 동적 할당 되어있지 않다면 뱉어낼 문자열이 없지요. 그렇다고 nullptr로 초기화 되어 있는 것을 던져주기는 좀 그러니 그냥 빈 문자열을 리턴하도록 했습니다. c_str()은 data()와 동작이 완전히 동일하니 정성들여 만들어 둔 data()를 그냥 호출해 주면 되겠죠. 테스트 하기에는 너무 싱거운 코드지만 한번 해 봅시다. 
 
+```cpp
+PRINT_NORMAL_MSG(life_is_a_highway_lyrics_1.data());
+
+_jcode::JString Blank;
+PRINT_NORMAL_MSG(Blank.c_str());
+```
+```
+(이미지)
+```
+
 잘 동작합니다!!
+
+## ④ empty()
+
+레퍼런스를 봅시다. std::string의 empty() 함수는 문자열을 가지고 있는지 확인하는 함수네요. 그렇지만 JString에서는 조금 동작을 달리 하고 싶습니다. JString에서의 empty() 함수는 말 그대로 문자열을 비우는 동작을 하도록 고안하겠습니다. 단, 메모리 크기는 동일하게 유지하는 상태입니다. 개인적으로 is_empty()라는 이름이었다면 동일하게 동작을 구현했겠지만 empty()와 clear() 요 두 놈이 굉장히 헷갈립니다. 마음에 안 드네요. 따라서 여기서는 말 그대로 empty 하도록 구현하겠습니다. 
+
+처음에는 0으로 값을 채울까도 생각했으나 0도 어쨌든 값입니다. 따라서 쓰레기 값 일지언정 동일한 크기로 다시 메모리를 할당 받도록 하죠, 구현은 간단하니 아래와 같이 작성하면 될 듯 합니다. 
+
+```cpp
+const bool _jcode::JString::empty() noexcept {
+	PRINT_FUNCTION_CALL("JString::empty()");
+
+	if(preventAccess()) return false;
+	
+	free(Buffer);
+	Buffer = (char*)malloc(sizeof(char) * Length);
+	
+	return true;
+}
+```
+
+테스트가 기대되는 군요. 어떤 쓰레기 값이 들어가려나...
+
+```cpp
+life_is_a_highway_lyrics_3.empty();
+PRINT_NORMAL_MSG(life_is_a_highway_lyrics_3);
+```
+```
+(이미지)
+```
+
+袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴羲羲硼??N 찾아보면, 
+
+```
+(이미지)
+```
+
+“사타구니사타구니사타구니사타구니사타구니사타구니사타구니사타구니사타구니사타구니사타구니사타구니사타구니숨결소리커”
+
+그렇다네요.
+
+## ⑤ sizelength() 
+
+직관적인 이름입니다. 레퍼런스를 볼 것도 없이 문자열의 크기를 리턴하는 메서드네요. 애초에 멤버로 길이 정보를 가지고 있는 변수가 있었으니, 바로 들어갑시다. 
+
+```cpp
+const int _jcode::JString::sizelength() const noexcept {
+
+	return this->Length;
+}
+```
+
+테스트 할 것도 없어 보입니다. 
+
+
 
 
 
