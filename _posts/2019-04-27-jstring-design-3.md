@@ -242,6 +242,94 @@ const int _jcode::JString::sizelength() const noexcept {
 
 테스트 할 것도 없어 보입니다. 
 
+## ⑥ shrink_to_fit()
+  
+할당된 메모리 크기와 문자열의 크기가 상이할 때 그에 맞게 메모리를 줄여주는 역할을 하는 메서드입니다. 길이 정보는 항상 가지고 있으니 Length 멤버를 가지고 메모리를 줄여주면 되겠죠. 메모리 할당이 안 되어 있다면 아무 짓도 안하면 되는 거고요. 간단한 함수입니다. 메모리 재지정은 realloc() 함수가 담당합니다. 
+
+애초에 다른 함수들이 호출부로 되돌아 가기 직전 update()를 이용하거나 메모리 관리를 하기 때문에 shrink_to_fit()을 사용하는 경우가 있을지 의문이지만 어쨌든 구현은 해 보았습니다. 이 함수 또한 간단하므로 테스트는 스킵하겠습니다. 
+
+```cpp
+const bool _jcode::JString::shrink_to_fit() noexcept {
+	PRINT_FUNCTION_CALL("JString::shrink_to_fit()");
+	
+	if(preventAccess()) return false;
+	
+	Buffer = (char*)realloc(Buffer, (Length + 1) * sizeof(char));
+
+	return true;
+}
+```
+
+## ⑦ clear()
+
+clear() 함수입니다. 간단하게 가지고 있는 문자열을 비우는 동작을 하면 되겠죠. Buffer 멤버에 동적 할당이 되어 있다면 메모리를 해제하면 되고, nullptr로 애초에 문자열 할당이 되어있지 않은 상태라면 아무 짓도 하지 않도록 하면 됩니다. 마지막으로 길이는 없으니 Length는 0으로 설정 해 주면 되겠군요. 코드는 아래와 같아요.
+
+```cpp
+// alteration
+void _jcode::JString::clear() noexcept {
+	PRINT_FUNCTION_CALL("JString::clear()");
+
+	if(Buffer != nullptr) free(Buffer);
+
+	Buffer = nullptr;
+	Length = 0;
+};
+```
+
+clear 해 보도록 합시다. 
+
+```cpp
+life_is_a_highway_lyrics_3.clear();
+PRINT_NORMAL_MSG(life_is_a_highway_lyrics_3);
+```
+
+아무것도 뜨지 않는군요. 
+
+```
+(이미지)
+```
+
+## ⑧ insert() 
+
+여기서부터 쓸만한 함수가 나오기 시작합니다. 문자열 수정의 대표적인 함수입니다. 어느 위치에 내가 원하는 문자열을 끼우고 싶을 때 사용하는 함수네요. 
+
+원리는 간단할 겁니다. 위치에 대한 배열의 인덱스를 입력 받으면 인자로 들어온 문자열 크기만큼 메모리를 늘려주고, 기존의 문자열을 끼울 문자열의 크기만큼 뒤에 붙여두고 끼울 문자열을 그 사이에 끼워 넣으면 되겠죠. 문장이 길어 장황하니 정리하면
+
+* (1) 배열의 인덱스와 넣고 싶은 문자열을 인자로 받아서,  *
+* (2) 받은 문자열 크기만큼 메모리 할당 먼저 해 주고 기존의 문자열을 그 크기만큼 뒤로 밀기, *
+* (3) 사이에 문자열을 넣어 주면 끝. *
+
+해 봅시다. 우선 문자열을 입력받는 함수입니다. const char* 인자이므로 문자열이 될 테고, 뒤의 const int 형식은 들어갈 위치를 나타내는 인덱스 값입니다. 390번 줄과 391번 줄은 간단한 예외 처리이고 우리가 위에서 작성한 (1)~(3)은 394번 줄부터 시작됩니다. 
+
+
+* (1) 배열의 인덱스와 넣고 싶은 문자열을 인자로 받아서, (388번 줄) *
+* (2) 받은 문자열 크기만큼 메모리 할당 먼저 해 주고 기존의 문자열을 그 크기만큼 뒤로 밀기, (394, 396번 줄) *
+* (3) 사이에 문자열을 넣어 주면 끝. (398번 줄) *
+
+```cpp
+const bool _jcode::JString::insert(const char* argStr, const int argIdx) noexcept {
+
+	if (preventAccess()) return false;
+	if (argIdx < 0 || argIdx > Length) return false;
+	
+	// Reallocation
+	Buffer = (char*)realloc(Buffer, sizeof(char) * (Length + std::strlen(argStr) + 1));
+
+	std::memcpy(&Buffer[argIdx + std::strlen(argStr)], &Buffer[argIdx], sizeof(char) * (Length - argIdx + 1));
+	
+	std::memcpy(&Buffer[argIdx], argStr, sizeof(char) * std::strlen(argStr));
+
+	update(); // update variable 'Length'!!
+
+	return true;
+};
+```
+
+문자열의 크기가 달라졌으니 update()를 꼭 호출하여 Length 멤버 값을 최신화 해야 될겁니다. 
+
+하나 더 만들어봅시다. insert()의 인자가 항상 char* 형 배열이라고는 할 수 없습니다. 동일한 JString형을 다른 문자열 사이에 넣고 싶을 때가 있겠죠. 오버라이딩(overriding) 해 봅시다. 
+  
+insert() 함수를 하나 더 만들고 첫 번째 인자만 const JString&으로 수정합니다. const는 입력받을 문자열이 수정될 일이 없을뿐더러 수정이 되면 안되므로 const 지정자를 붙이는게 좋고, JString이 가진 문자열의 크기를 알 수 없으니 복사하여 인자로 받는 것 보단 레퍼런스로 받는 것이 더 좋을 겁니다. 우리는 insert() 함수를 위에 아주 정성들여 만들어 두었으니 그걸 사용하면 더 간단해지겠죠. 코드는 아래와 같습니다.
 
 
 
