@@ -1,15 +1,14 @@
 # Site settings
 title: "dev-playground"
-url: "https://dev-acoustikue.github.io"    # the protocol and hostname of your site, eg. `http://laobubu.github.io`
-# modded by acoustikue
-baseurl: "" # the prefix of your site uri, eg. `"/jekyll-theme-EasyBook"` or empty string `""`
+url: "https://dev-acoustikue.github.io"
+baseurl: "" 
 #timezone: Asia/Chongqing
 description: >
   The little-greedy engineer dreamer.
 
 # modded by acoustikue
 email: acoustikue@gmail.com # modded by acoustikue
-author: acoustikue # modded by acoustikue
+author: acoustikue
 avatar: "//www.gravatar.com/avatar/your_email_md5?d=mm&s=135"
 profile: The little-greedy engineer dreamer.
 #twitter_username: twitter_username
@@ -29,13 +28,9 @@ header:
   links:             # Links on the header. Link to in-site page with a slash as prefix
     About: /about/
     Category: /category/
-    # Python: /category/
-    # EE: /category/
-    # Link(OICW): /category/
-    # Donate: https://laobubu.net/donate.html 
     # modded by acoustikue
 
-permalink: /archivers/:title
+#permalink: /archivers/:title # modded by acoustikue
 plugins:
  - jekyll-paginate
  - jekyll-gist
@@ -48,7 +43,6 @@ paginate_path: "page:num"
 highlighter: rouge
 markdown: kramdown
 
-# https://jekyllrb.com/docs/configuration/#precedence
 defaults:
   -
     scope:
