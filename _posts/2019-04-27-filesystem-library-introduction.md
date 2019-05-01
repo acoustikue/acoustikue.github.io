@@ -250,11 +250,11 @@ void _jcode::ExtensionFinder::showConsoleRootFolderFileList() const {
 
 showConsoleRootFolderFileList 함수는 단순히 출력만 하는 디버깅용 함수입니다. 여기서 집중해야 할 부분은 붉게 표시한 부분입니다. 레퍼런스를 보면, 
 
-![capture](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-10.jpg)
+![capture](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-11.jpg)
 
 std::filesystem::directory_entry 요소를 순회하는 반복자네요. 그렇지만 하위 폴더에 있는 놈들은 순회하지 않는다고 합니다. 예를 들어, 
 
-![capture](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-11.jpg)
+![capture](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-12.jpg)
 
 그림과 같은 폴더가 있다고 합시다. E:\프로젝트\Line_Counter_ 라는 경로를 제시하면, directory_iterator는 E:\프로젝트\Line_Counter_ 바로 밑의 폴더를 훑습니다. 이를 출력하면 하위 폴더의 요소들이 폴더인지, 일반 파일인지 등을 구분하지 않고 말이죠. 분기 없이 단순히 
 
@@ -283,12 +283,12 @@ E:\프로젝트\Line_Counter_\Line_Counter_.v12.suo
 저는 파일을 구분해야만 합니다. 폴더는 읽을 수도 없을뿐더러 하위 폴더 경로는 확실히 구분을 해 두어야 순회가 가능하니까요. 이를 위해 라이브러리는 다음과 같은 함수를 제공합니다. 
 
 
-![capture](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-12.jpg)
+![capture](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-13.jpg)
 
 File type을 알 수 있는 is_ 시리즈가 있군요. 저는 이 놈이 폴더인지, 일반 파일인지 체크를 해야 하니, 
 
 
-![capture](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-13.jpg)
+![capture](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-14.jpg)
 
 std::filesystem::is_directory() 요 놈을 써 봅시다. 이 함수는 “Checks if the given file status or path corresponds to a directory.” 이네요. 디렉토리인지 아닌지 구분해 주는 놈입니다. 함수의 인자로 들어가는 std::filesystem::path 형은 std::string형와 변환이 가능합니다. 그러면 아까의 코드로 돌아가서, 
 
