@@ -332,7 +332,195 @@ const bool _jcode::JString::insert(const char* argStr, const int argIdx) noexcep
   
 insert() 함수를 하나 더 만들고 첫 번째 인자만 const JString&으로 수정합니다. const는 입력받을 문자열이 수정될 일이 없을뿐더러 수정이 되면 안되므로 const 지정자를 붙이는게 좋고, JString이 가진 문자열의 크기를 알 수 없으니 복사하여 인자로 받는 것 보단 레퍼런스로 받는 것이 더 좋을 겁니다. 우리는 insert() 함수를 위에 아주 정성들여 만들어 두었으니 그걸 사용하면 더 간단해지겠죠. 코드는 아래와 같습니다.
 
+```cpp
+const bool _jcode::JString::insert(const JString& argJStr, const int argIdx) noexcept {
+	return insert(argJStr.data(), argIdx);
+}
 
+```
+
+노래 가사를 망치기 싫지만 "INSERTED"라는 문자열을 끼워 넣어 봅시다.
+
+```cpp
+life_is_a_highway_lyrics_1.insert("INSERTED", 3);
+PRINT_NORMAL_MSG(life_is_a_highway_lyrics_1);
+
+life_is_a_highway_lyrics_1.insert(life_is_a_highway_lyrics_2, 4);
+PRINT_NORMAL_MSG(life_is_a_highway_lyrics_1);
+
+```
+
+```
+(이미지)
+```
+
+정상적으로 동작하는군요. 맘에 듭니다.
+
+## ⑨ erase()
+
+함수명 근대로 erase 하는 함수입니다. 인덱스를 나타내는 인자를 두 개 받고, 그 사이의 문자열을 삭제하면 됩니다. insert()와는 다르게 그냥 뒤의 메모리를 복사하여 당겨 붙인 후 메모리만 realloc 해주면 되겠죠. 과정은 다음과 같습니다. 
+
+```cpp
+const bool _jcode::JString::erase(const int argStrIdx, const int argEndIdx) noexcept {
+
+	if (preventAccess()) return false;
+
+	// Filter
+	if (argStrIdx > argEndIdx) return false;
+	if (argStrIdx < 0 || argEndIdx < 0) return false;
+
+	std::memcpy(&Buffer[argStrIdx + 1], &Buffer[argEndIdx + 1], sizeof(char) * (Length - argEndIdx + 1));
+	Buffer = (char*)realloc(Buffer, sizeof(char) * (Length - (argEndIdx - argStrIdx)) + 1);
+
+	update(); // update variable 'Length'!!
+
+	return true;
+}
+
+```
+
+414번 줄부터 418번 줄 까지는 예외 처리입니다. 인덱스 값이 잘못 된 경우는 메모리 할당을 할 수 없으니 예외로 두어야 겠죠. 420번 줄에서 볼 수 있듯이 해당 길이만큼 내용물을 복사하고 메모리 크기를 바로잡는 과정입니다. 어차피 메모리를 크기가 작아지는 쪽으로 재할당 하는 경우에는 그 뒤의 값은 버려집니다. realloc 레퍼런스에서도 그렇게 말하고 있네요. 
+
+```
+이미지
+```
+
+테스트 해 봅시다. 
+
+```cpp
+life_is_a_highway_lyrics_3.erase(0, 10);
+PRINT_NORMAL_MSG(life_is_a_highway_lyrics_3);
+```
+
+```
+이미지
+```
+
+정상적으로 지워지는 것을 확인할 수 있습니다. 
+
+
+## ⑩ push_back(), pop_back()
+
+어디서 많이 본 함수입니다. std::vector<>를 사용할 때 많이 쓰는 함수이죠. 사용 방식은 동일하게 구현해보도록 하겠습니다.   pop_back()의 경우 std::string에서는 아무것도 리턴하지 않지만 여기서는 가장 뒤의 글자를 리턴하도록 해 봅시다. 
+
+구현입니다. 
+
+```cpp
+const bool _jcode::JString::push_back(const char argc) noexcept {
+	
+	if (preventAccess()) {
+		
+		Buffer = (char*)malloc(sizeof(char) * 2);
+		
+		Buffer[0] = argc;
+		Buffer[1] = '\0';
+
+		update(); // update variable 'Length'!!
+
+		return true;
+
+	} else {
+		
+		Buffer = (char*)realloc(Buffer, sizeof(char) * (Length + 2));
+		
+		Buffer[Length + 1] = Buffer[Length];
+		Buffer[Length] = argc;
+
+		update(); // update variable 'Length'!!
+
+		return true;
+	};
+};
+
+
+const char _jcode::JString::pop_back() noexcept {  
+	
+	if (preventAccess())
+		return -0x01; // will be regarded as error code.
+
+	else {
+
+		const char tbufc = Buffer[Length - 1];
+
+		Buffer = (char*)realloc(Buffer, sizeof(char) * (Length));
+		Buffer[Length - 1] = '\0';
+
+		update(); // update variable 'Length'!!
+
+		return tbufc;
+	}
+
+};
+```
+
+먼저 push_back()의 경우는 고려해야 할 수가 두 가지입니다. (1)동적 할당이 되어있지 않은 경우, 배열 크기를 2로 잡고 첫 번째 Buffer[0]에는 인자를 집어넣고 두 번째 Buffer[1]에는 문자 종료를 알리는 ‘\0’을 넣어주면 됩니다. (2)동적 할당이 되어있는 경우 사이즈를 1크게 잡고 먼저 ‘\0’을 넣어준 후 인자를 바로 앞에 넣어주면 될 겁니다. 어렵지 않습니다.
+
+pop_back()의 경우 또한 두 가지인데 먼저 (1)동적 할당이 되어있지 않은 경우는 pop 할 내용이 없으므로 예외 코드로 -0x01을 리턴합니다. (2)동적 할당이 되어있는 경우에는 크기를 먼저 줄이고 마지막에만 종료 문자를 넣어줍니다. 어차피 크기를 하나 줄이는 경우 기존에 있던 ‘\0’만 지워질 테니 배열 마지막에만 ‘\0’ 문자를 대입하면 되겠죠. 이 또한 그렇게 어렵지 않습니다. 
+
+테스트 해 봅시다. ‘A'를 push 하고 pop 해보죠.
+
+```cpp
+life_is_a_highway_lyrics_1.push_back('A');
+PRINT_NORMAL_MSG(life_is_a_highway_lyrics_1);
+
+life_is_a_highway_lyrics_1.pop_back();
+PRINT_NORMAL_MSG(life_is_a_highway_lyrics_1);
+```
+
+그러면 결과는 아래와 같습니다.
+
+```
+이미지
+```
+
+테스트, 성공적.
+
+## ⑪ replace()
+
+배열의 어느 한 인덱스부터 지정한 인덱스까지 문자열을 치환하는 함수입니다. 작동 이해에 대한 어려움은 없으니 바로 구현해봅시다.
+
+```cpp
+const bool _jcode::JString::replace(const char* argStr, const int& argFrom, const int& argTil) noexcept {
+	
+	if (preventAccess()) return false;
+
+	const int TargetStrLen = std::strlen(argStr);
+
+	if (argTil == 0) {
+		
+		for (int idx = argFrom; idx != (argFrom + TargetStrLen); idx++) {
+
+
+			Buffer[idx] = argStr[idx - argFrom];
+		}	
+
+		return true;
+
+	} else {
+		
+		if ((argFrom - argTil != TargetStrLen))
+			return false; // size mismatch.
+
+		for (int idx = argFrom; idx != argTil; idx++)
+			Buffer[idx] = argStr[idx];
+
+		return true;
+	}
+};
+```
+
+루프를 돌면서 하나하나씩 대입하는 과정입니다. 바로 테스트 해 봅시다. 
+
+```cpp
+life_life_is_a_highway_lyrics_3.replace("_SAMPLE_", 8);
+PRINT_NORMAL_MSG(life_life_is_a_highway_lyrics_3);
+```
+
+```
+이미지
+```
+
+정상작동 하는군요!!
 
 
 
