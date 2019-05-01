@@ -3,7 +3,7 @@ layout: post
 title:  "JString Design[3]"
 date:   2019-04-27 09:00:00
 categories: LINK(OICW)
-permalink: /archivers/
+permalink: /archivers/Jstring_Design_3
 ---
 
 # [_jcode mini-project] JString Design(3) (작성중)
