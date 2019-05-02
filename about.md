@@ -4,8 +4,14 @@ title: About
 permalink: /about/
 ---
 
-## acoustikue
+## Personal playground
 
-- **ROK Air Force**, Operations Information & Communication Wing, System Development Department, Air-defense Guided Missile System Team
+> An experience-hungry engineer dreamer.
 
+#### Majored
 
+in electronic engineering.
+
+#### Career
+
+- **ROK Air Force** Operations Information & Communication Wing, System Development Department, Air Defense Guided Missile System Team, **KTMO-Cell Software Supporter**
