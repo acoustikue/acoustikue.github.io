@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "C++17 Filesystem Library Introduction"
-date:   2019-04-27 09:00:00
+date:   2019-01-10 09:00:00
 categories: LINK(OICW)
 permalink: /archivers/filesystem_library_introduction
 ---
@@ -35,12 +35,12 @@ permalink: /archivers/filesystem_library_introduction
 
 당시는 급하게 만든 나머지 파일 하나하나를 읽어 들여 라인을 세는 방식이었습니다. 예를 들면, 
 
-![line_counter_folder](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-00.jpg)
+![line_counter_folder](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-00.jpg)
 
 path.txt라는 파일에 경로를 모두 적어두고, 그 경로를 읽고, 파일을 열고, 변수 하나를 선언하여 카운팅합니다.
 
 
-![path](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-01.jpg)
+![path](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-01.jpg)
 
 뭐, 대략적인 소스는 아래와 같습니다.
 
@@ -75,7 +75,7 @@ int main() {
 
 라인 하나씩 카운트하고 그냥 출력해줍니다. csv 형식으로 저장도 하네요. 저걸 돌려보면 
 
-![result](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-02.jpg)
+![result](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-02.jpg)
 
 
 뭐, 이런식으로 저장은 될 겁니다. 
@@ -97,7 +97,7 @@ int main() {
 
 C++17에는 공식적으로 filesystem 라이브러리가 추가되었습니다. 이 라이브러리는 boost 라이브러리에 있던 것인데, C++17에 와서야 공식적으로 포함되었습니다. 그때 가지고 있던 컴파일러는 C++11 일부까지만 지원했기 때문에 음, 불가능. 
 
-![vs2017](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-03.jpg)
+![vs2017](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-03.jpg)
 
 음, 새로운 컴파일러군요. VS2017 Professional입니다. 얼마 전 우연히 얻게 되었습니다. 그러면 filesystem 라이브러리가 있고, 맡고 있는 프로젝트도 얼추 마무리 단계에 들어갔으니 여유 있을 때 조잡한 라인 카운터를 한번 개선해보도록 하지요.
 
@@ -107,27 +107,27 @@ C++17에는 공식적으로 filesystem 라이브러리가 추가되었습니다.
 
 일단 filesystem 라이브러리를 봅시다. 
 
-![capture](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-04.jpg)
+![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-04.jpg)
 
 공식 레퍼런스에도 있네요? 한번 들어가 봅시다. 
 
-![capture](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-05.jpg)
+![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-05.jpg)
 
 filesystem 헤더 안에 정의되고 네임스페이스는 filesystem 이랍니다. 바로 추가합시다.
 
-![capture](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-06.jpg)
+![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-06.jpg)
 
 일단 에러는 없습니다. 네임스페이스 filesystem 안에 정의되어 있다 하니 fs로 간단하게 쓰게끔 using으로 선언해둡시다. 그러면, 
 
-![capture](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-07.jpg)
+![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-07.jpg)
 
 에러가 뜹니다!! 이상하네요. 분명히 filesystem 네임스페이스 안에 정의되어 있다고 공식 레퍼런스에도 써 있건만. 어쩔 수 없으니 헤더를 열어 봅시다. 
 
-![capture](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-08.jpg)
+![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-08.jpg)
 
 엥? C++17인데 experimental 이라고?? 믿을 수가 없군요. 샘플로 다른 문서도 열어봅시다. C++17에서 지원하는 것 라이브러리 다른 것들도 열어 보죠 뭐. <variant>, <any>, <optional>을 추가 해보면,
 
-![capture](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-09.jpg)
+![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-09.jpg)
 
 filesystem만 문제가 있습니다. 윈도우라 표준을 따르지 않는다, 실험적이므로 알아서 잘 써라 이런 건가 보네요. 어쨌든 저는 요 놈이 필요하니 쓰려면 어쩔 수 없습니다. 
 
@@ -250,11 +250,11 @@ void _jcode::ExtensionFinder::showConsoleRootFolderFileList() const {
 
 showConsoleRootFolderFileList 함수는 단순히 출력만 하는 디버깅용 함수입니다. 여기서 집중해야 할 부분은 붉게 표시한 부분입니다. 레퍼런스를 보면, 
 
-![capture](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-11.jpg)
+![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-11.jpg)
 
 std::filesystem::directory_entry 요소를 순회하는 반복자네요. 그렇지만 하위 폴더에 있는 놈들은 순회하지 않는다고 합니다. 예를 들어, 
 
-![capture](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-12.jpg)
+![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-12.jpg)
 
 그림과 같은 폴더가 있다고 합시다. E:\프로젝트\Line_Counter_ 라는 경로를 제시하면, directory_iterator는 E:\프로젝트\Line_Counter_ 바로 밑의 폴더를 훑습니다. 이를 출력하면 하위 폴더의 요소들이 폴더인지, 일반 파일인지 등을 구분하지 않고 말이죠. 분기 없이 단순히 
 
@@ -283,12 +283,12 @@ E:\프로젝트\Line_Counter_\Line_Counter_.v12.suo
 저는 파일을 구분해야만 합니다. 폴더는 읽을 수도 없을뿐더러 하위 폴더 경로는 확실히 구분을 해 두어야 순회가 가능하니까요. 이를 위해 라이브러리는 다음과 같은 함수를 제공합니다. 
 
 
-![capture](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-13.jpg)
+![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-13.jpg)
 
 File type을 알 수 있는 is_ 시리즈가 있군요. 저는 이 놈이 폴더인지, 일반 파일인지 체크를 해야 하니, 
 
 
-![capture](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-14.jpg)
+![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-14.jpg)
 
 std::filesystem::is_directory() 요 놈을 써 봅시다. 이 함수는 “Checks if the given file status or path corresponds to a directory.” 이네요. 디렉토리인지 아닌지 구분해 주는 놈입니다. 함수의 인자로 들어가는 std::filesystem::path 형은 std::string형와 변환이 가능합니다. 그러면 아까의 코드로 돌아가서, 
 
@@ -449,8 +449,8 @@ long long _jcode::CounterAdv::countListOf(const std::vector<std::vector<std::str
 
 실험해 봅시다. C:\Users\Administrator\Desktop\[ERITER]WRS_Sys\source\final\WRS_Sys 을 최상위 폴더로 지정하고, .xml 확장자만 뽑아 라인 카운팅 하면, 
 
-![capture](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-15.jpg)
+![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-15.jpg)
 
-![capture](/assets/posts/2019-04-27-filesystem-library-introduction/2019-04-27-16.jpg)
+![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-16.jpg)
 
 음!! 잘 되네요. 
