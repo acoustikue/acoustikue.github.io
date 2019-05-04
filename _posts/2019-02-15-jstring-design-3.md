@@ -19,9 +19,7 @@ permalink: /archivers/Jstring_Design_3
 
 함수를 만들어 봅시다. 레퍼런스를 보면, 
 
-```
-(이미지)
-```
+![reference](/assets/posts/2019-02-15-jstring-design-3/2019-02-15-00.jpg)
 
 > "accesses the specified character with bounds checking" 
 
@@ -79,6 +77,8 @@ PRINT_NORMAL_MSG(life_is_a_highway_lyrics_2.at(2);
 PRINT_NORMAL_MSG(life_is_a_highway_lyrics_2.at(3);
 ```
 
+![console](/assets/posts/2019-02-15-jstring-design-3/2019-02-15-01.jpg)
+
 짜자자잔, 정상 작동 확인 완료했습니다. 
 
 ## ② operator[] ()
@@ -109,9 +109,7 @@ const char _jcode::JString::operator[](const int& argIdx) const noexcept {
 
 테스트 해 볼까요? 잘 되는군요!!
 
-```
-(이미지)
-```
+![console](/assets/posts/2019-02-15-jstring-design-3/2019-02-15-02.jpg)
 
 ## ③ front(), back()
 
@@ -147,6 +145,8 @@ PRINT_NORMAL_MSG(life_is_a_highway_lyrics_1.back());
 ```
 
 테스트 해 봅시다. 잘 나옵니다. 참고로 맨 앞 글자는 공백입니다.
+
+![console](/assets/posts/2019-02-15-jstring-design-3/2019-02-15-03.jpg)
 
 ## ③ data(), c_str()
 
@@ -185,9 +185,7 @@ PRINT_NORMAL_MSG(life_is_a_highway_lyrics_1.data());
 _jcode::JString Blank;
 PRINT_NORMAL_MSG(Blank.c_str());
 ```
-```
-(이미지)
-```
+![console](/assets/posts/2019-02-15-jstring-design-3/2019-02-15-04.jpg)
 
 잘 동작합니다!!
 

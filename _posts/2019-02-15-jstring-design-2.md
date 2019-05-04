@@ -22,6 +22,7 @@ std::string 멤버로 관리할 수야 있겠다만 이건 너무 양아치입�
 ```
 (이미지)
 ```
+![reference](/assets/posts/2019-02-15-jstring-design-2/2019-02-15-00.jpg)
 
 지원하는 메서드만 봐도 이만큼이 있군요. 이름은 같은 것을 쓰는 것으로 하고 중요한 메서드만 지원하는거로 하겠습니다. 물론 동작은 같게 해야겠죠. 우선 clear, insert, erase, push_back, pop_back, compare, replace 정도로만 정합시다.
 
@@ -33,9 +34,7 @@ std::string 멤버로 관리할 수야 있겠다만 이건 너무 양아치입�
 
 악! 제가 작성했지만 지금 보니 너무 많습니다. 보기 쉽게 클래스 다이어그램으로 보죠.
 
-```cpp
-
-```
+![reference](/assets/posts/2019-02-15-jstring-design-2/2019-02-15-01.jpg)
 
 100%는 아니지만 std::string 클래스를 따라하려고 노력했습니다. 여기서 확인할 것은 연산자 오버로딩 부분입니다.
 
