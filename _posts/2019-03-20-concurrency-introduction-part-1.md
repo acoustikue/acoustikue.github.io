@@ -247,14 +247,113 @@ g++ -o app ./include/*h ./src/*.cpp -pthread -std=c++14 -g
 
 간단한 예제입니다. [thread_id: XXXXXX] 부분은 단순한 코드입니다. 
 
+```cpp
+std::cout << "[thread_id: " << std::this_thread::get_id() << ...
+```
+
+![reference](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-14.jpg)
 
 
+즉, 쓰레드를 구분하는 ID값을 반환합니다. 맨 처음 main() 함수[140132807874368]가 시작되고 객체가 생성됨과 동시에 worker_thread_3[140132773603072], worker_thread_2[140132781995776], worker_thread_1[140132790388480] 쓰레드가 작동하는 것을 확인할 수 있습니다.
+
+## Thread 수명
+
+쓰레드의 수명은 쓰레드를 생성한 코드(현재 쓰레드)에서 관리해야 합니다. 생성된 쓰레드의 실행은 해당 호출 가능 단위의 실행이 끝나면 함께 끝납니다. 
+
+생성된 쓰레드 객체가 T라 할 때, T를 생성한 코드는 T의 실행을 마칠 때 까지 기다릴 수도 있고(T.join()), 아니면 명시적으로 T를 자신으로부터 떼어낼 수도 있습니다(T.detach()). join() 이나 detach()가 한 번도 수행되지 않은 쓰레드를 합류 가능한(joinable)이라고 합니다. 합류 가능한 쓰레드는 소멸자에서 std::terminate를 호출하고, 그러면 기본적으로 프로그램이 종료됩니다.
+
+![reference](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-15.jpg)
+
+자신을 생성한 코드에서 떨어진 쓰레드는 배경에서 독자적으로 실행됩니다. 그런 쓰레드를 흔히 데몬(daemon)쓰레드라고 부릅니다.
+
+혹시라도 쓰레드 객체를 생성하고 join()이나 detach()를 실행하지 않으면 프로그램이 죽어버립니다. 
+
+## Thread 인수 전달
+
+앞서 이야기 했듯, std::thread는 가변 인수 템플릿(variadic template)입니다. 간단히 말해 이는 클래스의 생성자가 임의의 개수의 인수들을 복사 또는 참조로 전달받을 수 있다는 뜻입니다. std::thread의 경우 첫 인수는 쓰레드가 실행할 호출 가능 단위이고, 그 이후의 임의의 개수의 인수들은 그 호출 가능 단위에 전달됩니다. 물론, 호출 가능 단위가 람다 함수인 경우에는 생성자 인수 대신 람다 capture을 통해 인수를 전달할 수도 있습니다.
+
+```cpp
+#elif(_WHAT_ == 2) // part 2 - Joining and Detaching Threads
+	
+	int divider = 1;
+	std::vector<std::thread> worker_threads;
+	
+	// Once a thread is started then another thread can wait for this new thread to finish. 
+	// For this another need need to call join() function on the std::thread object.
+		
+	for(int i = 0; i < 10; i++) {
+		worker_threads.push_back(
+			std::thread(
+				[=](int arg_div) { // catch by copying.
+					APP_THREAD_START
+					std::cout << " > An anonymous lambda #" << arg_div << " running as a thread." << std::endl;
+					
+					APP_THREAD_TERMINATE
+				}
+			, divider)
+		);
+		
+		divider++;
+	}
+	
+	
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+	
+	std::cout<<" > Waiting for all the worker thread to finish..."<<std::endl;
+	for(auto& itor : worker_threads)
+		if(itor.joinable())
+			itor.join();
+```
+
+예를 들어, 132번 줄에 std::thread 생성자에 int형 인자를 받는 람다 함수가 들어가 있습니다. 이에 대한 파라미터는 std::thread 두 번째 파라미터로 들어가고 있습니다. 이를 출력해 보면, 
+
+![bash](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-16.jpg)
+
+쓰레드가 수행되는 순서라 함은 OS에서 알아서 정하는 것이니 생성한 순서대로 수행되지는 않습니다. 어쨌든 인자가 잘 들어가고 있는 건 확인할 수 있네요. 
 
 
+## Thread 연산
+
+뭐, 종합하면 아래와 같이 됩니다. 
 
 
+| 메서드 | 설명 |
+| ---
+| t.join() | 쓰레드 t(호출 가능 단위)가 실행을 마칠 때까지 기다린다. |
+| t.detach() | 생성된 쓰레드 t를 그것을 생성한 쓰레드와 독립적으로 실행되게 한다. |
+| t.joinable() | 쓰레드 t에 대해 join이나 detach를 호출할 수 있는지의 여부를 돌려준다. |
+| t.get_id(), std::this_thread::get_id() | 쓰레드 식별자를 돌려준다. |
+| std::thread::hardware_concurrency() | 병렬로 실행할 수 있는 쓰레드 개수를 돌려준다. |
+| std::this_thread::sleep_until(absTime) | 쓰레드 t를 absTime(절대 시간)이 될 때까지 재운다. |
+| std::this_thread::sleep_for(relTime) | 쓰레드 t를 지금부터 relTime 시간이 흐를 때까지 재운다. |
+| std::this_thread::yield() | 운영체제에게 실행권을 양보한다(다른 쓰레드를 실행 할 수 있도록).  |
+| t.swap(t2), std::swap(t1, t2) | 두 쓰레드를 맞바꾼다. |
+
+t.join()과 t.detach()는 하나의 t에 대해 딱 한 번만 호출할 수 있습니다. 이 메서드들을 여러 번 호출하면 std::system_error 예외가 발생합니다. 한편으로는 컴파일은 에러를 내놓지 않고 정상적으로 완료됩니다. 실행 시 프로그램이 자꾸 죽으니 디버깅 시 애를 먹이게 되죠.
+
+std::thread::hardware_concurrency()는 CPU 코어의 개수를 돌려줍니다. 단, 실행 시점 모듈이 코어 개수를 알아낼 수 없는 상황이면 0을 돌려줍니다. sleep_until과 sleep_for 연산은 시점(time point, chrono헤더에 정의) 또는 기간을 받습니다. 
+
+한편 쓰레드는 복사할 수 없고 이동(std::move())만 가능합니다. swap함수는 이동이 가능한 대상에 대해서는 이동을 수행해줍니다.
 
 
+## 공유 변수와 경쟁 조건(Race condition)
+
+여기서부터 모든 것을 main()에 때려 박았던 습관이 발목을 잡기 시작합니다. 이전에는 하나의 함수가 배타적인 동작을 보장하는 로직을 작성했기 때문에 변수에 대해 생각할 필요가 없었습니다. 단지 함수 내부에 있는 지역 또는 전역 변수의 여부나 메모리 할당과 해제에 대해서만 고려하면 되니까요. 
+
+**그런데 하나의 변수를 둘 이상의 쓰레드가 공유한다면 문제가 발생하게 됩니다.**
+
+![race_condition](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-17.jpg "「C++ Concurrency in Action」 P.35")
+
+이중 연결 리스트를 생각해 봅시다. 한 노드에는 양 방향의 노드를 가리키고 있는 포인터가 있겠죠. 만약 한 노드를 지우는 과정을 실행한다면 지워지는 노드의 양 쪽에 있는 노드의 포인터는 업데이트가 되어야 할 겁니다. 일련의 과정을 간단히 나타내면 아래와 같겠죠.
+
+1. Identify the node to delete (N).
+2. Update the link from the node prior to N to point to the node after N.
+3. Update the link from the node after N to point to the node prior to N.
+4. Delete node N.
+
+예를 들어 쓰레드 A가 한 node를 읽는 반면, 쓰레드 B는 하나의 node를 지운다고 생각해 봅시다. 지우는 과정 중인 그림의 b)나 c)의 과정에서 데이터를 읽는 다면 쓰레드 A는 원하는 데이터를 읽을 수도 없을 뿐더러 전체적인 구조를 망가뜨릴 수 있습니다. 이러한 경우와 같이 적어도 두 개의 쓰레드가 동시에 하나의 공유 자료에 접근하되 둘 중 적어도 하나가 기록자(write)인 상황을 경쟁 조건(race condition)이라고 합니다. 경쟁 조건이 발생하는 경우 프로그램의 행동은 정의되지가 않습니다.
+
+그럼 이중 연결 리스트보다는 더 간단한 예제를 만들어 봅시다. 하나는 counter 변수를 증가시키는 놈이고 counter 변수를 감소시키는 놈입니다. 동일한 횟수로 1씩 증가/감소 시키는 과정입니다. 
 
 
 
