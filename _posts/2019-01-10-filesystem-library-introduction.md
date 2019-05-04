@@ -6,7 +6,7 @@ categories: LINK(OICW)
 permalink: /archivers/filesystem_library_introduction
 ---
 
-# 간단한 filesystem(C++17) 맛보기(작성중)
+# 간단한 filesystem(C++17) 맛보기
 
 
 > 필자는 공군 작전정보통신단 체계개발실에서 복무('17~'19)하였습니다. 이 포스트는 작전정보통신단 병사 **프로그래밍 동아리(LINK)** 에서의 활동을 바탕으로 작성한 내용입니다.
@@ -70,7 +70,41 @@ int main() {
 오래 전에 작성한 코드라 기억이 가물가물 하군요. 일단 path.txt를 열어둡니다. 그리고 라인을 하나씩 읽어서 [주소][파일명]을 문자열 형식으로 std::vector<string> 형 변수 pathList_에 추가하고 있네요.
 
 ```
-(코드/이미지)
+// Interface
+long long _jcode::LineCounter::countLines() {
+
+	std::ifstream openFile_(FileName_);
+	// std::ifstream openFile_(FileName_.c_str());
+
+	std::string _T;
+
+	if (openFile_) 
+		while (std::getline(openFile_, _T))
+			Lines_++;
+
+	return Lines_;
+};
+```
+
+```cpp
+for (auto itor_ = pathList_.begin(); itor_ != pathList_.end(); itor_++) {
+	
+		counter_.setFileName(*itor_);
+
+		counter_.countLines();
+
+		if (!counter_.getFileName().substr(0, 2).compare("//")) // User comments in path.txt.
+			continue;
+
+		if (counter_.getFileName().compare("")) {
+			resultFile_ << counter_.getFileName() << "\t" << counter_.getLines() << std::endl;
+			std::cout << counter_.getFileName() << ": " << counter_.getLines() << std::endl;
+		}
+
+		Accumulator_ += counter_.getLines();
+
+		counter_.resetCounter();
+	}
 ```
 
 라인 하나씩 카운트하고 그냥 출력해줍니다. csv 형식으로 저장도 하네요. 저걸 돌려보면 
