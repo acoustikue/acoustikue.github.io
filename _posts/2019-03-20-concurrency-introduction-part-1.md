@@ -70,18 +70,61 @@ sudo apt-get update
 ![bash](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-03.jpg)
 
 ```bash
-#sudo apt-get install gcc-8 g++-8
+sudo apt-get install gcc-8 g++-8
 ```
 
 ![bash](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-04.jpg)
 
 ![bash](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-05.jpg)
 
+아직도 4.8.4 버전이군요. 업그레이드 버전으로 잡아 줍니다.
 
+```bash
+sudo update-alternatives --install /usr/bin/gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ /usr/bin/g++-8
+```
+![bash](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-06.jpg)
 
+확인하고 gdb도 깔아 줍시다. 빈 컨테이너에는 gdb가 없더라고요.
 
+```bash
+sudo apt-get install gdb
+```
 
+![bash](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-07.jpg)
 
+그러면 환경 설정은 완료됩니다.
 
+![bash](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-08.jpg)
+
+인터넷이 되는 환경이라 자료 찾아보기도 편하고 너무 좋군요. 
+
+추후 예제에 쓸 함수를 하나 만들어 둡시다. 리눅스에서는 윈도우 VS에서 지원하는 getch() 함수가 존재하지 않습니다. 따라서 아래와 같이 하나 만들어 둡니다. 
+
+```cpp
+#include <stdio.h>
+#include <termio.h>
+
+int getch(void) {
+
+	int ch;
+	struct termios buf, save;
+	
+	tcgetattr(0, &save);
+	
+	buf = save;
+	
+	buf.c_flag &= ~(ICANON | ECHO);
+	buf.c_cc[VMIN] = 1;
+	buf.c_cc[VTIME] = 0;
+	
+	tcsetattr(0, TCSAFLUSH, &buf);
+	
+	ch = getchar();
+	tcsetattr(0, TCSAFLUSH, &save);
+	
+	return ch;
+
+}
+```
 
 
