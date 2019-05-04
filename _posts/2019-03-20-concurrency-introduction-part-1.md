@@ -133,7 +133,7 @@ cppreference.com([링크](https://en.cppreference.com/w/))은 참 편리합니�
 
 ![reference](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-09.jpg)
 
-쓰레드(Thread)는 하나의 실행 단위입니다. C++에서는 std::thread라는 클래스 객체로 존재하게 되죠. 기본적으로 쓰레드 객체는 생성 즉시 실행을 시작합니다. 쓰레드가 실행하는 코드는 생성자의 인수로 주어진 호출 가능 단위가 됩니다. 여기서 호출 가능 단위는 _①함수일 수도 있고_ _②함수 객체(Functor)_나 _③람다 함수_일 수도 있습니다. 생성자를 확인해 봅시다.
+쓰레드(Thread)는 하나의 실행 단위입니다. C++에서는 std::thread라는 클래스 객체로 존재하게 되죠. 기본적으로 쓰레드 객체는 생성 즉시 실행을 시작합니다. 쓰레드가 실행하는 코드는 생성자의 인수로 주어진 호출 가능 단위가 됩니다. 여기서 호출 가능 단위는 __①함수일 수도 있고__ __②함수 객체(Functor)__나 __③람다 함수__일 수도 있습니다. 생성자를 확인해 봅시다.
 
 ![reference](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-10.jpg)
 
