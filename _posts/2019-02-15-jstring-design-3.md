@@ -214,17 +214,13 @@ const bool _jcode::JString::empty() noexcept {
 life_is_a_highway_lyrics_3.empty();
 PRINT_NORMAL_MSG(life_is_a_highway_lyrics_3);
 ```
-```
-(이미지)
-```
+![console](/assets/posts/2019-02-15-jstring-design-3/2019-02-15-05.jpg)
 
 袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴袴羲羲硼??N 찾아보면, 
 
-```
-(이미지)
-```
+![console](/assets/posts/2019-02-15-jstring-design-3/2019-02-15-06.jpg)
 
-“사타구니사타구니사타구니사타구니사타구니사타구니사타구니사타구니사타구니사타구니사타구니사타구니사타구니숨결소리커”
+> “사타구니사타구니사타구니사타구니사타구니사타구니사타구니사타구니사타구니사타구니사타구니사타구니사타구니숨결소리커”
 
 그렇다네요.
 
