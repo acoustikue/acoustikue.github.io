@@ -14,4 +14,5 @@ in electronic engineering.
 
 ### Career
 
-- **ROK Air Force** Operations Information & Communication Wing,  System Development Department, Air Defense Guided Missile System Team, **KTMO-Cell Software Supporter**
+- 공군 작전사령부 예하 작전정보통신단 체계개발실
+**ROK Air Force** Operations Information & Communication Wing,  System Development Department, Air Defense Guided Missile System Team, **KTMO-Cell Software Supporter**
