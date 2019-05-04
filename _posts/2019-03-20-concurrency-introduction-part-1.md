@@ -21,6 +21,11 @@ permalink: /archivers/concurrency_introduction_part_1
 
 뒤져보니 아직도 관련 자료가 남아있네요. 어떻게 일일이 그렸는지 다시 하라면 못 할 짓입니다. 한쇼 파일 여는 데에만 해도 5~6초가 걸립니다.
 
+![reference](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-FF.jpg)
+
+![reference](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-FE.jpg)
+
+
 각설하고, RTD 프로젝트는 약간의 문제가 있었습니다. 로그에서 찍히는 정보가 어마무시하다 보니 이놈이 정보를 가져오고 처리하는데 시간을 좀 잡아먹습니다. 시뮬레이터 장비로 정보를 쏘게 되면 가져오고 전시하는 데에만 몇 십초. 어떤 로직으로 짜여져 있는지 그 도중에는 마우스나 각종 입력이 먹히지 않습니다. 
 
 그래서 저에게 던져진 것이 데이터 처리와 사용자 입력 로직을 분리해라. 즉, 데이터 처리 과정을 별도의 쓰레드(Thread)로 만들어 사용자 입력 처리가 가능하게 하라는 것이었죠. 하나의 쓰레드는 작업(worker thread)을, 다른 하나의 쓰레드는 사용자 입력을 받도록 하도록 만드는 작업이었습니다. 
@@ -355,18 +360,326 @@ std::thread::hardware_concurrency()는 CPU 코어의 개수를 돌려줍니다. 
 
 그럼 이중 연결 리스트보다는 더 간단한 예제를 만들어 봅시다. 하나는 counter 변수를 증가시키는 놈이고 counter 변수를 감소시키는 놈입니다. 동일한 횟수로 1씩 증가/감소 시키는 과정입니다. 
 
+```cpp
+#elif(_WHAT_ == 4) // part 4 - Data Sharing and Race Conditions
+	
+		
+	int counter = 0;
+	
+	std::thread worker_thread_1([&]() {
+		APP_THREAD_START
+		std::cout << " > An augmenting lambda running as a thread." << std::endl;
+				
+		for(int itor = 0; itor < 100; itor++) {
+			
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			counter++;
+		}
+		
+		APP_THREAD_TERMINATE
+		
+	});
+	
+	std::thread worker_thread_2([&]() {
+		APP_THREAD_START
+		std::cout << " > An decreasing lambda running as a thread." << std::endl;
+				
+		for(int itor = 0; itor < 100; itor++) {
+			
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			counter--;
+		}
+		
+		APP_THREAD_TERMINATE
+		
+	});
+	
+	
+	if(worker_thread_1.joinable())
+		worker_thread_1.join();
+	
+	if(worker_thread_2.joinable())
+		worker_thread_2.join();
+
+	std::cout << " > Racing condition result is " << counter << std::endl;
+```
+
+동일하게 100번씩 증가시키고 감소시키네요. 그러면 우리가 기대하는 값은 0이 되겠죠.
+
+![bash](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-18.jpg)
+
+결과는 그렇지 않습니다. 프로그램을 실행시킬 때마다 한번은 3, 한번은 -1을 출력하고 있네요. 우리가 원하는 값은 아닙니다. 
 
 
+## Mutex
+
+뮤텍스(mutex)는 Mutual Exclusion(상호 배제)를 줄인 말입니다. 뮤텍스는 한 번에 한 쓰레드만 임계 영역(critical region)에 접근할 수 있게 하는 수단입니다. Mutex를 사용하려면 mutex 헤더를 포함시켜야 합니다.
+
+![reference](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-19.jpg)
+
+단순합니다. m이 하나의 std::mutex 객체라고 하면 m.lock()은 임계 영역을 잠그고 m.unlock()은 임계 영역을 풀어줍니다. 그러면 하나의 변수에 대해 다수의 쓰레드가 동시 접근하지 못하도록 만드는 게 가능합니다. 만일 lock()을 호출하고 unlock()을 호출하지 않았다면 교착 상태(deadlock)가 발생합니다. 
+
+따라서 뮤택스는 자물쇠(lock)안에 캠슐화하여 뮤텍스가 자동으로 잠기고 풀리게 하는 것이 바람직합니다. 그러한 자물쇠 클래스는 RAII 관용구를 이용하여 뮤텍스의 수명을 자신의 수명에 묶습니다. std::lock_guard는 이를 지원합니다.
+
+> RAII는 Resource Acquisition Is Initialization(자원 획득은 초기화)를 줄인 것으로 자원 획득과 해제를 객체의 수명에 연관시키는 C++ 기법입니다. 예를 들어 스마트 포인터가 RAII를 따른다는 것은 간단히 말해 메모리를 생성자에서 할당하고 소멸자에서 해제한다는 뜻이죠. C++에서는 scope를 벗어날 때 자동으로 소멸자가 호출되기 때문에 이러한 기법이 가능합니다. 
+
+```cpp
+#elif(_WHAT_ == 5) // part 5 - Using mutex to fix Race Conditions
+		
+	int counter = 0;
+	std::mutex mutex;
+	
+	std::thread worker_thread_1([&]() {
+		APP_THREAD_START
+		std::cout << " > An augmenting lambda running as a thread." << std::endl;
+				
+		mutex.lock();
+		
+		for(int itor = 0; itor < 100; itor++) {
+			
+			
+			
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			counter++;
+		}
+		
+		mutex.unlock();
+		
+		APP_THREAD_TERMINATE
+		
+	});
+	
+	std::thread worker_thread_2([&]() {
+		APP_THREAD_START
+		std::cout << " > An decreasing lambda running as a thread." << std::endl;
+		
+		// std::lock_guard is a class template, which implements the RAII for mutex.
+		// It wraps the mutex inside it’s object and locks the attached mutex in its constructor. 
+		// When it’s destructor is called it releases the mutex.
+		
+		std::lock_guard<std::mutex> local_lock_guard(mutex);
+		
+		for(int itor = 0; itor < 100; itor++) {
+			
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			counter--;
+		}
+		
+		APP_THREAD_TERMINATE
+		
+	});
+	
+	
+	if(worker_thread_1.joinable())
+		worker_thread_1.join();
+	
+	if(worker_thread_2.joinable())
+		worker_thread_2.join();
+
+	std::cout << " > Racing condition result is " << counter << std::endl;
+```
+
+예제에서는 worker_thread_1은 lock(), unlock()으로, worker_thread_2는 lock_guard 객체를 이용해봤습니다. 두 가지 모두 동일하며 실행하면 우리가 원하는 결과를 보장하는 것을 확인할 수 있습니다. 
+
+![reference](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-20.jpg)
+
+std::lock_guard는 주어진 뮤텍스를 생성자에서 잠그고 소멸자에서 해제하는 역할만 합니다. 따라서 lock_guard를 생성하기만 하면 뮤텍스가 자동으로 잠기고 풀립니다. 
+
+![reference](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-21.jpg)
+
+추가적으로 std::unique_lock도 한번 보죠. std::unique_lock은 std::lock_guard보다 많은 기능을 제공하는, 따라서 좀 더 복잡한 용도로 사용할 수 있는 자물쇠입니다. std::lock_guard 와는 달리 std::unique_lock은 뮤텍스 없이도 생성할 수 있고, 뮤텍스를 명시적으로 잠그구 푸는 기능과 일정 시간 동안 뮤텍스 잠금을 시도하는 기능도 제공합니다. 
+여기까지 아주 빠르게 표준 라이브러리 thread 관련 기본만을 다루었습니다. 활용해 보죠. 
+
+‘y' 키가 입력받기 전까지 0.5초 마다 "I am listening!!" 이라는 문구를 출력하는 프로그램을 만들어 봅시다. 그러려면 *①키 입력을 기다리는 쓰레드 하나*, *②0.5초마다 키가 입력되었는지 검사하는 쓰레드 하나*, 두 개의 쓰레드를 만들어 두면 될 겁니다. 맞는 키가 입력되었는지의 여부는 bool형 keep_listener_running 변수에 저장해 두면 되고, 두 개의 쓰레드는 이 변수를 읽으며 자신이 계속 실행될지, 또는 종료할 지의 여부를 결정하도록 하면 될 겁니다. RTD 프로젝트에서 저에게 떨어진 과제도 이런 종류였으니 감회가 새롭네요.
+
+key_event_listener 쓰레드 객체 하나와 listener_alert 쓰레드 객체 하나 선언해두죠. 아래와 같이 될겁니다.
+
+```cpp
+#elif(_WHAT_ == 6) // part 6 - Need of Event Handling
+	
+	bool keep_listener_running = true;
+	
+	// customed example
+	std::thread key_event_listener(
+		[&]() {
+			
+			APP_THREAD_START
+				
+			int key = 0;
+			
+			while(keep_listener_running) {
+				
+				std::cout << " > Listening for 'y' key input..." << std::endl;
+				
+				key = getch();
+				
+				if(key != 'y')
+					continue;
+				
+				else {
+					keep_listener_running = false;
+					break;
+				}
+				
+			}
+			
+			APP_THREAD_TERMINATE
+		}
+	);
+	
+	std::thread listener_alert(
+		[&]() {
+			
+			APP_THREAD_START
+				
+			while(keep_listener_running) {
+				
+				std::this_thread::sleep_for(std::chrono::milliseconds(500));
+				std::cout << " > I am listening!!" << std::endl;
+				
+			}
+				
+			APP_THREAD_TERMINATE
+		}
+	);
+	
+	
+	if(key_event_listener.joinable())
+		key_event_listener.join();
+	
+	if(listener_alert.joinable())
+		listener_alert.join();
+```
+
+실행하면 0.5초마다 키를 입력받으라고 징징대는 것을 확인할 수 있습니다.
+
+![bash](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-22.jpg)
+
+’y‘를 입력해줍시다. 그러면 쓰레드 두 개가 모두 종료됩니다. 만일 다른 키를 입력하면 그 키가 아니라고 다시 입력하라고 징징거립니다.
+
+![bash](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-23.jpg)
+
+![bash](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-24.jpg)
 
 
+하지만 이건 한 쓰레드가 지속적으로 0.5초마다 bool형 플래그를 검사하는 과정이 필요합니다. 만일 한 쓰레드가 다른 쓰레드에게 받았다는 신호를 보내면 그때 쓰레드가 반응하도록 하는 것이 더 좋겠죠.
 
 
+## 조건 변수
+
+조건 변수(condition variable)을 이용하면 메시지를 통해서 쓰레드들을 동기화 할 수 있습니다. C++에서 이 기능을 사용하려면 <condition_variable> 헤더를 include해 줍니다. 조건 변수를 이용한 동기화에서는 한 쓰레드는 메시지 송신자(sender) 역할을 하고 다른 한 쓰레드는 메시지 수신자(receiver)역할을 할 겁니다. 수신자는 송신자의 통지를 기다리겠죠. 조건 변수의 전형적인 용도는 생산자-소비자(product-consumer) 작업흐름을 구현하는 것입니다.
+
+하나의 조건 변수는 메시지 송신과 수신 모두에 사용할 수 있습니다. 
+
+![reference](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-25.jpg)
 
 
+| 메서드 | 설명 |
+| ---
+| cv.notify_one() | 대기 중인 한 쓰레드에 통지한다.  |
+| cv.notify_all() | 대기 중인 모든 쓰레드에 통지한다. |
+| cv.wait(lock, ...) | 자물쇠(std::unique_lock)를 잠근 상태에서 통지를 기다린다. |
+| cv.wait_for(lock, relTime, ...) | 자물쇠(std::unique_lock)를 잠근 상태에서 일정 기간이 흐를 때까지 통지를 기다린다. |
+| cv.wait_until(lock, absTime, ...) | 자물쇠(std::unique_lock)를 잠근 상태에서 특정 시각이 될 때까지 통지를 기다린다. |
 
+레퍼런스는 너무 친절합니다. 사용법을 보죠. 
 
+![reference](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-26.jpg)
 
+'intends to modify the variable'이라 함은 메시지 송신자를 의미하는 것이고, ’intends to wait on std::condition_variable’은 메시지 통지를 기다리는 쓰레드를 의미하겠네요. ①송신자는 그냥 자물쇠를 한 번만 잠그고 풀면 되므로 std::lock_guard로 충분합니다. 레퍼런스에도 전형적으로 std::lock_guard를 사용한다고 나와 있네요. lock을 획득한 상태에서 일정한 로직을 수행한 후 notify_all() 또는 notify_one()을 통해 wait()하고 있는 수신자에게 통보합니다. 
 
+②수신자는 뮤텍스를 여러 번 잠그고 풀어야 하는 경우가 많으므로 std::unique_lock이 필요합니다. 레퍼런스에도 maximal efficiency를 위해 std::unique_lock<std::mutex>에서만 동작한다고 명시되어 있습니다. 
 
+그러면 예제를 작성해 보죠.
 
+#1 부터 #10까지의 쓰레드는 키 입력을 기다립니다. 키 입력을 기다리는 key_event_listener 쓰레드를 하나 생성하고, 어떤 쓰레드가 반응할지 대기하는 쓰레드를 10개 만들어둡니다. 만일 3을 입력했다면 #3 쓰레드가 반응하도록 만들면 되겠죠. 
 
+```cpp
+#elif(_WHAT_ == 7)	// part 7 - Condition Variables 
+	
+
+	std::vector<std::thread> worker_threads; // list of threads
+
+	std::mutex mutex;
+	std::condition_variable cv;
+	
+	
+	int wt_signal = 0;
+	bool signal_received = false;
+		
+	std::thread key_event_listener(
+		[&]() {
+			
+			APP_THREAD_START
+			
+			//while(1) {
+				
+				std::cout << " > Listening for id of a thread to run..." << std::endl;
+				
+				std::lock_guard<std::mutex> guard(mutex); // sender
+				
+				wt_signal = getch() - '0';
+			
+				signal_received = true;
+				cv.notify_all();			
+				
+			//}
+			
+			APP_THREAD_TERMINATE
+		}
+	);
+	
+	
+	
+	for(int i = 0; i < 10; i++) {
+		worker_threads.push_back(
+			std::thread(
+				[&](int arg_div) { // catch by copying.
+					APP_THREAD_START
+					
+					const int self_signal_id = arg_div + 1;
+						
+					//while(1) {
+						
+						std::unique_lock<std::mutex> lock(mutex);
+						// m_condVar.wait(mlock, std::bind(&Application::isDataLoaded, this));
+						cv.wait(lock, [&]() { return signal_received; });
+						
+						if(wt_signal == self_signal_id) {
+		
+							std::cout << " > An worker thread #" << arg_div + 1 << " catched signal." << std::endl;
+						}						
+						
+						lock.unlock();
+					//}					
+					
+					APP_THREAD_TERMINATE
+				}
+			, i)
+		);
+	}
+	
+	for(auto& itor : worker_threads)
+		if(itor.joinable())
+			itor.join();
+	
+	
+	if(key_event_listener.joinable())
+		key_event_listener.join();	
+```
+
+한번 돌려 봅시다. 쓰레드가 시작되고 모두 대기하고 있네요.
+
+![bash](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-27.jpg)
+
+7을 누르면 #7 쓰레드가 반응하고 3을 누르면 #3 쓰레드가 반응합니다. 
+
+![bash](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-28.jpg)
+
+![bash](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-29.jpg)
+
+만일 다른 키를 누르면 아무런 반응 없이 모든 쓰레드가 종료될겁니다. 
+
+![bash](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-30.jpg)
+
+Part 2에서는 원자적 연산을 보장하는 atomic 헤더와 쓰레드가 리턴하는 값을 이용하기 위한 std::future, std::promise, std::async를 보겠습니다. 
