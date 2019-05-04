@@ -80,4 +80,4 @@ static 으로 선언되었으니 아무렇게나 불러다 쓰면 됩니다. 그
 
 와 같이 정의하고 쓸 겁니다. 이게 편해요 전, 아몰랑.
 
-[JString Design[2]](https://dev-acoustikue.github.io/archivers/Jstring_Design_2)
+[다음 포스트: JString Design[2]](https://dev-acoustikue.github.io/archivers/Jstring_Design_2)
