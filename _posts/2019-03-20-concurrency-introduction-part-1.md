@@ -133,7 +133,7 @@ cppreference.com([링크](https://en.cppreference.com/w/))은 참 편리합니�
 
 ![reference](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-09.jpg)
 
-쓰레드(Thread)는 하나의 실행 단위입니다. C++에서는 std::thread라는 클래스 객체로 존재하게 되죠. 기본적으로 쓰레드 객체는 생성 즉시 실행을 시작합니다. 쓰레드가 실행하는 코드는 생성자의 인수로 주어진 호출 가능 단위가 됩니다. 여기서 호출 가능 단위는 __①함수일 수도 있고__ __②함수 객체(Functor)__나 __③람다 함수__일 수도 있습니다. 생성자를 확인해 봅시다.
+쓰레드(Thread)는 하나의 실행 단위입니다. C++에서는 std::thread라는 클래스 객체로 존재하게 되죠. 기본적으로 쓰레드 객체는 생성 즉시 실행을 시작합니다. 쓰레드가 실행하는 코드는 생성자의 인수로 주어진 호출 가능 단위가 됩니다. 여기서 호출 가능 단위는 __①함수일 수도 있고__  __②함수 객체(Functor)__나  __③람다 함수__일 수도 있습니다. 생성자를 확인해 봅시다.
 
 ![reference](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-10.jpg)
 
@@ -151,13 +151,101 @@ cppreference.com([링크](https://en.cppreference.com/w/))은 참 편리합니�
 
 호출 가능 단위는 함수, 함수 객체, 람다가 가능합니다. 그러면 함수 thread_function(), 함수 객체ThreadFunctor를 만들어 둡시다. 
 
+```cpp
+// declaration scope
+void thread_function() {
+    
+	APP_THREAD_START // head of a thread.
+	
+	std::cout << " > thread_function() running as a thread." << std::endl;
+	
+	APP_THREAD_TERMINATE // end!!
+};
 
 
+class ThreadFunctor {
+public:
+    void operator()() {
+        APP_THREAD_START // head of a thread.
+	
+		std::cout << " > ThreadFunctor::operator() running as a thread." << std::endl;
+	
+		APP_THREAD_TERMINATE // end!!
+    };
+};
+```
 
+그리고 main() 함수는 아래와 같습니다.
 
+```cpp
+#if defined(_UNIT_TEST_MODE_)
 
+int main() try {
+	
+	// compilation options
+	// g++ -o app ./include/*.h ./src/*.cpp -pthread -std=c++14 -g
+	// g++ -o app /workspace/gen_blank/link/include/*.h /workspace/gen_blank/link/src/*.cpp -pthread -std=c++14 -g
+	
+	namespace jc = _jcode;
+	
+	APP_BANNER // jc namespace is declared in app.h, for visibility!!
+	APP_THREAD_START
+	
+	auto thread_start = std::chrono::system_clock::now();
+	
+	
+#define _WHAT_ 7
+	std::cout << " > Unit test case: " << _WHAT_ << std::endl;
+	
+	std::cout << " > " << std::thread::hardware_concurrency() << " concurrent threads are supported." << std::endl;
 
+	
+#if(_WHAT_ == 1) // part 1 - Create Threads
+		
+	// What std::thread accepts in constructor?
+	// We can attach a callback with the std::thread object, that will be executed when this new thread starts. These callbacks can be,
 
+	// 1.) Function Pointer
+	// 2.) Function Objects
+	// 3.) Lambda functions
+	
+	// 1. Creating a thread using Function Pointer
+	std::thread worker_thread_1(thread_function);
+	
+	// 2. Creating a thread using Function Objects
+	std::thread worker_thread_2((ThreadFunctor()));
+	
+	// 3. Creating a thread using Lambda functions
+	std::thread worker_thread_3(
+		[]() {
+			APP_THREAD_START
+			std::cout << " > An anonymous lambda running as a thread." << std::endl;
+			APP_THREAD_TERMINATE
+		}
+	);
+	
+	worker_thread_1.join();
+	worker_thread_2.join();
+	worker_thread_3.join();
+```
+
+std::thread::hardware_concurrency()는 CPU의 개수를 리턴한다고 보면 될 것 같습니다. worker_thread_1은 함수를, worker_thread_2는 함수 객체를, worker_thread_3는 람다를 인자로 받았습니다. std::thread는 객체 생성과 동시에 쓰레드를 실행한다고 했으니 확인해 봅시다. 
+
+컴파일은 한 번에 합시다. 이후 사용할 컴파일 명령어는 아래와 같습니다. 
+
+```bash
+g++ -o app ./include/*h ./src/*.cpp -pthread -std=c++14 -g
+```
+
+실행은 아래와 같습니다.
+
+```bash
+./app
+```
+
+![bash](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-13.jpg)
+
+간단한 예제입니다. [thread_id: XXXXXX] 부분은 단순한 코드입니다. 
 
 
 
