@@ -131,13 +131,25 @@ int getch(void) {
 
 cppreference.com([링크](https://en.cppreference.com/w/))은 참 편리합니다. 방대한 표준 라이브러리 내용을 예제와 함께 담고 있어 사전처럼 찾아보기 좋습니다. 일단 C++ 다중 쓰레드 인터페이스를 사용하려면 thread 헤더가 필요합니다.
 
-쓰레드(Thread)는 하나의 실행 단위입니다. C++에서는 std::thread라는 클래스 객체로 존재하게 되죠. 기본적으로 쓰레드 객체는 생성 즉시 실행을 시작합니다. 쓰레드가 실행하는 코드는 생성자의 인수로 주어진 호출 가능 단위가 됩니다. 여기서 호출 가능 단위는 <U>①함수일 수도 있고</U> <U>②함수 객체(Functor)</U>나 <U>③람다 함수</U>일 수도 있습니다. 생성자를 확인해 봅시다.
+![reference](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-09.jpg)
 
+쓰레드(Thread)는 하나의 실행 단위입니다. C++에서는 std::thread라는 클래스 객체로 존재하게 되죠. 기본적으로 쓰레드 객체는 생성 즉시 실행을 시작합니다. 쓰레드가 실행하는 코드는 생성자의 인수로 주어진 호출 가능 단위가 됩니다. 여기서 호출 가능 단위는 _①함수일 수도 있고_ _②함수 객체(Functor)_나 _③람다 함수_일 수도 있습니다. 생성자를 확인해 봅시다.
 
+![reference](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-10.jpg)
 
+우리가 주목해야 할 것은 세 번째(3) 생성자의 파라미터입니다. 가변인수 꼴이며 더 자세히는,
 
+![reference](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-11.jpg)
 
+라고 되어 있습니다. 호출 가능한 단위와 그 단위에 전달할 파라미터를 가변적으로 받고 있습니다. 조금 더 자세히 들어가면, 
 
+![reference](/assets/posts/2019-03-20-concurrency-introduction-part-1/2019-03-20-12.jpg)
+
+기본적으로 std::thread로 생성된 쓰레드는 리턴값은 무시합니다. 또한 예외를 던지는 경우 std::terminate가 호출된다고 하는 군요. 쓰레드가 리턴하는 값은 std::promise와 std::future을 이용해야 하는데 이는 Part 2에서 다루겠습니다.
+
+그러면 일단은 한번 만들어 봅시다.
+
+호출 가능 단위는 함수, 함수 객체, 람다가 가능합니다. 그러면 함수 thread_function(), 함수 객체ThreadFunctor를 만들어 둡시다. 
 
 
 
