@@ -15,7 +15,7 @@ permalink: /archivers/concurrency_introduction_part_3_1
 
   thread 헤더에 관련된 레퍼런스를 여행하다 보면 심심찮게 등장하는 변수들이 있는데 std::atomic_xxx 시리즈들입니다. 이전에 std::lock_guard 등의 객체를 선언하여 여러 쓰레드가 접근하지 못하도록 mutex를 처리했다면, std::atomic 변수들은 기본적으로 원자적 연산을 지원하는 변수들입니다. 
   
-![reference](/assets/posts/2019-04-11-concurrency-introduction-part-3/2019-04-11-00.jpg)
+![reference](/assets/posts/2019-04-11-concurrency-introduction-part-3-1/2019-04-11-00.jpg)
 
 여기서 원자적 연산(atomic operation)이란 언어 그대로 해석하면 편합니다. 원자는 물질을 구성하는 요소로 더 이상 쪼개지지 않습니다. 즉, 어떠한 연산을 구현할 때 한 변수에 관련된 연산의 쪼개짐(여러 단계로 나누어 연산되는 것)에 대한 방지를 보장하는 것이 원자적 연산이라고 할 수 있습니다. 
 
@@ -71,7 +71,7 @@ counter++;
 counter--;
 ```
 
-![reference](/assets/posts/2019-04-11-concurrency-introduction-part-3/2019-04-11-01.jpg)
+![reference](/assets/posts/2019-04-11-concurrency-introduction-part-3-1/2019-04-11-01.jpg)
 
 그렇다면 왜 이런 경우가 발생하느냐? 컴파일러는 우리가 작성한 코드 곧이곧대로 변환해주지 않습니다. 프로그래머보다 컴파일러가 똑똑하기 때문이죠. 컴파일러는 자체적으로 최적의 성능(performance)을 내도록 코드를 재작성합니다. 이를 최적화라고 하죠. 즉, 내가 작성한 171번과 185번 줄이 내가 의도했던 한 줄이 아니라 여러 단계에 나누어 기계어로 번역되었을 가능성이 큽니다.
 
@@ -87,7 +87,7 @@ counter--;
 
 그러면 std::atomic 레퍼런스를 뒤져봅시다. 
 
-![reference](/assets/posts/2019-04-11-concurrency-introduction-part-3/2019-04-11-02.jpg)
+![reference](/assets/posts/2019-04-11-concurrency-introduction-part-3-1/2019-04-11-02.jpg)
 
 > "If one thread writes to an atomic object while another thread reads from it, the behavior is well-defined(see memory model for details on data races) "
 
@@ -95,11 +95,11 @@ counter--;
 
 아주 잘 정의된답니다. 자세한건 메모리 모델(memory model)을 보라고 하는군요. 들어가 보면 뭐라뭐라 써져 있고, 그 중에 한 놈이 눈에 띕니다.
 
-![reference](/assets/posts/2019-04-11-concurrency-introduction-part-3/2019-04-11-03.jpg)
+![reference](/assets/posts/2019-04-11-concurrency-introduction-part-3-1/2019-04-11-03.jpg)
 
 그렇군요. 그러면 std::memory_order를 찾아보죠.
 
-![reference](/assets/posts/2019-04-11-concurrency-introduction-part-3/2019-04-11-04.jpg)
+![reference](/assets/posts/2019-04-11-concurrency-introduction-part-3-1/2019-04-11-04.jpg)
 
 붉은 색으로 표시한 부분을 간단하게 해석하면 원자적 변수가 아닌 놈에 대한 메모리 접근을 어떻게 정렬(order)하는지 결정하는 옵션이라고 합니다. 
 
