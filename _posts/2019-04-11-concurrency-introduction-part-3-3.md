@@ -89,9 +89,9 @@ C++에서 기본으로 설정(default ordering model)되어 있는 모델입니�
 
 Listing 1의 13번째 줄을 봅시다. 본론만 먼저 이야기하면 13번째의 subtract() 함수는 sequenced-before 라 할 수 있습니다. sub에 값을 대입하기 전에 subtract() 함수가 먼저 호출(called)된다는 이야기죠. 여기까지는 자명합니다. 그리고 각각의 get_num() 함수는 subtract() 함수가 실행되기 이전에 선행되는 것 또한 명확합니다. 
 
-> In general, a statement is sequenced-before another statement and the operand evaluation of an operator is unsequenced. Meaning neither operand is sequenced before the other. Exceptions to this are the built-in comma operator ',' or the logical operators '&&' or '||' where the operand evaluation is sequenced.
+> In general, a statement is sequenced-before another statement and the operand evaluation of an operator is unsequenced. Meaning neither operand is sequenced before the other. Exceptions to this are the built-in comma operator ',' or the logical operators 'and' or 'or' where the operand evaluation is sequenced.
 
-그러면 subtract() 함수 안의 get_num() 함수는 어떤 것이 먼저 호출되는지 의문이 듭니다. 여기서 이야기 하는 답은 ‘모른다’라는 겁니다. 연산자(operator)의 피연산자(operand) 값의 판단은 unsequenced 하다는 거죠. subtract() 함수의 인자로 get_num() 함수가 먼저 호출되는 것은 맞지만, 앞의 것이 먼저 호출되고 뒤의 것이 호출될지, 또는 뒤의 것이 먼저 호출되고 앞의 것이 나중에 호출될지는 알 수 없습니다. 물론 비교 연산자인 &&나 || 등은 순서가 명확합니다. 
+그러면 subtract() 함수 안의 get_num() 함수는 어떤 것이 먼저 호출되는지 의문이 듭니다. 여기서 이야기 하는 답은 ‘모른다’라는 겁니다. 연산자(operator)의 피연산자(operand) 값의 판단은 unsequenced 하다는 거죠. subtract() 함수의 인자로 get_num() 함수가 먼저 호출되는 것은 맞지만, 앞의 것이 먼저 호출되고 뒤의 것이 호출될지, 또는 뒤의 것이 먼저 호출되고 앞의 것이 나중에 호출될지는 알 수 없습니다. 물론 비교 연산자인 and나 or 등은 순서가 명확합니다. 
 
 예제에 사소한 오류가 있지만 말하고 싶은 바는 알 수 있습니다. 이것을 unsequenced side effect라 표현하고 프로그램이 의도한 바와 같이 동작하지 않는다는 것을 말합니다(behavior of this program is therefore undefined).
 
@@ -135,9 +135,7 @@ Part 1에서 간단하게 이야기한 내용입니다. Part 1에서는
 라고 소개한 바 있습니다. 여기서도 같은 이야기를 하고 있네요. 조금 더 자세히 들어가면, 
 
 >  A data race can further be defined as:
-if two memory operations from different threads conflict, and
-at least one of them is a data operation, and
-the memory operations are adjacent in total order.
+> 	if two memory operations from different threads conflict, and ②at least one of them is a data operation, and ③the memory operations are adjacent in total order.
 
 
 
