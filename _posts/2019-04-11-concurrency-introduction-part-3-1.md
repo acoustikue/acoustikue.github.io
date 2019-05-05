@@ -6,7 +6,7 @@ categories: LINK(OICW)
 permalink: /archivers/concurrency_introduction_part_3_1
 ---
 
-# C++ Multithreading (Part 3)
+# C++ Multithreading (Part 3)[1]
 ## C++ Memory Model
 
 > 필자는 공군 작전정보통신단 체계개발실에서 복무('17~'19)하였습니다. 이 포스트는 작전정보통신단 병사 **프로그래밍 동아리(LINK)** 에서의 활동을 바탕으로 작성한 내용입니다.

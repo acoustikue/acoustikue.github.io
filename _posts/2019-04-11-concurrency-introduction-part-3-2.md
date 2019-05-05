@@ -6,15 +6,15 @@ categories: LINK(OICW)
 permalink: /archivers/concurrency_introduction_part_3_2
 ---
 
-# C++ Multithreading (Part 3)
-## C++ Memory Model
+# C++ Multithreading (Part 3)[2]
 
 > 필자는 공군 작전정보통신단 체계개발실에서 복무('17~'19)하였습니다. 이 포스트는 작전정보통신단 병사 **프로그래밍 동아리(LINK)** 에서의 활동을 바탕으로 작성한 내용입니다.
 
 ## Abstract
 
 > Prior to C++11, multi-threading in C++ was supported only by libraries and the language was specified as a single threaded language. With the memory model introduced in C++11 threading support is integrated into the language specification and therefore exactly defines the behavior of multi-threaded applications. 
-Further more, the simple usage of atomic operations is introduced to allow the implementation of lock-free algorithms and therefore a more performance conscious way of programming.
+
+> Further more, the simple usage of atomic operations is introduced to allow the implementation of lock-free algorithms and therefore a more performance conscious way of programming.
 
 서론입니다. 중요하지 않은 내용은 날려버립시다. 뭐, 그래도 대부분 아는 내용입니다. C++11로 오기 이전에는 쓰레드 구현은 라이브러리로만 가능했고 이는 C++11이전에는 언어적으로 싱글 쓰레드(single threaded)를 지원했다는 점, 새로운 메모리 모델(memory model)과 함께 정확한 다중 쓰레드의 행동(behavior)이 정의되었다는 내용입니다. 또한 Part 1에서 설명했던 lock을 사용하지 않은 원자적 연산 프로그래밍을 지원한다는 내용입니다.
 
@@ -118,7 +118,7 @@ PThread 라이브러리를 이용해야 하는 경우 아래의 규칙을 따라
 
 > Applications shall ensure that access to any memory location by more than one thread of control (threads or processes) is restricted such that no thread of control can read or modify a memory location while another thread of control may be modifying it. Such access is restricted using functions that synchronize thread execution and also synchronize memory with respect to other threads...
 
-> 대충 요약하자면 어느 한 쓰레드가 한 메모리 위치를 수정(modify)하는 중이라면 다른 쓰레드는 그 위치를 읽거나 쓰면 안된다 라는 겁니다. 그 제약을 위한 함수가 대표적으로 pthread_mutex_lock과 pthread_mutex_unlock인데, 이 함수를 이용할 때에도 위의 규칙을 준수해야 됩니다. 함수 적용은 아래와 같습니다. 
+대충 요약하자면 어느 한 쓰레드가 한 메모리 위치를 수정(modify)하는 중이라면 다른 쓰레드는 그 위치를 읽거나 쓰면 안된다 라는 겁니다. 그 제약을 위한 함수가 대표적으로 pthread_mutex_lock과 pthread_mutex_unlock인데, 이 함수를 이용할 때에도 위의 규칙을 준수해야 됩니다. 함수 적용은 아래와 같습니다. 
 
 > 1. The implementation of the synchronization functions such as pthread_mutex_lock must guarantee that the memory is synchronized. This is realized by adding memory fences that are specific to the underlying hardware. The fences therefore preclude a hardware reordering of memory operations around calls to synchronization operations of Pthread. This is shown in Figure 4.
 
@@ -177,29 +177,4 @@ Pthread와 같은 외부 라이브러리에 의한 다중 쓰레드의 구현은
 > This approach cannot guarantee continued correctness and portability of the application as the compiler evolves and more aggressive optimizations are added, or as the application is moved to a different compiler.
 
 그리고 이러한 접근은 컴파일러가 진화하면서 더욱 더 공격적인 최적화(optimization)을 제공할수록, 어플리케이션이 다른 종류의 컴파일러로 작성되어 질수록 정확성과 이식성을 보장할 수 없겠죠. 추가적으로 lock과 unlock을 반복할수록 성능상의 문제가 존재합니다.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
