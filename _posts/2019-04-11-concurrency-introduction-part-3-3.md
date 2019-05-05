@@ -134,7 +134,10 @@ Part 1에서 간단하게 이야기한 내용입니다. Part 1에서는
 
 라고 소개한 바 있습니다. 여기서도 같은 이야기를 하고 있네요. 조금 더 자세히 들어가면, 
 
->  A data race can further be defined as:  if two memory operations from different threads conflict, and  at least one of them is a data operation, and  the memory operations are adjacent in total order.
+>  A data race can further be defined as:
+if two memory operations from different threads conflict, and
+at least one of them is a data operation, and
+the memory operations are adjacent in total order.
 
 
 
