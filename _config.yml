@@ -19,7 +19,7 @@ profile_links:
 
 # Comment Service (Disqus)
 #  choose one and un-comment the line to active it
-#disqus_shortname: xxx   # get one: https://disqus.com/admin/signup/
+disqus_shortname: acoustikue   # get one: https://disqus.com/admin/signup/
 
 excerpt_separator: <!--more-->
 
