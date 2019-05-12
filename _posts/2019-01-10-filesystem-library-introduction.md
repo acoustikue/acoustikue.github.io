@@ -2,7 +2,6 @@
 layout: post
 title:  "C++17 Filesystem Library Introduction"
 date:   2019-01-10 09:00:00
-comments: true
 categories: LINK(OICW)
 permalink: /archivers/filesystem_library_introduction
 ---
