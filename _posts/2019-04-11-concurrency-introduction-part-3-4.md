@@ -1,204 +1,249 @@
 ---
 layout: post
-title:  "Introduction to Concurrency(Part 3)[3]"
+title:  "Introduction to Concurrency(Part 3)[4]"
 date:   2019-04-11 09:00:00
 categories: LINK(OICW)
-permalink: /archivers/concurrency_introduction_part_3_3
+permalink: /archivers/concurrency_introduction_part_3_4
 ---
 
-# C++ Multithreading (Part 3)[3]
+# C++ Multithreading (Part 3)[4]
 ## C++ Memory Model
 
 > 필자는 공군 작전정보통신단 체계개발실에서 복무('17~'19)하였습니다. 이 포스트는 병사 **프로그래밍 동아리(LINK)** 에서의 활동을 바탕으로 작성한 내용입니다.
 
 
-## 3. The C++ Memory Model
+## 3.6. Introducing Low-Level Atomic to the C++ Memory Model
 
-표준화된 메모리 모델(memory model)은 data race가 존재하지 않는(data race free) 모델입니다. 즉, data race가 어떤 행동을 할지 정의 자체가 되어있지 않다는 말이죠. 
+C++11로 오면서 명시적으로 sequential consistency 보장(guarantee)을 느슨하게 적용하는 방법이 생겼습니다. Figure 7에서의 각종 옵션이 원자적 연산이 명시적으로 로우 레벨(low-level)에서 동작하게끔 만들어줍니다. 우선 sequential consistent ordring이 표준(standard)으로 정의되어 있는 모델임을 기억하면서 다른 느슨한 모델을 봅시다.
 
-C++는 atomics를 통해 단순화된 원자적 연산(atomic operation)을 제공합니다. atomics는 여러 개의 정렬 옵션(ordering option)을 먹일 수가 있는데, 이는 앞서 보았던 레퍼런스에서 아래에 해당하는 내용입니다. 
+## 3.6.1. Ordering Options
 
-![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-3/2019-04-11-00.jpg)
+아래는 정렬 옵션(ordering options)의 의미를 나타내고 있습니다. 
 
-예를 들어 atomics를 sequential consistent execution 옵션을 준다면 sequential consistent model로 동작합니다. 그 외로 성능 상의 이점을 위해 더 유연한(relaxed) 모델들을 제공하고 있습니다. 조금 더 유연한 모델을 로우 레벨(low-level) atomics라고 하죠. 이번 장부터는 sequential consistent 모델과 유연한(relaxed) 모델인 로우 레벨(low-level) 모델에 대해 감을 잡아봅시다. 
+- memory_order_relaxed: no operation orders memory.
+- memory_order_release, memory_order_acq_rel, and memory_order_seq_cst: a store operation performs a release operation on the affected memory location.
+- memory_order_consume: a load operation performs a consume operation on the affected memory location.
+- memory_order_acquire, memory_order_acq_rel, and memory_order_seq_cst: a load operation performs an acquire operation on the affected memory location.
 
 
+여러 용어가 등장하니 복잡하지만 단순하게 생각해봅시다. memory_order_relaxed는 메모리를 정렬하지 않습니다. memory_order_release, memory_order_acq_rel, memory_order_seq_cst의 쓰기 연산(store operation)은 release operation을 수행하고, memory_order_acquire, memory_order_acq_rel, memory_order_seq_cst의 읽기 연산(load operation)은 acquire operation을 수행합니다. 
 
-## 3.1. Model Overview
 
-아래의 Figure 7은 C++에서 가능한 정렬 모델(ordering model)과 그에 따른 옵션(ordering options)들을 나타내고 있습니다. 
+## 3.6.2. Sequential Consistent Ordering
 
-![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-3/2019-04-11-01.jpg)
+Figure 13의 간단한 예시를 봅시다. 여기서 happens-before라는 새로운 개념이 등장하고 있습니다. 
 
-> Figure 7: Possible ordering models in C++ with the ordering options that lead to the used model.
+![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-4/2019-04-11-00.jpg)
 
-여기서 알아 두어야 할 것은 각각의 메모리 모델은 CPU 아키텍쳐마다 각기 다른 비용(varying costs)을 요구합니다. 예를 들어 어떠한 특정한 아키텍쳐에서는 sequential consistent ordering에서 acquire-release ordering 보다 추가적인 동기화(synchronization)을 요구할 수 있습니다. 추가적인 동기화에 대한 영향은 프로세서가 많은 시스템일수록 클 겁니다. 
+> Figure 13: Sequential consistent ordering. Each thread reads the others write atomically.
+ 
+![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-4/2019-04-11-01.jpg)
+ 
+> Figure 14: Happens-before relation between operations in the example of Figure 13. 
 
 
-## 3.2. Basics
+Figure 13은 data race가 발생하지 않습니다. 이는 happens-before 관계로 보일 수가 있는데, 이 개념 또한 문자 그대로 받아들이면 편합니다. 해석하면 ‘일어나기 전에’정도 될 겁니다. 쓰레드 내부에서는 happens-before은 sequenced-before과 동일하다고 보면 됩니다.
 
-이 장에서는C++ 메모리 모델에 대한 기본적인 내용을 설명하고 있습니다. 
 
+Figure 13은 data race가 발생하지 않습니다. 이는 happens-before 관계로 보일 수가 있는데, 이 개념 또한 문자 그대로 받아들이면 편합니다. 해석하면 ‘일어나기 전에’정도 될 겁니다. 쓰레드 내부에서는 happens-before은 sequenced-before과 동일하다고 보면 됩니다.
 
-## 3.3. Objects and Memory Location
+쓰레드 간의 관계(inter-thread consideration)의 입장에서 봅시다. x.load 연산은 x.write 연산과 동기화 관계에 있습니다. load연산이 write 연산의 결과를 읽는 과정이니까요. 단순화된 정의에 의하면 release operation W(write의 약자)는 W에 의해 쓰여진 값을 읽는 acquire operation과 synchronizes-with 관계에 있습니다. 더 나아가 생각하면 synchronizes-with 관계에 의해 inter-thread-happens-before의 관계가 생기고, 결국 happens-before 관계로 나아갑니다. 
 
-> A memory model comprises two aspects. The structural and the concurrency aspect. The structural aspect is about how objects and values are organized in memory. It is the basic to dene whether there is potential of a concurrent access.
+**새로운 용어는 문자 그대로 해석하면 편합니다. 좋은 번역 방법이 떠오르지 않네요.**
 
-메모리 모델(memory model)은 두 가지 측면(aspect)로 볼 수 있습니다. 하나는 구조적(the structural) 측면이고 하나는 동시성(the concurrency) 측면이죠. 프로그램이 실행될　때 메모리 연산(memory operation)은 어떤 특정한 메모리 위치(memory location)에 접근(access)합니다. 아래 Figure 8은 흔히 아는 구조체의 메모리 구조를 나타냅니다. 
+조금 풀어서 설명해 보죠. Figure 14에서 왼쪽의 Wscx(x.store)는 Rscy(y.load) 보다 먼저 일어나므로 sequenced-before 관계에 있습니다. 하나의 쓰레드 내에 있기 때문에 위의 설명에서처럼 happens-before 관계에 있다고 봐도 무방하겠죠. 이는 Figure 14의 오른쪽 쓰레드에서도 동일하게 적용됩니다. Wscy(y.store)는 Rscx(x.load) 보다 먼저 일어나므로 sequenced-before 관계이고, 동일한 쓰레드 내의 관계이므로 happens-before입니다. 
 
-![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-3/2019-04-11-02.jpg)
+계속해 봅시다. release operation은 acquire operation과 synchronizes-with 관계에 있기 때문에 결국 Wscx(x.store)이 먼저 선행되고 Rscx(x.load)가 나중에 일어납니다. 즉, 이는 inter-thread-happens-before, sequenced-before 관계임과 동시에 happens-before 관계에 놓여 있죠. 이를 정리한 내용이 바로 아래입니다.
 
-> Figure 8: The division of a struct into objects and memory locations.
+> Further inter-thread-happens-before also combines with the sequenced-before relation: if operation A is sequenced before operation B, and operation B inter-thread happens-before operation C, then A inter-thread happens-before C.
 
-단순한 내용이라도 다시 한 번 짚고 넘어갑시다. 비트 필드(bit fields) 변수 bf1과 bf2는 크기가 각각 10bit, 25bit입니다. 하나의 메모리 블록을 잡고 있는 것을 보아하니 32bit 크기네요. std::string은 당연히 s의 크기만큼 메모리 사이즈를 잡고 있을 테고, zero-length 비트 필드를 선언하고 있음으로써 bf3과 bf4는 분리되어 공간을 차지합니다. 
 
+A가 B보다 먼저 선행(sequenced-before)되고, 서로 다른 쓰레드에서 B가 C보다 먼저 선행(inter-thread-happens-before)된다면 A는 C보다 먼저 선행(inter-thread-happens-before)된다는 이야기입니다. 당연한 이야기이지만 뭔가 장황하게 써 두었네요.
 
-## 3.4. Modification Order
+그러면 여기서 happens-before의 관계를 이용해 새로운 data race의 정의를 유도할 수 있습니다.
 
-모든 C++ 객체는 수정 순서(modification order)가 정의되어 있습니다. 이는 프로그램의 모든 쓰레드에 해당합니다. 
+> A data race can now newly be defined with the happens-before relation as follows:
+Two actions at the same location, on different threads, not related by happens-before and at least one of which is a write.
 
-> The modification order may vary between executions, but in a specific execution all threads agree on the modification order of each variable.
+두 행동이 동일한 메모리 위치에 접근하는데, happens-before로 엮이지 않으면서 둘 중 하나가 적어도 기록자(write)면 data race가 발생합니다. happens-before로 엮이지 않는다는 말을 달리 하면 두 개의 명령 수행이 일정한 순서가 보장되지 않음을 의미하겠죠.
 
-수정 순서는 실행마다 달라질 수는 있습니다. 그러나 프로그램 실행 시 모든 쓰레드는 각각의 변수에 대한 수정 순서는 일정해야 합니다. 이게 프로그래머가 동기화를 할 때 어떠한 모델을 선택하든지 간에 신경 써 주어야 하는 부분이죠.
 
-![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-3/2019-04-11-02.jpg)
+## 3.6.3. Relaxed Ordering
 
-위의 예시를 봅시다. 만약 각 쓰레드에서 변수에 대한 수정 순서가 일정하게 약속(agreed)이 되어 있다면 모델에 따라 2번 과정의 값을 7번 과정에서 읽을 수도 있고, 없을 수도 있습니다. 약간 헷갈릴 수 있지만 여기에서는 이정도만 하고 이에 대한 내용은 아래에 서술하겠습니다. 
+느슨한 정렬(relaxed ordering)은 C++ 메모리 모델 중에서 가장 약한(weakest) 정렬 모델(ordering model)입니다. relaxed ordering은 모든 쓰레드가 각자의 변수 수정에 대한 순서를 변화시키는 것만 보장합니다. 예를 들어 Figure 15는 Figure 13과 동일한 프로그램입니다. 단지 relaxed로 옵션이 변경되었을 뿐이죠. 
 
+![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-4/2019-04-11-02.jpg)
 
-## 3.5. The C++ Memory Model Without Low-Level Atomics
+> Figure 15: Relaxed ordering. Each thread reads the others write atomically. 
+ 
+![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-4/2019-04-11-03.jpg)
+ 
+> Figure 16: Possible outcome for each operation in the program of Figure 15. As relaxed atomics do not contribute in synchronization, there is no happens-before relation between variable that are shared by threads.
 
-C++에서 기본으로 설정(default ordering model)되어 있는 모델입니다. 앞서 보았던 sequential consistent semantic이죠. 이번 장에서는 sequentially consistent execution order과 그에 따른 엄밀한 data race의 정의를 자세히 다뤄보겠습니다. 
+그림에서와 같이 x의 변수를 읽으면 0의 값이 나올 가능성이 있습니다. 
 
+> This result is possible since there is no imposed ordering between the read and write on the shared variable x.
 
-## 3.5.1. Sequentially Consistent Execution
 
-> A sequentially consistent execution of a program is possible even if the chosen programming language does not implement the sequential consistency memory model.
+당연히, 적용된 순서 모델(ordering)이 없으니 쓰레드 변수 간의 happens-before의 관계가 성립하지 않습니다. 따라서 Figure 16과 같은 결과가 나올 수 있습니다. (무조건 Figure 16의 결과가 나온다는 것이 아니라 나올 수 있는 하나의 경우의 수입니다.) 물론 이와 같은 상황에서는 data race가 존재하지 않을 겁니다.
 
-특이한 내용입니다. sequentially consistency memory model가 적용되지 않은 언어라도 프로그램이 sequentially consistent 하도록 실행할 수 있다는 말입니다. 이번 장에서는 다중 쓰레드 프로그램이 sequential consistent 하게 실행될 경우 memory action에 어떠한 제약이 있는지 보겠습니다. 
 
-![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-3/2019-04-11-04.jpg)
+## 3.6.4. Acquire-Release Ordering
 
-> Listing 1: Evaluation of the arguments to subtract are sequenced-before the execution of the function body of subtract on line 4 but the evaluation order of the arguments to subtract is undefined. The argument evaluation contains a unsequenced side effect and the behavior of this program is therefore undefined
+acquire-release ordering은 sequential consistency보다는 조금 느슨(relaxed)합니다. 
 
-여기서 sequenced-before 이라는 새로운 용어를 하나 소개하고 있습니다. 의미 그대로 해석하면 ‘이전에 일어남’정도 될 겁니다. 이제까지 C++를 공부하면서 본능적으로 알고 있던 내용을 추상적으로 이론화 하여 설명하고 있네요. 새로운 용어가 나와도 기존에 알고 있던 내용과 비교하면서 읽으면 조금 더 수월합니다.
+> There is no guarantee anymore, that a read of a location returns the last previously written value.
 
-단일 쓰레드의 실행 순서(execution order)는 sequenced-before 관계(relation)로 정의됩니다. 다시 말하면, 실행에는 어떠한 특정한 순서가 정의된다는 겁니다. 
+이 모델은 어느 한 곳의 읽기 연산의 결과가 이전에 쓰였던 값이라는 것을 보장하지 않습니다. 이는 release sequence를 이용한 synchronizes-with 관계를 조금 더 정교화 시키면 가능합니다. 
 
-**예제에 오류가 있습니다. get_num()에서 반환하는 값이 명시되어있지 않습니다.**
+> Additionally the possible value read by the acquire operation that participates in synchronizes-with are defined by the visible sequence of side effects.
 
-Listing 1의 13번째 줄을 봅시다. 본론만 먼저 이야기하면 13번째의 subtract() 함수는 sequenced-before 라 할 수 있습니다. sub에 값을 대입하기 전에 subtract() 함수가 먼저 호출(called)된다는 이야기죠. 여기까지는 자명합니다. 그리고 각각의 get_num() 함수는 subtract() 함수가 실행되기 이전에 선행되는 것 또한 명확합니다. 
+추가적으로 봅시다. synchronizes-with 관계에 있는 상태의 acquire operation을 이용하여 값을 읽는 경우, 그 값은 visible sequence of side effects에 의해 정의된다고 합니다. 이는 예시를 보면서 설명하겠습니다.
 
-> In general, a statement is sequenced-before another statement and the operand evaluation of an operator is unsequenced. Meaning neither operand is sequenced before the other. Exceptions to this are the built-in comma operator ',' or the logical operators 'and' or 'or' where the operand evaluation is sequenced.
+![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-4/2019-04-11-04.jpg)
 
-그러면 subtract() 함수 안의 get_num() 함수는 어떤 것이 먼저 호출되는지 의문이 듭니다. 여기서 이야기 하는 답은 ‘모른다’라는 겁니다. 연산자(operator)의 피연산자(operand) 값의 판단은 unsequenced 하다는 거죠. subtract() 함수의 인자로 get_num() 함수가 먼저 호출되는 것은 맞지만, 앞의 것이 먼저 호출되고 뒤의 것이 호출될지, 또는 뒤의 것이 먼저 호출되고 앞의 것이 나중에 호출될지는 알 수 없습니다. 물론 비교 연산자인 and나 or 등은 순서가 명확합니다. 
+> Figure 17: The release operation of the sender on y synchronizes-with the acquire operation on y by the receiver.
+ 
+![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-4/2019-04-11-05.jpg)
+ 
+> Figure 18: (1) shows the synchronizes-with relation. (2) shows the synchronizes-with relation with a release sequence.
 
-예제에 사소한 오류가 있지만 말하고 싶은 바는 알 수 있습니다. 이것을 unsequenced side effect라 표현하고 프로그램이 의도한 바와 같이 동작하지 않는다는 것을 말합니다(behavior of this program is therefore undefined).
+Figure 17을 봅시다. 송신자(sender)와 수신자(receiver)가 있습니다. 송신자가 x에 1이라는 값을 쓰기까지 while문을 돌며 y flag가 설정(set)될 때까지 기다리는 구조입니다. 여기서 수신자는 반드시 송신자가 쓴 값을 읽는 것을 보장받아야 하고, 추가적으로 수신자가 읽기 전까지 x 변수의 값이 수정되면 안 됩니다. Figure 17은 이 내용이 보장되는 것을 확인할 수 있군요.
 
-> To conclude, the sequenced-before relation partially orders the execution of memory actions in a single-threaded program and therefore also which value is read from a variable.
+> The synchronizes-with edge arises because of the acquire operation (c) that reads from the release operation (b). 
 
-결론적으로, 싱글 쓰레드 프로그램도 부분적으로 memory action의 재정렬(reordering) 현상이 나타나는 것을 볼 수 있습니다. 여기서 memory action을 두 가지로 분류합니다. 동기화 연산(synchronization operations)과 데이터 연산(data operations)이죠.
+여기서 edge라 함은 ‘신호를 보낸다’ 정도로 이해하면 됩니다. 당연히, release operation이 완료되면 synchronizes-with 의 관계에 있어 신호를 보내고, acquire operation(RACQy)은 release operation의 결과 값을 읽습니다. 여기서 release sequence는 아래와 같이 이해하면 됩니다.
 
-- As synchronization operations we define the actions: lock, unlock, atomic load, atomic store and atomic read-write-modify. All these actions can be used to communicate between threads, therefore the category name.
+> By the release sequence it is defined that an acquire operation can synchronize with a release (to the same location), that is before the write that it reads from.
 
-- As data operations or sometimes also ordinary data operations we define the non atomic actions: store and load.
+release sequence에 의해 acquire operation은 release operation에 의해 쓰여진 값을 읽습니다. 조금 더 자세히 정의하면 
 
-여기서 동기화 연산이란 위에서부터 계속 이야기해왔던 lock/unlock과 원자적 연산이 포함되고, 데이터 연산이란 재정렬(reordering) 방지가 보장되지 않는 일반적인 쓰기와 읽기(store and load)를 이야기합니다.
+> A release sequence is defined as a contiguous sub-sequence of modification order on the location of the release. The release sequence is headed by the release (e.g (b)) and can be followed by writes from the same thread (e.g (c)) or read-modify-writes from any thread (not shown).
 
-그럼 이제 몇 가지 제약 조건을 두어 다중 쓰레드 프로그램의 sequential consistent execution을 정의해 봅시다. 
+한마디로 release가 행해지고 난 뒤의 인접한 수정 절차(modification order)라고 이해하면 됩니다.
+Figure 18의 ①번은 문제없이 (b)의 release operation에 의해 저장된 값을 읽습(acquire operation)니다(synchronizes-with). 그런데 ②의 경우는 (d)의 읽는 행위(aquire operation, RACQy)는 release operation의 값을 읽을 수 없습니다. 여기서 등장하는게 위에서 보았던 visual sequence of side effects입니다. synchronizes-with 관계에 있는 acquire operation의 결과는 visual sequence of side effects에 의해 정의된다는 겁니다.
 
-> 1) The execution of each thread must be internally consistent. This means that reordering of actions are allowed, as far as they still maintain a correct sequential execution with respect to the values read and with respect to the sequenced-before ordering. As an example, optimizations that are inconsistent with sequenced-before ordering are not allowed.
+>  Which values can be read by the acquire participating in synchronizes-with is defined by the visual sequence of side effects.
 
-첫 번째 조건입니다. 한마디로 각 쓰레드는 내부적으로 일관성을 유지해야 한다는 거죠. Action의 재정렬(reordering)은 허용하겠지만 그게 값을 읽고 sequenced-before을 유지해야 한다는 겁니다. sequenced-before ordering을 위반하는 최적화는 허용되지 않는다는 것을 명시하고 있습니다. 
+![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-4/2019-04-11-06.jpg)
 
-> 2) The total order is consistent with the sequenced-before ordering. E.g if a is sequenced before b then a <T b.
+> Figure 19: Happens-before relation in program fragment of Figure 18 (2).
 
-전체적인 순서는 sequenced-before 에 의해 일관성을 유지해야 한다는 겁니다. 즉, 전체적으로 sequenced-before 하라는 거네요.
+자세히 봅시다. Figure 19는 Figure 18 2번의 그림을 happens-before 관계로 나타낸 그림입니다. visual sequence of side effects를 정의해 보면, 
 
-> 3) Each load, lock and read-modify-write operation reads the value from the last preceding write to the same location according to the total order. The last operation on a given lock preceding an unlock must be a lock operation performed by the same thread.
+> A visual sequence of side effects of a read is a contiguous sub-sequence of modification order, headed by a visible side effect of the read, where the read does not happen before any member of the sequence.
 
-2번의 일관적인 total order 로부터, 수정 연산이나 lock 연산은 직전에 수행된 쓰기 연산에 의한 값을 읽습니다. 또한 unlock을 수행하기 전에는 lock을 수행해야 합니다.
+아하, 이제 조금 알겠습니다. visual sequence of side effects란 순서의 가시성이 입장에 따라 달라짐을 이야기합니다. Figure 19에서 d:RACQy 과정은 b:WRELy의 입장에서 ‘보입’니다(visible). 그러나 c:WRLXLy은 보이지 않죠. (b)과정과 (c)과정은 happens-before 관계에 있고, (b)과정과 (d)과정도 happens-before 관계에 있습니다. (c)와 (d)입장에서는 서로 볼 수가 없습니다. 또한 (c)과정은 단순히 relaxed operation 입니다. 따라서 (e)번에서 읽는 행위는 (c)의 결과와 (d)의 결과 모두 불러올 수 있습니다.
 
-이 3가지에 의해 여러 쓰레드가 수행되는 동안에도 전체적인 수행 순서(total order)는 일관성을 유지하게 될 겁니다.
 
+## 3.6.5. Data Dependency in Acquire-Release Ordering
 
-## 3.5.2. Data Race
+sequential consistency보다 상대적으로 약한(weaker) 메모리 순서(memory order)인 release/acquire 쌍(pair)(acquire-release ordering)이라면 멀티 프로세서에서의 구현은 비용이 좀 더 저렴합니다. 그렇지만 이 또한 단순한 저장과 읽기(plain stores and loads)보다는 조금 더 비용을 지불해야 되겠죠. 
 
-그렇다면 data race를 엄밀하게 정의해 봅시다. 
+> Multiprocessors as Power guarantees that certain data dependencies in instructions are respected.
 
-> Two operations conflict, if they access the same memory location, and at least one of them is a store, atomic store, or atomic read-modify-write operation.
+여기서 Power의 의미를 정확히는 모르겠지만, 여하튼 특정한 멀티프로세서는 명령어의 데이터 의존성(data dependencies)을 보장한다고 합니다. 따라서 이러한 경우에는 동기화에서의 재정렬 방지를 위한 각종 노력이 쓸모가 없습니다. 추가적인 노력을 들이지 않아도 된다면 성능상의 이점 또한 가져올 수 있을 겁니다. 이러한 이유 때문에 acquire-release ordering에 memory_order_consume이 도입된 이유입니다. 만일 프로그래머가 하드웨어(target hardware)가 데이터 의존성에 의해 특정한 순서를 보장한다면 굳이 이외의 모델을 적용하지 않고 memory_order_consume을 적용한다면 추가적인 동기화 비용을 지불하지 않고서도 충분하겠죠.
 
-Part 1에서 간단하게 이야기한 내용입니다. Part 1에서는 
+memory_order_consume의 예시는 아래에서 봅시다.
 
-> “적어도 두 개의 쓰레드가 동시에 하나의 공유 자료에 접근하되 둘 중 적어도 하나가 기록자(write)인 상황을 경쟁 조건(race condition)이라고 합니다.”
 
-라고 소개한 바 있습니다. 여기서도 같은 이야기를 하고 있네요. 조금 더 자세히 들어가면, 
+![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-4/2019-04-11-07.jpg)
 
->  A data race can further be defined as:
-> 	if two memory operations from different threads conflict, and ②at least one of them is a data operation, and ③the memory operations are adjacent in total order.
+> Figure 20: Write data and store to a shared atomic pointer p by the sender. The receiver consumes the shared pointer and dereferences.
 
-과 같습니다. 똑같은 이야기입니다. 다중 쓰레드에서 적어도 하나는 데이터 연산(data operation: 위에서 정의한 바와 같이 원자적 연산이 아닌 단순 load/store)이며 전체적인 순서에서 memory operation이 인접하는 경우입니다. 앞서 보았던 Figure 2의 Flag1 = 1, Flag2 == 0 과정 또한 data race인 상황입니다.
+![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-4/2019-04-11-08.jpg)
 
+> Figure 21: (1) shows the synchronizes-with relation in release/acquire pairs. (2) shows the dependency-ordered-before (dob) relation between the release operation (b) and the consume operation (c) as well as to (d) because (c) carries-a-dependency-to (d).
 
+Figure 20을 보면 송신자(sender)는 data 변수에 값을 저장(store)하고 공유 원자적 포인터(shared atomic pointer) p에 그 값을 넘기고 있습니다. 수신자(receiver)는 포인터의 값을 읽고 있죠. 이에 대한 관계는 Figure 21에 나타나 있습니다. ②번은 memory_order_consume을 적용했을 경우에서의 그림이고, 비교를 위해 ①번은 memory_order_acquire을 적용했을 때를 그려주었네요. 
 
-## 3.5.3. Data Race Free Model
+다시, carries-a-dependency-to라는 새로운 개념이 등장합니다. 이 또한 문자 그대로 해석해봅시다. ‘의존한다’ 정도면 충분할 듯 합니다. 정리해보면, 
 
-앞서 이야기한 바와 같이 C++은 data race가 없는 메모리 모델입니다. 다시 바꾸어 이야기 해 보면, 위에서 data race를 정의했으므로 프로그램의 data race에 의한 동작은 반대로 정의가 되지 않습니다. 즉, 프로그램(동일한 입력에서)은 sequentially consistent 하게 명령을 수행해야 하며, 때문에 하드웨어와 컴파일러의 최적화와 재정렬(reordering)에 대한 제약이 걸립니다. 이러한 제약에 대해서는 아래에서 설명하겠습니다.
+> The read of p (c) carries-a-dependency-to the read of the data (d). The relation carries-dependency-to applies only within a single thread and models data dependency between operations. 
 
-3.5.4. Optimizations Allowed By the Model
+(d)의 읽는 과정이 (c )의 읽는 과정에 의존하고 있습니다. 단적으로 코드만 봐도, 주소를 넘김으로써 그 주소에 의존하고 있다고 이해해도 좋습니다.
 
-허용된 최적화에 관해 들어가기 전에 몇 가지 용어를 정리하고 갑시다.
+> If the result of an operation A is used as an operand for an operation B, then A carries-a-dependency to B.
 
-![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-3/2019-04-11-05.jpg)
+어렵게 써 놨지만 간단히 이야기 하자면 이겁니다. B 연산에 A 연산의 결과가 피연산자로 쓰인다면 B는 A연산에 의존하고 있다고 봐도 무방하다는 겁니다.
 
-> Figure 10: Lock operations are operations on the lock object. The synchronization operations lock() and unlock() use them to prevent from multiple thread in a critical section.
+> If the result of operation A is a value of a scalar type such as an int, then the relationship still applies if the result of A is stored in a variable, and that variable is then used as an operand for operation B 
 
-우선 synchronization operation을 조금 다듬어 봅시다. 
+같은 말이군요. 만일 A 연산의 결과가 스칼라 타입(즉, 상수)이고 그 결과가 B의 연산에 쓰인다면 마찬가지로 B는 A연산에 의존하고 있을 겁니다. (위의 예에서 (c)와 (d)의 관계)
 
-> The term synchronization operation is refined into: read synchronization operation that consist of lock() and atomic read and ②write synchronization operation that consist of unlock() and atomic write.
+dependency-ordered-before라는 개념도 등장하는군요. 읽어보면 release/acquire synchronizes-with 관계와 비슷한 놈이랍니다. 이는 이미 위에서 훑고 왔었죠.
 
-lock과 unlock은 lock 객체(lock object)를 통해 구현됩니다. 이러한 연산을 lock operation이라 하고 lock operation은 읽기나 쓰기를 수행할 수 있습니다. 여기서 이야기 하는 lock은 Part 1에서 언급한 critical section에 대한 내용과 동일합니다.
+> The dependency-ordered-before is the release/consume analogue of the release/acquire synchronizes-with.
 
-M1과 M2라는 연산이 있고, M1과 M2가 sequenced-before의 관계(relation)라면 자유롭게 재정렬(reordering) 가능합니다. 그 조건은, 
+비슷한 놈이라면, 당연히 dependency-ordered-before 요 놈도 release sequence를 포함하고 있을 겁니다. 위의 예에서 (b)에 해당하겠죠. 따라서 (c)에서 읽힐 수 있는 값은 또 다시 visual sequence of side effects에 의해 정의됩니다. 더 나아가면 dependency-ordered-before 관계는 inter-thread-happens-before에 기여하고, 그러므로 happens-before 또한 마찬가지입니다.
 
-1. M1 is a data operation and M2 is a read synchronization operation or
-2. M1 is write synchronization and M2 is data or
-3. M1 and M2 are both data with no synchronization sequence-ordered between them
 
+## 3.6.6. Example - Reading Values From a Queue
 
-①M1이 데이터 연산이고 M2가 동기화-읽기 연산이거나, ②M1이 동기화-쓰기 연산이고 M2가 데이터 연산이거나, ③M1과 M2가 모두 동기화 없는 데이터 연산이면 하드웨어나 컴파일러가 자유롭게 재정렬(reorder)할 수 있다는 겁니다. 이를 그림으로 그려보면 아래와 같습니다. 
+앞서 보았던 내용에 의하면 release는 acquire와 동기화(synchronize)할 수 있는데, acquire에서 읽는 값은 release의 결과를 읽는 것이 보장되지는 않습니다. 그러나 읽는 값은 무조건 release sequence의 결과여야만 합니다. 
 
-![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-3/2019-04-11-06.jpg)
+> Other threads can participate in the release sequence if there are read-modify-write operations executed between the release and the acquire of the synchronizes-with relation. 
 
-> Figure 11: Allowed reordering around synchronization operations by the described model.
+다른 쓰레드가 read-modify-write operations가 있는 경우 release/acquire synchronizes-with의 release sequence 사이에 작동할 수 있다는군요. 하나의 쓰레드가 큐에 내용을 채우는(populate) 동안 다른 쓰레드는 내용을 읽어 들이는 예시를 봅시다. 
 
-추가적으로 lock operation도 재정렬이 가능한데 이는 아주 잘 구조화된(well-structured) 방식이어야만 가능합니다. dead-lock을 발생시키면 안 되겠죠. 동일한 조건이라고 가정하면,
+![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-4/2019-04-11-09.jpg)
 
-1. M1 is data and M2 is the write of a lock operation or
-2. M1 is unlock and M2 is either a read or write of a lock.
+> Listing 2: Reading from a queue with atomic operations. The full example can be seen in Listing 3 on page 17 in the appendix.
 
-![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-3/2019-04-11-07.jpg)
+count는 원자적 자료 형식입니다. 8번 줄을 보면 초기 아이템의 개수를 저장하고 있네요. release이므로 다른 쓰레드에게 내용이 준비되었다는 것을 알릴 수 있을 겁니다. 다른 쓰레드에서 이제 이 값을 읽기 시작하겠죠. 우선 read-modify-write operation(여기서 fetch_sub() 함수, acquire semantic)을 통해 값을 달라고 요청합니다. 
 
-> Figure 12: Allowed reordering around lock operations by the described model.
+fetch_sub() 함수는 원자적으로 count 변수를 읽고 count 변수에서 1을 빼서 count에 반영합니다. 그리고 리턴 된 값은 수정되기 전에 읽힌 값입니다. 0보다 작은 값이 리턴 된다면 while문을 돌면서 새로운 아이템이 큐에 채워질 때 까지 기다릴 겁니다. 과정을 그림으로 나타내면 아래와 같이 되겠네요.
 
-①M1이 데이터 연산이고 M2가 lock-write 연산이거나, ②M1이 unlock을 수행하고 M2가 lock-read 또는 lock-write 연산일 때 재정렬이 가능합니다.
+그림에서 점선은 release sequence를 나타내고 실선은 happens-before 관계를 나타냅니다. 처음의 fetch_sub() 함수는 release sequence 이므로 두 번째 fetch_sub() 함수의 호출과 동기화 됩니다. 
 
+> Recognize also that the value read by the second fetch_sub must return the value written by the first fetch_sub although both, the release and the first acquire, are in the visual sequence of side effects. 
 
+여기서 자세히 보면 두 번째 fetch_sub()는 첫 번째 fetch_sub()에서 수정한 count 값을 리턴해야 됩니다. 그런데 release와 첫 번째 acquire가 visual sequence side effects입니다. 즉, count.store()에 의해 일어난 count 변수의 수정과 fetch_sub()에 의한 count 변수의 수정 중 어느 값을 읽어야 하는지 모호하죠. 
 
-## 3.5.5. The Way to Sequential Consistent Atomics
+> This is defined by the write-read coherence that prevents from reading a value that is happens-before hidden by
+a later write in the modification order. To our case, the release (write) is hidden to the second acquire since the release happens before the second acquire and the first acquire occurs later in the modification order of count.
 
+write-read coherence, 즉 수정 과정에서 나중에 일어날 쓰는 과정에 의해 숨겨진 happens-before 관계에 있는 값을 읽는 것을 방해하는 것을 이야기하고 있습니다. 이 예시의 경우 release는 두 번째 acquire에 숨겨져 있는 상태입니다. 
 
-> The model requires that synchronization operations appear sequentially consistent with respect to each other
+## 4. Conclusion
 
-C++ 메모리 모델은 동기화 연산이 sequentially consistent 하도록 요구하고 있습니다. 즉, 동기화 연산은 다른 동기화 연산과 재정렬(reordered) 될 수 없으며, 원자적 연산(atomic operations)은 원자적으로 실행되어야 함을 보장해야 한다는 이야기입니다. 이러한 예는 Figure 2에서 이미 한번 보았습니다. Flag1과 Flag2가 원자적이지 않아 data race가 발생했었죠. 
+프로그램을 작성할 때 data race가 일어나지 않도록 하는 것이 가장 중요합니다. 순서 옵션(ordering option)을 적용하지 않는다면 sequential consistent execution은 C++11에 정의된 메모리 모델에 의해 항상 보장됩니다. 따라서 대부분의 경우 컴파일러의 제멋대로인 최적화나 하드웨어의 모델을 신경쓰지 않아도 무방하죠. 
 
-한편으로 원자적 쓰기(atomic writes)는 성능상의 문제가 있습니다. 첫 번째로 멀티코어 프로세서에서는 쓰여진 값(written values)이 다른 코어의 캐시가 일정한 값을 가질 수 있도록 전달(propagate)되어야 하죠. 두 번째로는, 하드웨어가 임의적으로 명령(instructions)를 재정렬하지 못하도록 컴파일러가 원자적 쓰기(atomic stores)를 어떻게 변환할 것인지의 문제입니다. 대부분의 코어 제조사(vendors)가 다른 일반적인 명령어와 동기화 명령어를 구분해 두고 있지 않으니 추가적인 울타리(fence) 구현이 필요합니다. 
+만일 lock과 sequential consistent atomics에 의한 sequential consistent execution이 만족할만한 성능을 뽑아내 주지 않는다면 로우 레벨(low-level) atomics를 적용할 수 있을 겁니다. 그렇지만 위의 경우에서 보았듯이 조심해서 사용해야 할 겁니다.
 
-따라서 어느 정도의 느슨한(relaxed) 원자적 쓰기 연산(atomic writes)의 구현은 성능상의 이점을 가져다줍니다.
 
-> Relaxing atomic writes means to allow reading of another thread's write earlier than other threads can. 
+*후, 직접 해석과 기술적 이해를 동시에 하고 글로 옮기려니 굉장히 힘이 듭니다. 이 자료를 작성하면서 모호한 부분도 있고 이해가 잘못된 부분 도 있고 각종 오류가 있을 수 있습니다. 또 억지스러운 해석으로 인해 표현이 자연스럽지 못 한 부분도 굉장히 많습니다. 따라서 원문을 보는 것을 추천 드리며 이 자료와 같이 첨부하겠습니다.*
 
-느슨한 원자적 쓰기 연산을 구현한다는 것은, 어느 특정한 쓰레드가 다른 쓰레드보다 먼저 쓰여진 값을 읽도록 허용한다는 의미입니다. 이건 캐시를 공유하는 멀티코어 프로세서에서는 가능합니다. 
+*얼떨결에 Part 3를 먼저 작성했는데 너무 피곤하네요. 과연 Part 2를 마저 작성할 수 있을지...*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
