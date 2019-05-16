@@ -107,15 +107,15 @@ Listing 1의 13번째 줄을 봅시다. 본론만 먼저 이야기하면 13번�
 
 그럼 이제 몇 가지 제약 조건을 두어 다중 쓰레드 프로그램의 sequential consistent execution을 정의해 봅시다. 
 
-> 1. The execution of each thread must be internally consistent. This means that reordering of actions are allowed, as far as they still maintain a correct sequential execution with respect to the values read and with respect to the sequenced-before ordering. As an example, optimizations that are inconsistent with sequenced-before ordering are not allowed.
+> 1) The execution of each thread must be internally consistent. This means that reordering of actions are allowed, as far as they still maintain a correct sequential execution with respect to the values read and with respect to the sequenced-before ordering. As an example, optimizations that are inconsistent with sequenced-before ordering are not allowed.
 
 첫 번째 조건입니다. 한마디로 각 쓰레드는 내부적으로 일관성을 유지해야 한다는 거죠. Action의 재정렬(reordering)은 허용하겠지만 그게 값을 읽고 sequenced-before을 유지해야 한다는 겁니다. sequenced-before ordering을 위반하는 최적화는 허용되지 않는다는 것을 명시하고 있습니다. 
 
-> 2. The total order is consistent with the sequenced-before ordering. E.g if a is sequenced before b then a <T b.
+> 2) The total order is consistent with the sequenced-before ordering. E.g if a is sequenced before b then a <T b.
 
 전체적인 순서는 sequenced-before 에 의해 일관성을 유지해야 한다는 겁니다. 즉, 전체적으로 sequenced-before 하라는 거네요.
 
-> 3. Each load, lock and read-modify-write operation reads the value from the last preceding write to the same location according to the total order. The last operation on a given lock preceding an unlock must be a lock operation performed by the same thread.
+> 3) Each load, lock and read-modify-write operation reads the value from the last preceding write to the same location according to the total order. The last operation on a given lock preceding an unlock must be a lock operation performed by the same thread.
 
 2번의 일관적인 total order 로부터, 수정 연산이나 lock 연산은 직전에 수행된 쓰기 연산에 의한 값을 읽습니다. 또한 unlock을 수행하기 전에는 lock을 수행해야 합니다.
 
@@ -136,6 +136,72 @@ Part 1에서 간단하게 이야기한 내용입니다. Part 1에서는
 
 >  A data race can further be defined as:
 > 	if two memory operations from different threads conflict, and ②at least one of them is a data operation, and ③the memory operations are adjacent in total order.
+
+과 같습니다. 똑같은 이야기입니다. 다중 쓰레드에서 적어도 하나는 데이터 연산(data operation: 위에서 정의한 바와 같이 원자적 연산이 아닌 단순 load/store)이며 전체적인 순서에서 memory operation이 인접하는 경우입니다. 앞서 보았던 Figure 2의 Flag1 = 1, Flag2 == 0 과정 또한 data race인 상황입니다.
+
+
+
+## 3.5.3. Data Race Free Model
+
+앞서 이야기한 바와 같이 C++은 data race가 없는 메모리 모델입니다. 다시 바꾸어 이야기 해 보면, 위에서 data race를 정의했으므로 프로그램의 data race에 의한 동작은 반대로 정의가 되지 않습니다. 즉, 프로그램(동일한 입력에서)은 sequentially consistent 하게 명령을 수행해야 하며, 때문에 하드웨어와 컴파일러의 최적화와 재정렬(reordering)에 대한 제약이 걸립니다. 이러한 제약에 대해서는 아래에서 설명하겠습니다.
+
+3.5.4. Optimizations Allowed By the Model
+
+허용된 최적화에 관해 들어가기 전에 몇 가지 용어를 정리하고 갑시다.
+
+![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-3/2019-04-11-05.jpg)
+
+> Figure 10: Lock operations are operations on the lock object. The synchronization operations lock() and unlock() use them to prevent from multiple thread in a critical section.
+
+우선 synchronization operation을 조금 다듬어 봅시다. 
+
+> The term synchronization operation is refined into: read synchronization operation that consist of lock() and atomic read and ②write synchronization operation that consist of unlock() and atomic write.
+
+lock과 unlock은 lock 객체(lock object)를 통해 구현됩니다. 이러한 연산을 lock operation이라 하고 lock operation은 읽기나 쓰기를 수행할 수 있습니다. 여기서 이야기 하는 lock은 Part 1에서 언급한 critical section에 대한 내용과 동일합니다.
+
+M1과 M2라는 연산이 있고, M1과 M2가 sequenced-before의 관계(relation)라면 자유롭게 재정렬(reordering) 가능합니다. 그 조건은, 
+
+1. M1 is a data operation and M2 is a read synchronization operation or
+2. M1 is write synchronization and M2 is data or
+3. M1 and M2 are both data with no synchronization sequence-ordered between them
+
+
+①M1이 데이터 연산이고 M2가 동기화-읽기 연산이거나, ②M1이 동기화-쓰기 연산이고 M2가 데이터 연산이거나, ③M1과 M2가 모두 동기화 없는 데이터 연산이면 하드웨어나 컴파일러가 자유롭게 재정렬(reorder)할 수 있다는 겁니다. 이를 그림으로 그려보면 아래와 같습니다. 
+
+![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-3/2019-04-11-06.jpg)
+
+> Figure 11: Allowed reordering around synchronization operations by the described model.
+
+추가적으로 lock operation도 재정렬이 가능한데 이는 아주 잘 구조화된(well-structured) 방식이어야만 가능합니다. dead-lock을 발생시키면 안 되겠죠. 동일한 조건이라고 가정하면,
+
+1. M1 is data and M2 is the write of a lock operation or
+2. M1 is unlock and M2 is either a read or write of a lock.
+
+![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-3/2019-04-11-07.jpg)
+
+> Figure 12: Allowed reordering around lock operations by the described model.
+
+①M1이 데이터 연산이고 M2가 lock-write 연산이거나, ②M1이 unlock을 수행하고 M2가 lock-read 또는 lock-write 연산일 때 재정렬이 가능합니다.
+
+
+
+## 3.5.5. The Way to Sequential Consistent Atomics
+
+
+> The model requires that synchronization operations appear sequentially consistent with respect to each other
+
+C++ 메모리 모델은 동기화 연산이 sequentially consistent 하도록 요구하고 있습니다. 즉, 동기화 연산은 다른 동기화 연산과 재정렬(reordered) 될 수 없으며, 원자적 연산(atomic operations)은 원자적으로 실행되어야 함을 보장해야 한다는 이야기입니다. 이러한 예는 Figure 2에서 이미 한번 보았습니다. Flag1과 Flag2가 원자적이지 않아 data race가 발생했었죠. 
+
+한편으로 원자적 쓰기(atomic writes)는 성능상의 문제가 있습니다. 첫 번째로 멀티코어 프로세서에서는 쓰여진 값(written values)이 다른 코어의 캐시가 일정한 값을 가질 수 있도록 전달(propagate)되어야 하죠. 두 번째로는, 하드웨어가 임의적으로 명령(instructions)를 재정렬하지 못하도록 컴파일러가 원자적 쓰기(atomic stores)를 어떻게 변환할 것인지의 문제입니다. 대부분의 코어 제조사(vendors)가 다른 일반적인 명령어와 동기화 명령어를 구분해 두고 있지 않으니 추가적인 울타리(fence) 구현이 필요합니다. 
+
+따라서 어느 정도의 느슨한(relaxed) 원자적 쓰기 연산(atomic writes)의 구현은 성능상의 이점을 가져다줍니다.
+
+> Relaxing atomic writes means to allow reading of another thread's write earlier than other threads can. 
+
+느슨한 원자적 쓰기 연산을 구현한다는 것은, 어느 특정한 쓰레드가 다른 쓰레드보다 먼저 쓰여진 값을 읽도록 허용한다는 의미입니다. 이건 캐시를 공유하는 멀티코어 프로세서에서는 가능합니다. 
+
+
+
 
 
 
