@@ -517,4 +517,4 @@ PRINT_NORMAL_MSG(life_life_is_a_highway_lyrics_3);
 정상작동 하는군요!!
 
 
-
+[다음 포스트: JString Design[4]](https://dev-acoustikue.github.io/archivers/Jstring_Design_4)

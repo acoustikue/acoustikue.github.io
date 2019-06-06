@@ -237,3 +237,5 @@ _jcode::JString::~JString() {
 		PRINT_NORMAL_MSG("Not allocated.");
 };
 ```
+
+[다음 포스트: JString Design[3]](https://dev-acoustikue.github.io/archivers/Jstring_Design_3)

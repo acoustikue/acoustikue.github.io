@@ -5,15 +5,35 @@ comments: false
 permalink: /about/
 ---
 
-## Personal playground
+## dev-playground
 
-> An experience-hungry engineer dreamer.
+Second launch, personal playground.
 
-### Majored
+> 修人事待天命
 
-in electronic engineering.
 
-### Career
 
-- 공군 작전사령부 예하 작전정보통신단 체계개발실
-**ROK Air Force** Operations Information & Communication Wing,  System Development Department, Air Defense Guided Missile System Team, **KTMO-Cell Software Supporter**
+---
+
+## acoustikue
+
+### Education
+
+Major in electrical and electronics engineering.
+
+### Experience
+
+
+#### '17 ~ '19 공군 작전사령부 예하 작전정보통신단 체계개발실 방공유도탄체계팀
+
+- KTMO-Cell 작전소프트웨어 유지/보수, C/C++/MFC
+- KTMO-Cell 작전소프트웨어 유지/보수, Full Stack, Java/JSP/Javascript/MySQL
+- IAI ELTA(Israel Aerospace Industries, Elta Systems) 레이더 교육, C/Unix
+
+
+
+
+
+
+
+
