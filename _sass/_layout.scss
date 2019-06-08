@@ -17,7 +17,7 @@ body {
 	background-color: $header-bg;
 	padding: 10px;
 	margin: 0;
-	box-shadow: 0 2px 4px #999; /* modded by acoustikue */
+	box-shadow: 0 7px 7px #999; /* modded by acoustikue */
 	
 	&:after {
 		clear: both;
@@ -91,7 +91,7 @@ $hide-sidebar-screen-width: 1120px;
 	.wrapper {
 		position: relative;
 		background: #FAFAFA;
-		box-shadow: 0 2px 4px #999; /* modded by acoustikue */
+		box-shadow: 0 7px 7px #999; /* modded by acoustikue */
 		outline: 1px solid #CCC;
 		&:after {
 			clear:both;
