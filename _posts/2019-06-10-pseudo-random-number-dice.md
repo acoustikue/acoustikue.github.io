@@ -53,11 +53,11 @@ $$ -->
 
 
 
-## 배경 이론
+### 배경 이론
 
 완벽한 난수를 회로로 구성하는 것은 굉장히 난해합니다. 따라서 유사난수 회로를 구현하는 것으로 합시다. 여기에 **선형 되먹임 시프트 레지스터**(Linear Feedback Shift Register, LFSR)가 사용되므로 간단히 원리를 알아봅시다. 
 
-> 이전에 참고했던 사이트([링크](http://www.newwaveinstruments.com/resources/articles/m_sequence_linear_feedback_shift_register_lfsr.htm))가 지금 확인해 보니 죽어있습니다. 지금은 좋은 자료가 많이 있으니 다른 사이트의 자료를 참고하시면 될 듯 싶습니다.
+> *이전에 참고했던 사이트([링크](http://www.newwaveinstruments.com/resources/articles/m_sequence_linear_feedback_shift_register_lfsr.htm))가 지금 확인해 보니 죽어있습니다. 지금은 좋은 자료가 많이 있으니 다른 사이트의 자료를 참고하시면 될 듯 싶습니다.*
 
 선형 되먹임 시프트 레지스터(LFSR)는 시프트 레지스터의 일종으로, 레지스터에 입력되는 값이 이전 상태 값들의 선형 함수로 계산되는 구조를 가지고 있습니다. 의사난수 생성기(Pseudo-random Number Generator)는 LFSR로 구성되는데, 이때 사용되는 선형 함수(피드백)는 주로 배타적 논리합(XOR)입니다. LFSR의 초기 bit 값은 시드(seed)라고 부릅니다.
 
@@ -83,7 +83,12 @@ $$
 N=2^m-1
 $$
 
+ 그러나 이 주기는 **적절한 피드백**(Feedback)이 일어난 경우에 최대의 값인 *N*을 가지게 됩니다. 어떤 하나의 LFRS가 *N*이라는 최대 주기를 가지게 되는 경우를 Maximal Length Sequence라고 하며 M-Sequence라고도 부르죠. M-Sequence는 다음과 같은 특성을 갖습니다.
 
+1. LFSR는 탭의 수가 짝수일 경우에만 최대입니다.
+2. 최대 LFSR에서 탭 값은 서로소입니다.
+3. m-bit의 레지스터는 $$N=2^m-1$$의 주기를 갖습니다.
+4. M-Sequence는 정확히 $$2^m-1$$개의 0과 1을 갖습니다.
 
 
 
