@@ -8,13 +8,12 @@ permalink: /archivers/Jstring_Design_1
 
 # [_jcode mini-project] JString Design(1) (작성중)
 
-
-> 필자는 공군 작전정보통신단 체계개발실에서 복무('17~'19)하였습니다. 이 포스트는 작전정보통신단 병사 **프로그래밍 동아리(LINK)** 에서의 활동을 바탕으로 작성한 내용입니다.
-
 ## 서론
 
 우리가 아무런 생각 없이 단순히 document만 보고도 작성할 수 있는 것들이 있죠. STL도 그 중 하나이고 더 큼직한 것들인 OpenCV, MFC, Qt for C++ 등등. 우리가 쓰는 흔히 말하는 어떠한 결과물을 얻기 위해서는 단순히 라이브러리/프레임워크가 지원하는 여러 객체 정도만 알고 있어도 무방합니다. 예를 들어 이 클래스가 어떤 놈이고 어떤 짓을 하고, 클래스가 어떠한 놈인지는 모른 채 객체를 생성했을 때 그 인스턴스가 지원하는 method만 알면 되겠지요. 알게 모르게 우리는 객체지향 프로그래밍 특성 중 하나인 객체화를 사용했던 겁니다. 이는 Java, Python, 자바스크립트 등등 여러 언어가 지원해 주고 있지요. 
+
 <!--more-->
+
 ```java
 System.out.println("Hello world!!");
 // out 객체로 println 짓을 하라!! 원리는 아몰랑.
@@ -79,5 +78,8 @@ void CMFCApplication7App::OnAppAbout()
 static 으로 선언되었으니 아무렇게나 불러다 쓰면 됩니다. 그런데 이름이 너무 길군요. 그러니,
 
 와 같이 정의하고 쓸 겁니다. 이게 편해요 전, 아몰랑.
+
+
+> 필자는 공군 작전정보통신단 체계개발실에서 복무('17~'19)하였습니다. 이 포스트는 작전정보통신단 병사 **프로그래밍 동아리(LINK)** 에서의 활동을 바탕으로 작성한 내용입니다.
 
 [다음 포스트: JString Design[2]](https://dev-acoustikue.github.io/archivers/Jstring_Design_2)

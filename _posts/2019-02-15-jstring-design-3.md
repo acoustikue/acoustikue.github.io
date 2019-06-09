@@ -8,9 +8,6 @@ permalink: /archivers/Jstring_Design_3
 
 # [_jcode mini-project] JString Design(3) (작성중)
 
-
-> 필자는 공군 작전정보통신단 체계개발실에서 복무('17~'19)하였습니다. 이 포스트는 작전정보통신단 병사 **프로그래밍 동아리(LINK)** 에서의 활동을 바탕으로 작성한 내용입니다.
-
 ## JString(3) 인터페이스를 만들자
 
 이제 본격적으로 JString 클래스의 동작을 정의해 줄 때입니다. 우선 at() 부터 만들기로 합시다.
@@ -20,6 +17,8 @@ permalink: /archivers/Jstring_Design_3
 함수를 만들어 봅시다. 레퍼런스를 보면, 
 
 ![reference](/assets/posts/2019-02-15-jstring-design-3/2019-02-15-00.jpg)
+
+<!--more-->
 
 > "accesses the specified character with bounds checking" 
 
@@ -516,5 +515,8 @@ PRINT_NORMAL_MSG(life_life_is_a_highway_lyrics_3);
 
 정상작동 하는군요!!
 
+
+
+> 필자는 공군 작전정보통신단 체계개발실에서 복무('17~'19)하였습니다. 이 포스트는 작전정보통신단 병사 **프로그래밍 동아리(LINK)** 에서의 활동을 바탕으로 작성한 내용입니다.
 
 [다음 포스트: JString Design[4]](https://dev-acoustikue.github.io/archivers/Jstring_Design_4)

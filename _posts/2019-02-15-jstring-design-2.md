@@ -8,14 +8,13 @@ permalink: /archivers/Jstring_Design_2
 
 # [_jcode mini-project] JString Design(2)
 
-
-> 필자는 공군 작전정보통신단 체계개발실에서 복무('17~'19)하였습니다. 이 포스트는 작전정보통신단 병사 **프로그래밍 동아리(LINK)** 에서의 활동을 바탕으로 작성한 내용입니다.
-
 ## JString(1) 문자열 관리는 어떻게?
 
 본격적으로 문자열 디자인을 해 봅시다. 결론적으로 C 스타일의 문자열로 관리합시다. char형 배열이죠.
 
 std::string 멤버로 관리할 수야 있겠다만 이건 너무 양아치입니다. 애초에 잘 만들어진 인터페이스가 있으니 디자인 측면에서는 할 게 없어지겠죠. 따라서 C 스타일의 문자열 멤버를 관리하는 형태로 가는 거로 합시다. 그리고 목표는 std::string 에서 지원하는 동작들을 대부분 지원하는 방향으로 하겠습니다. 
+
+<!--more-->
 
 그러면 여러 가지가 필요합니다. std::string 레퍼런스를 보면, 
 
@@ -237,5 +236,8 @@ _jcode::JString::~JString() {
 		PRINT_NORMAL_MSG("Not allocated.");
 };
 ```
+
+
+> 필자는 공군 작전정보통신단 체계개발실에서 복무('17~'19)하였습니다. 이 포스트는 작전정보통신단 병사 **프로그래밍 동아리(LINK)** 에서의 활동을 바탕으로 작성한 내용입니다.
 
 [다음 포스트: JString Design[3]](https://dev-acoustikue.github.io/archivers/Jstring_Design_3)

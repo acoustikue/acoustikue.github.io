@@ -8,13 +8,14 @@ permalink: /archivers/concurrency_introduction_part_3_2
 
 # C++ Multithreading (Part 3)[2]
 
-> 필자는 공군 작전정보통신단 체계개발실에서 복무('17~'19)하였습니다. 이 포스트는 작전정보통신단 병사 **프로그래밍 동아리(LINK)** 에서의 활동을 바탕으로 작성한 내용입니다.
 
 ## Abstract
 
 > Prior to C++11, multi-threading in C++ was supported only by libraries and the language was specified as a single threaded language. With the memory model introduced in C++11 threading support is integrated into the language specification and therefore exactly defines the behavior of multi-threaded applications. 
 
 > Further more, the simple usage of atomic operations is introduced to allow the implementation of lock-free algorithms and therefore a more performance conscious way of programming.
+
+<!--more-->
 
 서론입니다. 중요하지 않은 내용은 날려버립시다. 뭐, 그래도 대부분 아는 내용입니다. C++11로 오기 이전에는 쓰레드 구현은 라이브러리로만 가능했고 이는 C++11이전에는 언어적으로 싱글 쓰레드(single threaded)를 지원했다는 점, 새로운 메모리 모델(memory model)과 함께 정확한 다중 쓰레드의 행동(behavior)이 정의되었다는 내용입니다. 또한 Part 1에서 설명했던 lock을 사용하지 않은 원자적 연산 프로그래밍을 지원한다는 내용입니다.
 
@@ -178,3 +179,7 @@ Pthread와 같은 외부 라이브러리에 의한 다중 쓰레드의 구현은
 
 그리고 이러한 접근은 컴파일러가 진화하면서 더욱 더 공격적인 최적화(optimization)을 제공할수록, 어플리케이션이 다른 종류의 컴파일러로 작성되어 질수록 정확성과 이식성을 보장할 수 없겠죠. 추가적으로 lock과 unlock을 반복할수록 성능상의 문제가 존재합니다.
 
+
+
+
+> 필자는 공군 작전정보통신단 체계개발실에서 복무('17~'19)하였습니다. 이 포스트는 작전정보통신단 병사 **프로그래밍 동아리(LINK)** 에서의 활동을 바탕으로 작성한 내용입니다.

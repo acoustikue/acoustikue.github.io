@@ -9,8 +9,6 @@ permalink: /archivers/concurrency_introduction_part_3_3
 # C++ Multithreading (Part 3)[3]
 ## C++ Memory Model
 
-> 필자는 공군 작전정보통신단 체계개발실에서 복무('17~'19)하였습니다. 이 포스트는 병사 **프로그래밍 동아리(LINK)** 에서의 활동을 바탕으로 작성한 내용입니다.
-
 
 ## 3. The C++ Memory Model
 
@@ -19,6 +17,8 @@ permalink: /archivers/concurrency_introduction_part_3_3
 C++는 atomics를 통해 단순화된 원자적 연산(atomic operation)을 제공합니다. atomics는 여러 개의 정렬 옵션(ordering option)을 먹일 수가 있는데, 이는 앞서 보았던 레퍼런스에서 아래에 해당하는 내용입니다. 
 
 ![figure](/assets/posts/2019-04-11-concurrency-introduction-part-3-3/2019-04-11-00.jpg)
+
+<!--more-->
 
 예를 들어 atomics를 sequential consistent execution 옵션을 준다면 sequential consistent model로 동작합니다. 그 외로 성능 상의 이점을 위해 더 유연한(relaxed) 모델들을 제공하고 있습니다. 조금 더 유연한 모델을 로우 레벨(low-level) atomics라고 하죠. 이번 장부터는 sequential consistent 모델과 유연한(relaxed) 모델인 로우 레벨(low-level) 모델에 대해 감을 잡아봅시다. 
 
@@ -202,6 +202,7 @@ C++ 메모리 모델은 동기화 연산이 sequentially consistent 하도록 �
 
 
 
+> 필자는 공군 작전정보통신단 체계개발실에서 복무('17~'19)하였습니다. 이 포스트는 작전정보통신단 병사 **프로그래밍 동아리(LINK)** 에서의 활동을 바탕으로 작성한 내용입니다.
 
 
 
