@@ -15,7 +15,7 @@ permalink: /about/
 
 ## profile
 
-![acoustikue](/posts/acoustikue_icon.png)
+![acoustikue](/assets/posts/acoustikue_icon.png)
 
 ### Education
 
