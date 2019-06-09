@@ -5,13 +5,13 @@ nocomments: true
 permalink: /about/
 ---
 
-## dev-playground
+## acoustikue's devlog
 
 개발 일지 및 잡다한 일상 블로그 입니다.
 
 ---
 
-## acoustikue
+## profile
 
 ### Education
 
