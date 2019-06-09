@@ -5,17 +5,12 @@ nocomments: true
 permalink: /about/
 ---
 
+![acoustikue](/assets/acoustikue_icon.png)
+
+
 ## acoustikue's devlog
 
-
-
 개발 일지 및 잡다한 일상 블로그 입니다.
-
----
-
-## profile
-
-![acoustikue](/assets/acoustikue_icon.png)
 
 ### Education
 
