@@ -1,5 +1,6 @@
 # Site settings
 title: "namespace acoustikue"
+title_show: "namespace acoustikue { }"
 url: "https://dev-acoustikue.github.io"
 baseurl: "" 
 description: >
