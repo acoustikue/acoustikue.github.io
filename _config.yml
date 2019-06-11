@@ -1,5 +1,5 @@
 # Site settings
-title: "acoustikue.log(dev)"
+title: "namespace acoustikue"
 url: "https://dev-acoustikue.github.io"
 baseurl: "" 
 description: >
@@ -12,6 +12,10 @@ avatar: "/assets/profile_mod.png"
 profile: An experience-hungry engineer dreamer.
 #twitter_username: twitter_username
 #github_username:  dev-acoustikue
+
+# added by acoustikue
+logo: "/assets/logo_mod.png"
+
 profile_links:
   Email: "mailto:acoustikue@gmail.com"
   GitHub: "https://github.com/dev-acoustikue"
