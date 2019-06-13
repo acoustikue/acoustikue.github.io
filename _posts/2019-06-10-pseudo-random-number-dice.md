@@ -237,7 +237,24 @@ $$ G = I0 \cdot ( I2 \cdot I1 )'$$
 한편, 최하위 4-bit의 값을 입력하기 위해 Load의 입력을 받습니다. 이 때, 스위치를 단순하게 16V8에 연결하는 경우 클럭으로 인해 동일한 값만 Shift됩니다. 따라서 Load‘의 값이 1이 인가된 경우에만 DIP 스위치로 입력한 초기값이 들어가도록 구현합니다. 
 즉, 다음과 같이 진리표를 그리고, Boolean식을 K-map으로 간략화합니다.
 
+```
+Name        LFSR_LOW_BIT ;
+PartNo      00 ;
+Date        2017-05-17 ;
+Revision    01 ;
+Designer    SukJoon ;  
+Company     Konkuk Univ. ;
+Assembly    None ;
+Location    ;
+Device      G16V8A ;
 
+/* INPUTS */
+PIN 1 = Clk ;
+
+
+
+
+```
 
 
 
