@@ -187,22 +187,36 @@ M-Sequence를 발생시키는 데에는 모든 레지스터의 출력이 필요�
 
 ![figure](/assets/posts/2019-06-10-pseudo-random-number-dice/2019-06-10-09.jpg)
 
-$$ A = B = C = D = F = I2 $$
-
-
+$$ A = B = C = D = F = I2 cdot ( I1 cdot I0 )'$$
 
 ![figure](/assets/posts/2019-06-10-pseudo-random-number-dice/2019-06-10-10.jpg)
 
-
+$$ B = E =  = I1 cdot ( I2 cdot I0 )'$$
 
 ![figure](/assets/posts/2019-06-10-pseudo-random-number-dice/2019-06-10-11.jpg)
 
+$$ G = I0 cdot ( I2 cdot I1 )'$$
+
+를 얻습니다. 위의 연산은 16V8를 이용해 구현하겠습니다.
+
+
+## 구성도
+
+전체적인 구성을 정리하면 다음과 같습니다.
+
+![figure](/assets/posts/2019-06-10-pseudo-random-number-dice/2019-06-10-12.jpg)
 
 
 
+## 모의실험용 회로도 및 모의실험 결과
 
+### (1) 클럭원(555 Timer)
 
+![figure](/assets/posts/2019-06-10-pseudo-random-number-dice/2019-06-10-13.jpg)
 
+위와 같이 회로를 구성합니다. R2의 22KOhm는 제작 시 가변저항으로 대체할 겁니다. 모의실험 결과는 아래와 같습니다.
+
+![figure](/assets/posts/2019-06-10-pseudo-random-number-dice/2019-06-10-14.jpg)
 
 
 
