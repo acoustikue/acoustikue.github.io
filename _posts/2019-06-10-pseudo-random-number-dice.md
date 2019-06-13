@@ -441,7 +441,7 @@ Bill Of Materials  May 14, 2017  22:42:10  Page1
 |3 | 1 | C4 | 1uF/16V |
 4 | 1 | C5 | 0.1uF/16V | 
 5 | 3 | LFSR_LOW_BIT, 16V8 LFSR_HIGH_BIT,LED LOGIC |  | 
-6 | 6 | R1,R2,R12,R13,R14,R15	10K
+6 | 6 | R1,R2,R12,R13,R14,R15 | 10K |
 7 | 1 | R3 | 100K | 
 8 | 1 | R4 | 503(50K) | 
 9 | 7 | R5,R6,R7,R8,R9,R10,R11 | 330K | 
