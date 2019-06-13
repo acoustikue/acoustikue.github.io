@@ -187,15 +187,15 @@ M-Sequence를 발생시키는 데에는 모든 레지스터의 출력이 필요�
 
 ![figure](/assets/posts/2019-06-10-pseudo-random-number-dice/2019-06-10-09.jpg)
 
-$$ A = B = C = D = F = I2 cdot ( I1 cdot I0 )'$$
+$$ A = B = C = D = F = I2 \cdot ( I1 \cdot I0 )'$$
 
 ![figure](/assets/posts/2019-06-10-pseudo-random-number-dice/2019-06-10-10.jpg)
 
-$$ B = E =  = I1 cdot ( I2 cdot I0 )'$$
+$$ B = E =  = I1 \cdot ( I2 \cdot I0 )'$$
 
 ![figure](/assets/posts/2019-06-10-pseudo-random-number-dice/2019-06-10-11.jpg)
 
-$$ G = I0 cdot ( I2 cdot I1 )'$$
+$$ G = I0 \cdot ( I2 \cdot I1 )'$$
 
 를 얻습니다. 위의 연산은 16V8를 이용해 구현하겠습니다.
 
@@ -218,10 +218,24 @@ $$ G = I0 cdot ( I2 cdot I1 )'$$
 
 ![figure](/assets/posts/2019-06-10-pseudo-random-number-dice/2019-06-10-14.jpg)
 
+클럭이 정상적으로 출력되는 것을 확인할 수 있습니다.
+
+
+### (2) 난수 생성부 및 표시부
+
+난수 생성부와 표시부의 경우 대부분 ATF16V8B가 이용되므로 모의실험은 WinSim을 이용하여 진행하겠습니다.
 
 
 
+## WinCUPL 코드 및 WinSim 모의실험
 
+### (1) Linear Shift Register(Low 8-bit)
+
+
+① [16, 14, 13, 11]의 탭 수열을 적용하기 때문에 하위 8-bit Shift Register을 담당하는 16V8은 단순한 Shift Register의 역할을 합니다.
+
+한편, 최하위 4-bit의 값을 입력하기 위해 Load의 입력을 받습니다. 이 때, 스위치를 단순하게 16V8에 연결하는 경우 클럭으로 인해 동일한 값만 Shift됩니다. 따라서 Load‘의 값이 1이 인가된 경우에만 DIP 스위치로 입력한 초기값이 들어가도록 구현합니다. 
+즉, 다음과 같이 진리표를 그리고, Boolean식을 K-map으로 간략화합니다.
 
 
 
