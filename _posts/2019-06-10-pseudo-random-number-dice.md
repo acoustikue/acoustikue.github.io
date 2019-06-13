@@ -345,7 +345,11 @@ Reg10, Reg12, Reg13의 경우 이전 출력과 XOR되어 정상적으로 출력�
 ① K-map으로 얻은 표시부의 출력 bit는 아래와 같은 부울 식을 따릅니다.
 
 $$ A = B = C = D = F = I2 \cdot ( I1 \cdot I0 )'$$
-$$ B = E =  = I1 \cdot ( I2 \cdot I0 )'$$
+
+
+$$ B = E = I1 \cdot ( I2 \cdot I0 )'$$
+
+
 $$ G = I0 \cdot ( I2 \cdot I1 )'$$
 
 한편, 스위치를 적용하여 신호가 인가된 경우 클럭에 의해 bit가 쉬프트 되고, 신호가 인가되지 않은 경우 최근의 출력을 유지하도록 합니다. 따라서 Load‘의 입력을 추가하고 아래와 같이 진리표를 그리도록 하죠.
@@ -358,6 +362,7 @@ LED_n .D = Load' \cdot I2 \cdot (I1 \cdot I0)' + Load \cdot LED_n \
 where, n=A, C, D, F
 $$
 
+
 $$
 LED_n .D = Load' \cdot I1 (I2 \cdot I0)' + Load \cdot LED_n \
 where, n=B, E
@@ -368,24 +373,90 @@ LED_G .D = Load' \cdot I0 (I2 \cdot I1)' + Load \cdot LED_G
 $$
 
 
+이에 대한 CUPL 코드는 다음과 같습니다.
+
+```
+Name        LFSR_LOGIC ;
+PartNo      00 ;
+Date        2017-05-17 ;
+Revision    01 ;
+Designer     ;  
+Company      ;
+Assembly    None ;
+Location     ;
+Device      G16V8A ;
+
+/* INPUTS */
+PIN 1 = Clk ;
+PIN 2 = Load ;
+PIN[3..5] = [I0..2] ;
+
+/* OUTPUTS */
+PIN 12 = LED_A ;
+PIN 13 = LED_B ;
+PIN 14 = LED_C ;
+PIN 15 = LED_D ;
+PIN 16 = LED_E ;
+PIN 17 = LED_F ;
+PIN 18 = LED_G ;
+
+
+/* OPERATION */
+LED_A.D = !Load & I2 & !(I1 & I0) # Load & LED_A ;
+LED_C.D = !Load & I2 & !(I1 & I0) # Load & LED_C ;
+LED_D.D = !Load & I2 & !(I1 & I0) # Load & LED_D ;
+LED_F.D = !Load & I2 & !(I1 & I0) # Load & LED_F ;
+
+LED_B.D = !Load & I1 & !(I2 & I0) # Load & LED_B ;
+LED_E.D = !Load & I1 & !(I2 & I0) # Load & LED_E ;
+
+LED_G.D = !Load & I0 & !(I2 )& I1 # Load & LED_G ;
+```
+
+② WinSim 모의실험 결과는 다음과 같습니다.
+
+![figure](/assets/posts/2019-06-10-pseudo-random-number-dice/2019-06-10-19.jpg)
+
+Load’가 1이 인가될 때 입력에 대한 각 LED로 신호가 정상적으로 입력되고 클럭에 의해 다음 계산 계산으로 진행되는 것을 확인할 수 있습니다. Load‘가 0이 인가될 때 직전의 LED값을 유지하는 것을 확인할 수 있습니다.
+
+
+## 제작용 회로도
+
+![figure](/assets/posts/2019-06-10-pseudo-random-number-dice/2019-06-10-20.jpg)
 
 
 
+## BOM
+
+Revised: Thursday, May 18, 2017
+Revision: 
+
+Bill Of Materials  May 14, 2017  22:42:10  Page1
 
 
+| Item | Quantity | Reference | Part |
+|:---:|:---:|:---:|:---:|
+| 1	| 7 | G1,F1,E1,D1,B1,A1,C3 | LED |
+| 2 | 2 | C1,C2 | 10uF/16V |
+|3 | 1 | C4 | 1uF/16V |
+4 | 1 | C5 | 0.1uF/16V | 
+5 | 3 | LFSR_LOW_BIT, 16V8 LFSR_HIGH_BIT,LED LOGIC |  | 
+6 | 6 | R1,R2,R12,R13,R14,R15	10K
+7 | 1 | R3 | 100K | 
+8 | 1 | R4 | 503(50K) | 
+9 | 7 | R5,R6,R7,R8,R9,R10,R11 | 330K | 
+10 | 1 | SW1 | nLOAD_LED | 
+11 | 1 | SW2 | nLOAD_SR | 
+12 | 1 | SW3 | SW DIP-8 | 
+13 | 1 | U1 | NE555 | 
+14 | 3 | SPLD용 DIP20 소켓 |  | 
+15 | 1 | 만능기판 |  | 
 
 
+## Reference
 
+1. Wikipedia: [‘Linear-feedback_shift_register’](https://en.wikipedia.org/wiki/Linear-feedback_shift_register)
 
-
-
-
-
-
-
-
-
-
-
+2. New Wave Instruments: [‘Linear Feedback Shift Registers – Implementation, M-Sequence Properties, Feedback Tables’](http://www.newwaveinstruments.com/resources/articles/m_sequence_linear_feedback_shift_register_lfsr.htm )
 
 
