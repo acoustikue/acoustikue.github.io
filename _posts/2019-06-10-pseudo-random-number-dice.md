@@ -276,22 +276,96 @@ PIN [12..19] = [Reg0..7] ;
 
 /* OPERATION */
 Reg0.D = (Feedback & Load) # (Seed0 & !Load) ;
+Reg1.D = (Reg0 & Load) # (Seed1 & !Load) ;
+Reg2.D = (Reg1 & Load) # (Seed2 & !Load) ;
+Reg3.D = (Reg2 & Load) # (Seed3 & !Load) ;
+Reg4.D = Reg3 ;
+Reg5.D = Reg4 ;
+Reg6.D = Reg5 ;
+Reg7.D = Reg6 ;
+```
+
+② 다음은 WinSim 모의실험 결과입니다.
+
+![figure](/assets/posts/2019-06-10-pseudo-random-number-dice/2019-06-10-16.jpg)
+
+
+Load’가 1이 인가될 때 Seed0~Seed3의 값이 정상적으로 입력되고 클럭에 의해 다음 레지스터로 Shift 되는 것을 확인할 수 있네요.
+
+
+
+### (2) Linear Shift Register(High 8-bit)
+
+① M-Sequence를 발생시키는 탭 수열 중 [16, 14, 13, 11]를 선택하겠습니다. [16, 15, 12, 1]과 같은 수열을 선택하는 경우, 각각 구현할 탭이 두 개의 16V8로 분리되어 까다롭습니다. 따라서 상위 8-bit의 Shift Register를 담당하는 하나의 16V8로 XOR연산을 구현하기 위해 의 수열을 선택하도록 합시다.
+
+또한, Fibonacci Implementation을 적용할 경우 최상위 bit와 각 탭의 bit을 연산하여 Feedback 시키는데, 이 때 외부에서 XOR연산을 담당하는 로직이 필요하므로 부품의 개수가 증가합니다. 따라서, 16V8 내에서 Shift Register의 역할과 동시에 XOR연산이 가능한 Galois Implementation을 적용하여 CUPL코드로 구현하겠습니다. 이는 아래와 같습니다.
+
+
+```
+Name        LFSR_HIGH_BIT ;
+PartNo      00 ;
+Date        2017-05-17 ;
+Revision    01 ;
+Designer     ;  
+Company      ;
+Assembly    None ;
+Location     ;
+Device      G16V8A ;
+
+/* INPUTS */
+PIN 1 = Clk ;
+PIN 2 = Carry ;
+
+/* OUTPUTS */
+PIN [12..19] = [Reg8..15] ;
+
+/* OPERATION */
+Reg8.D = Carry ;
+Reg9.D = Reg8 ;
+Reg10.D = (Reg9 $ Reg15) ;
+Reg11.D = Reg10 ;
+Reg12.D = (Reg11 $ Reg15) ;
+Reg13.D = (Reg12 $ Reg15) ;
+Reg14.D = Reg13 ;
+Reg15.D = (Reg14 $ Reg15) ;
+
 
 ```
 
 
+② WinSim 모의실험 결과는 아래와 같습니다.
+
+![figure](/assets/posts/2019-06-10-pseudo-random-number-dice/2019-06-10-17.jpg)
+
+Reg10, Reg12, Reg13의 경우 이전 출력과 XOR되어 정상적으로 출력되는 것을 확인할 수 있습니다. 그 외의 경우 Shift되어 출력되고 있네요.
 
 
+### (3) Combinational Logic for LEDs
+
+① K-map으로 얻은 표시부의 출력 bit는 아래와 같은 부울 식을 따릅니다.
+
+$$ A = B = C = D = F = I2 \cdot ( I1 \cdot I0 )'$$
+$$ B = E =  = I1 \cdot ( I2 \cdot I0 )'$$
+$$ G = I0 \cdot ( I2 \cdot I1 )'$$
+
+한편, 스위치를 적용하여 신호가 인가된 경우 클럭에 의해 bit가 쉬프트 되고, 신호가 인가되지 않은 경우 최근의 출력을 유지하도록 합니다. 따라서 Load‘의 입력을 추가하고 아래와 같이 진리표를 그리도록 하죠.
+
+![figure](/assets/posts/2019-06-10-pseudo-random-number-dice/2019-06-10-18.jpg)
 
 
+$$
+LED_n .D = Load' \cdot I2 \cdot (I1 \cdot I0)' + Load \cdot LED_n \
+where, n=A, C, D, F
+$$
 
+$$
+LED_n .D = Load' \cdot I1 (I2 \cdot I0)' + Load \cdot LED_n \
+where, n=B, E
+$$
 
-
-
-
-
-
-
+$$
+LED_G .D = Load' \cdot I0 (I2 \cdot I1)' + Load \cdot LED_G 
+$$
 
 
 
