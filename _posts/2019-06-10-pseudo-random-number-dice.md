@@ -237,22 +237,45 @@ $$ G = I0 \cdot ( I2 \cdot I1 )'$$
 한편, 최하위 4-bit의 값을 입력하기 위해 Load의 입력을 받습니다. 이 때, 스위치를 단순하게 16V8에 연결하는 경우 클럭으로 인해 동일한 값만 Shift됩니다. 따라서 Load‘의 값이 1이 인가된 경우에만 DIP 스위치로 입력한 초기값이 들어가도록 구현합니다. 
 즉, 다음과 같이 진리표를 그리고, Boolean식을 K-map으로 간략화합니다.
 
+| Load | Seed | Reg | Reg+ |
+|:---:|:---:|:---:|:---:|
+| 0 | 0 | 0 | 0 |
+|   | 0 | 1 | 0 |
+|   | 1 | 0 | 1 |
+|   | 1 | 1 | 1 |
+| 1 | 0 | 0 | 0 |
+|   | 0 | 1 | 1 |
+|   | 1 | 0 | 0 |
+|   | 1 | 1 | 1 |
+
+![figure](/assets/posts/2019-06-10-pseudo-random-number-dice/2019-06-10-15.jpg)
+
+$$ Reg(N+1)_D = Load' \cdot Seed(N+1)+RegN \cdot Load $$
+
+이를 코드로 구현하면 아래와 같습니다.
+
 ```
 Name        LFSR_LOW_BIT ;
 PartNo      00 ;
 Date        2017-05-17 ;
 Revision    01 ;
-Designer    SukJoon ;  
-Company     Konkuk Univ. ;
+Designer     ;  
+Company      ;
 Assembly    None ;
-Location    ;
+Location     ;
 Device      G16V8A ;
 
 /* INPUTS */
 PIN 1 = Clk ;
+PIN 2 = Feedback ;
+PIN 3 = Load ;
+PIN [4..7] = [Seed0..3] ;
 
+/* OUTPUTS */
+PIN [12..19] = [Reg0..7] ;
 
-
+/* OPERATION */
+Reg0.D = (Feedback & Load) # (Seed0 & !Load) ;
 
 ```
 
