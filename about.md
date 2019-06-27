@@ -5,21 +5,21 @@ nocomments: true
 permalink: /about/
 ---
 
-![acoustikue](/assets/acoustikue_icon.png)
-
+<!-- ![acoustikue](/assets/acoustikue_icon.png) -->
 
 ## acoustikue's devlog
 
-개발 일지 및 잡다한 일상 블로그 입니다.
+개발 일지 및 잡다한 일상 기록입니다.
 
 ### Education
 
-Major in electrical and electronics engineering.
+- 전기전자공학 전공
 
 ### Experience
 
 #### '17-19 : 공군 작전사령부 예하 작전정보통신단 체계개발실 방공유도탄체계팀
 
+- 공군 작전사령부 예하 작전정보통신단 체계개발실 방공유도탄체계팀 **KTMO-CELL프로그램지원병**
 - KTMO-Cell 작전소프트웨어 유지/보수, C/C++/MFC
 - KTMO-Cell 작전소프트웨어 유지/보수, Full Stack, Java/JSP/Javascript/MySQL
 - IAI ELTA(Israel Aerospace Industries, Elta Systems) 레이더체계 교육 통역, C/Unix
