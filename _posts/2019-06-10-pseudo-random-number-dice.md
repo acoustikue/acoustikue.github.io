@@ -2,7 +2,7 @@
 layout: post
 title:  "Pseudo-random Number Dice"
 date:   2019-06-10 12:00:00
-categories: EE
+categories: "Electronic Engineering"
 permalink: /archivers/pseudo_random_number_dice
 use_math: true
 ---
