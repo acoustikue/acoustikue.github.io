@@ -2,7 +2,7 @@
 layout: post
 title:  "[OJT]Data Structure(3)"
 date:   2019-06-12 09:00:00
-categories: "ROKAF"
+categories: "OICW"
 nocomments: true
 permalink: /archivers/snippet_ojt_3
 ---
