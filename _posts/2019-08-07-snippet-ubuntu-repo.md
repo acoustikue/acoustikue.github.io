@@ -2,7 +2,7 @@
 layout: post
 title:  "우분투 Repository"
 date:   2019-08-07 09:00:00
-categories: OICW
+categories: Snippet
 permalink: /archivers/snippet_ubuntu_repo
 nocomments: true
 use_math: true 
