@@ -11,15 +11,28 @@ use_math: true
 # Ubuntu Repository 
 
 ### 구름 IDE 세팅값
+
+우분투 16.04 LTS 컨테이너를 생성하면 왠지 모르게 업그레이드가 안되는 애들이 있다. 몇 번 삽질한 결과 아래를 추가하자.
+
 <!--more-->
+
 
 ```bash
 vi /etc/apt/sources.list
 ```
 
+위의 파일을 열고 다음을 추가한다.
 
 ```bash
 deb http://archive.ubuntu.com/ubuntu bionic main restricted universe multiverse
 deb http://archive.ubuntu.com/ubuntu bionic-security main restricted universe multiverse
 deb http://archive.ubuntu.com/ubuntu bionic-updates main restricted universe multiverse
 ```
+
+그리고 갱신한다.
+
+```bash
+sudo apt-get update
+sudo apt-get upgrade
+```
+
