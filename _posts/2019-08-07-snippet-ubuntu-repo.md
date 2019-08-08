@@ -36,3 +36,30 @@ sudo apt-get update
 sudo apt-get upgrade
 ```
 
+
+### Firefox Headless 세팅
+
+```bash
+sudo apt-add-repository ppa:mozillateam/firefox-next
+```
+
+다음을 설치한다.
+
+```bash
+sudo apt-get install firefox xvfb
+```
+
+가상 디스플레이 설정해준다.
+
+
+```bash
+Xvfb :10 -ac &
+export DISPLAY=:10
+```
+
+파이어폭스 실행 확인한다.
+```bash
+firefox
+```
+
+
