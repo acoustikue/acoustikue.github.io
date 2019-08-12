@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Flask 미니 프로젝트 01"
-date:   2019-08-07 09:00:00
+date:   2019-08-13 09:00:00
 categories: Python
 permalink: /archivers/python_flask_01
 nocomments: false
