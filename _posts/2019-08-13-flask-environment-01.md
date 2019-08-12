@@ -79,4 +79,41 @@ venv\Scripts\activate
 
 ### Flask 설치
 
+가상환경에서 Flask 설치를 진행합시다. pip3가 보이지 않아 먼저 pip3 부터 설치해줍시다.
 
+```bash
+$ sudo easy_install3 pip
+```
+
+혹시 pip가 설치되어있지 않다면 커맨드는 아래와 같습니다.
+
+```bash
+$ sudo easy_install pip
+```
+
+이제 Flask를 설치합시다. 
+
+```bash
+(venv) $ pip3 install flask
+Collecting flask
+  Cache entry deserialization failed, entry ignored
+  Cache entry deserialization failed, entry ignored
+  Downloading https://files.pythonhosted.org/packages/9b/93/628509b8d5dc749656a9641f4caf13540e2cdec85276964ff8f43bbb1d3b/Flask-1.1.1-py2.py3-none-any.whl (94kB)
+    100% |████████████████████████████████| 102kB 1.7MB/s
+
+    ...
+
+    Installing collected packages: itsdangerous, MarkupSafe, Jinja2, Werkzeug, click, flask
+Successfully installed Jinja2-2.10.1 MarkupSafe-1.1.1 Werkzeug-0.15.5 click-7.0 flask-1.1.1 itsdangerous-1.1.0
+```
+
+import 했을 때 오류가 없으면 정상적으로 설치된 겁니다.
+
+
+```bash
+(venv) $ python3
+>>> import flask
+>>>
+```
+
+기본적인 준비는 끝났습니다. 첫 어플리케이션을 작성해봅시다.
