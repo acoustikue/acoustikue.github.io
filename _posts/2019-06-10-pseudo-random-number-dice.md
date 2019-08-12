@@ -7,7 +7,7 @@ permalink: /archivers/pseudo_random_number_dice
 use_math: true
 ---
 
-# Pseudo-random Number Dice(유사난수 주사위)(작성중)
+# Pseudo-random Number Dice(유사난수 주사위)
 
 오랜만에 대학 동기에게 연락이 왔습니다. 말년 휴가 중인 걸 알고 있었는지 학과 내 학술 소모임 카카오톡 단체 방에 초대해주겠다는 이야기였습니다. 늘 카카오톡은 휴대폰에 용량만 차지하던 장식이었는데 알림이 뜨기 시작한게 얼마 만인지 모르겠습니다. 그래도 시간은 가고 제대라는게 오긴 오고 있는가 봅니다. 
 

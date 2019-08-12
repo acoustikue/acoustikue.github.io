@@ -1,18 +1,18 @@
 ---
 layout: post
-title:  "우분투 Repository"
+title:  "구름IDE 초기 설정"
 date:   2019-08-07 09:00:00
 categories: Snippet
-permalink: /archivers/snippet_ubuntu_repo
-nocomments: true
+permalink: /archivers/snippet_goorm_config
+nocomments: false
 use_math: true 
 ---
 
 # Ubuntu Repository 
 
-### 구름 IDE 세팅값
+### 구름 IDE repository?
 
-우분투 16.04 LTS 컨테이너를 생성하면 왠지 모르게 업그레이드가 안되는 애들이 있다. 몇 번 삽질한 결과 아래를 추가하자.
+우분투 16.04 LTS 컨테이너를 생성하면 왠지 모르게 업그레이드가 안되는 애들이 있다. 몇 번 삽질한 결과 다음과 같은 방법으로 해결하면 될 듯 하다. 아래를 추가하자.
 
 <!--more-->
 
@@ -37,7 +37,7 @@ sudo apt-get upgrade
 ```
 
 
-### Firefox Headless 세팅
+### 콘솔 상의 Selenium을 위한 Firefox Headless 세팅 19.08.10.
 
 ```bash
 sudo apt-add-repository ppa:mozillateam/firefox-next
@@ -57,7 +57,7 @@ Xvfb :10 -ac &
 export DISPLAY=:10
 ```
 
-파이어폭스 실행 확인한다.
+파이어폭스 실행 후 프로세스가 돌아가는 것을 확인하자.
 ```bash
 firefox
 ```
