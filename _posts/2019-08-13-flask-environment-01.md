@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Flask 미니 프로젝트 01"
+title:  "Flask[01] 환경 구축"
 date:   2019-08-13 09:00:00
 categories: Python
 permalink: /archivers/python_flask_01
