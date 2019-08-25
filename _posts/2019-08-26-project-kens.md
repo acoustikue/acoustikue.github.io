@@ -132,3 +132,20 @@ Files named as **'notice_*'** are for the comparing process. In these files, pre
 If updated information is found, then it automatically stores the entire list in those files. Note that it ignores any other information like numbers, the numbers of posts seen that are not really worth to send notifications.
 
 
+
+
+## Update logs
+
+2019.08.21. <b>Version: 0.1.0va</b>
+- Project KENS initiated, author(SukJoon Oh, acoustikue)
+
+2019.08.24. <b>Version: 0.1.1va</b>
+- Telegram ID saving function added. No more receiving only recent ID's, preventing skipping sending messages for random ID's.
+- Administrator notification service module added.
+- Fixed giving alert every hour, even there's no updated information in the notice board.
+
+2019.08.25. <b>Version: 0.1.3vb</b>
+- KNS on KENS project successfully tested. Version upgraded to BETA.
+- Hello KNS! New service has been launched. This project is named KNS(Konkuk Univ Notice board Scraper). It is mainly focused on scraping main homepage notice board, where as KENS is only for the EE homepage.
+- 0.1.3vb is beta version, so it only sends notification of Haksa and Janghak section, but other tabs will be supported in the later version.
+- Directory scanning process added, for convenience in launching server.
