@@ -35,8 +35,27 @@ pi@raspberrypi:~ $ mkdir project_kens_log
 Now, logs named in the form of 'kens-[year]-[Month]-[Date]-[Hour]-[Minute]' or 'kns-[year]-[Month]-[Date]-[Hour]-[Minute]' will be piled up here.
 
 
+## Environment Settings
 
-## Settings
+KENS and KNS project are tested on Python 3.6 and 3.7 environment. Raspberry-Pi has Python as default with Raspbian, but make sure your Raspberry-Pi has Python installed.
+
+KENS/KNS uses parsing process with BeautifulSoup4 library. Thus install BeautifulSoup4 with Requests library.
+
+```bash
+root@raspberrypi:~# pip3 install bs4
+root@raspberrypi:~# pip3 install requests
+```
+
+KENS/KNS sends notification to users by Telegram. To run Telegram API without any errors, there should be python-telegram-bot module.
+
+```bash
+root@raspberrypi:~# pip3 install python-telegram-bot
+```
+
+
+
+
+## Project Settings
 
 Only some script files need to be registered in crontab, not every scripts. The scripts are, **/Rpi/KensRunRpi.py** and **/Rpi/KnsRunRpi.py** .
 
@@ -84,7 +103,32 @@ Examine if the logs are piling up.
 
 
 
+## How KENS/KNS stores data?
 
+KENS/KNS is not designed for heavy data handling, and they surely does not have to be. **They don't need databases.** It gets information of the first page each only, thus each function does not handle a large amount of data. Maximum number would be about 10 to 20, so it just stores as files.
 
+Of course, linux system does not have any meaning in extensions, thus the names are just for distinguishing projects.
+
+For example, if some files are named in a pattern of **'*.kens'**, then the files are used for KENS scripts. Same does for KNS scripts.
+
+Now, there will be several texts stored with nothing written. In 0.1.3vb version, there are no exception handling codes, thus **there must be files exactly named as written in the scripts.** The files necessary are listed below.
+
+Files necessary for KENS scripts are, 
+
+- notice.kens
+- user_telegram.kens
+
+and for KNS scripts,
+
+- notice_haksa.kns
+- notice_janghak.kns
+- notice_changup.kns
+- notice_guukjae.kns
+- notice_sanhak.kns
+- notice_ilban.kns
+
+Files named as **'notice_*'** are for the comparing process. In these files, previously scraped information(title, number, date, etc) are stored. The script first opens each files and stores them in _lists_, waiting for the new information to be compared. 
+
+If updated information is found, then it automatically stores the entire list in those files. Note that it ignores any other information like numbers, the numbers of posts seen that are not really worth to send notifications.
 
 
