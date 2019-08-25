@@ -103,7 +103,7 @@ Examine if the logs are piling up.
 
 
 
-## How KENS/KNS stores data?
+## How does KENS/KNS stores data?
 
 KENS/KNS is not designed for heavy data handling, and they surely does not have to be. **They don't need databases.** It gets information of the first page each only, thus each function does not handle a large amount of data. Maximum number would be about 10 to 20, so it just stores as files.
 
