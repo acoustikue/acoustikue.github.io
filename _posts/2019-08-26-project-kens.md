@@ -70,13 +70,18 @@ And add the script to run. This is an example of running scripts in every 30 min
 
 ```
 # added 19.08.25.
-0 * * * * /usr/bin/python3 /home/pi/Desktop/git/project_kens/Rpi/KensRunRpi.py > /home/pi/Desktop/project_kens_log/kens-`date +\%Y-\%m-\%d-\%H-\%M`
-2 * * * * /usr/bin/python3 /home/pi/Desktop/git/project_kens/Rpi/KnsRunRpi.py > /home/pi/Desktop/project_kens_log/kns-`date +\%Y-\%m-\%d-\%H-\%M`
 
-30 * * * * /usr/bin/python3 /home/pi/Desktop/git/project_kens/Rpi/KensRunRpi.py > /home/pi/Desktop/project_kens_log/kens-`date +\%Y-\%m-\%d-\%H-\%M`
-32 * * * * /usr/bin/python3 /home/pi/Desktop/git/project_kens/Rpi/KnsRunRpi.py > /home/pi/Desktop/project_kens_log/kns-`date +\%Y-\%m-\%d-\%H-\%M`
+0 * * * * /usr/bin/python3 /home/pi/Desktop/git/project_kens/Rpi/KensRunRpi.py > /home/pi/Desktop/project_kens_log/kens-`date +\%Y-\%m-\%d_\%H:\%M`
+2 * * * * /usr/bin/python3 /home/pi/Desktop/git/project_kens/Rpi/KnsRunRpi.py > /home/pi/Desktop/project_kens_log/kns-`date +\%Y-\%m-\%d_\%H:\%M`
 
-0 5 * * * rm /home/pi/Desktop/project_kens_log/*
+30 * * * * /usr/bin/python3 /home/pi/Desktop/git/project_kens/Rpi/KensRunRpi.py > /home/pi/Desktop/project_kens_log/kens-`date +\%Y-\%m-\%d_\%H:\%M`
+32 * * * * /usr/bin/python3 /home/pi/Desktop/git/project_kens/Rpi/KnsRunRpi.py > /home/pi/Desktop/project_kens_log/kns-`date +\%Y-\%m-\%d_\%H:\%M`
+
+0 5 * * * rm /home/pi/Desktop/project_kens_log/kens*
+1 5 * * * rm /home/pi/Desktop/project_kens_log/kns*
+2 5 * * * rm /home/pi/Desktop/project_kens_log/cron*
+
+*/20 * * * * /usr/sbin/service cron status | /bin/grep -E 'Active|Memory' > /home/pi/Desktop/project_kens_log/cron-`date +\%Y-\%m-\%d_\%H:\%M`
 
 ```
 
