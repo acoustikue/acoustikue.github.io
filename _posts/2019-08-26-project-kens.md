@@ -99,7 +99,7 @@ If you want to stop the script, then write the command like below.
 root@raspberrypi:~# service cron stop
 ```
 
-Examine if the logs are piling up.
+Examine whether the logs are piling up.
 
 
 
