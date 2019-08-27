@@ -154,3 +154,8 @@ If updated information is found, then it automatically stores the entire list in
 - Hello KNS! New service has been launched. This project is named KNS(Konkuk Univ Notice board Scraper). It is mainly focused on scraping main homepage notice board, where as KENS is only for the EE homepage.
 - 0.1.3vb is beta version, so it only sends notification of Haksa and Janghak section, but other tabs will be supported in the later version.
 - Directory scanning process added, for convenience in launching server.
+
+2019.08.27. <b>Version: 0.1.6vb</b>
+- KNS on KENS project updated! Now more tabs are supported.
+- Guukjae, haksaeng, ilban tab support was added. Other remaining tabs need a slight different algorithm, so please wait for later update.
+- Note that this service is still BETA, so there might be unexpected actions, for instance KNS catches even a slight modifications of a string in a single title. This will be fixed in the later update.
