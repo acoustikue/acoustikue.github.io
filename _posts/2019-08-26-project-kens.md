@@ -137,6 +137,11 @@ Files named as **'notice_*'** are for the comparing process. In these files, pre
 If updated information is found, then it automatically stores the entire list in those files. Note that it ignores any other information like numbers, the numbers of posts seen that are not really worth to send notifications.
 
 
+## Memory status using cron
+
+Figure below describes memory use checked by *cron service status* command.
+
+![kens_kns_memory_use](/assets/posts/2019-08-26-project-kens/2019-08-26-00.jpg)
 
 
 ## Update logs
