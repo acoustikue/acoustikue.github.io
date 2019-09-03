@@ -18,6 +18,8 @@ KNS scraps the main homepage of Konkuk University, where as KENS scraps Electron
 
 ![demo](/assets/posts/2019-09-01-project-knsf/demo.gif)
 
+Specially thanks to Su Chan Kim for testing.
+
 <!--more-->
 
 ## Install
