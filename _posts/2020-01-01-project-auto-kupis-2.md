@@ -19,6 +19,8 @@ Unlike AutoKupis project, all sources are open to public, thus anyone can use, r
 
 You can compile the source by yourself. You can compile it with **pyinstaller**. The command I used was, 
 
+<!--more-->
+
 ```
 pyinstaller --onefile --noconsole ak2.py --icon=C:\Users\acoustikue\Documents\Git\auto_kupis_2\ui\auto_kupis_2.ico
 ```
