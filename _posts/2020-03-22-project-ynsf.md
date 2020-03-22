@@ -12,9 +12,11 @@ use_math: true
 
 Project YNSF, KNSF extended, and refactored version.
 
-This is a web-scraping project for Konkuk University pages. KNSF stands for **Y**onsei University **N**otice Board **S**craper with **F**CM. This is based on KNSF project, and added some additional functions.
+This is a web-scraping project for Yonsei University pages. YNSF stands for **Y**onsei University **N**otice Board **S**craper with **F**CM. This is based on KNSF project, and added some additional functions.
 
 YNSF is mainly targeted for students who major in Electrical and Electronic Engineering(EE). It scraps the main homepage of Yonsei University, EE page, and sends notification if there is any change or update in notice.
+
+![demo](/assets/posts/2020-03-22-project-ynsf/ynsf_screenshot.jpg)
 
 <!--more-->
 
