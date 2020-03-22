@@ -10,7 +10,7 @@ permalink: /archivers/filesystem_library_introduction
 
 ## 좋은 코드?
 
-작년 중반 즈음, 아주 재미난 이야기를 듣습니다. 어느 개발 팀장 중 하나가 코드 평가 항목 중 하나는 ‘라인 수’라는 발언을 했다는 소식. 한마디로, 라인 수가 많으면 ‘좋은’ 또는 ‘잘 짜여진 코드’ 이므로 우수한 것 아니냐 라는 이야기죠. 예.
+작년 중반 즈음, 아주 재미난 이야기를 듣습니다. 어느 개발 팀장 중 하나가 코드 평가 항목 중 하나는 ‘라인 수’라는 발언을 했다는 소식. 한마디로, 라인 수가 많으면 ‘좋은’ 또는 ‘잘 짜여진 코드’ 이므로 우수한 것 아니냐 라는 이야기입니다. 예.
 
 <!--more-->
 
@@ -28,9 +28,9 @@ permalink: /archivers/filesystem_library_introduction
 ----------------------------------------------------------------------
 ## 내 코드를 세어 보자!
 
-뭐, 좋습니다. 마침 잠깐 짬이 난 김에 라인 수를 카운트하는 간단한 프로그램을 만들게 됩니다. 당시 맡고 있던 체계가 있었는데 내가 얼마나 작성했는지 그거라도 어디 한번 세어 보자라는 생각이었죠. 제로-베이스부터 시작한 프로젝트 였거든요.
+뭐, 좋습니다. 마침 잠깐 짬이 난 김에 라인 수를 카운트하는 간단한 프로그램을 만들게 됩니다. 당시 맡고 있던 체계가 있었는데 내가 얼마나 작성했는지 그거라도 어디 한번 세어 보자라는 생각이었습니다. 제로-베이스부터 시작한 프로젝트 였거든요.
 
-자바를 주로 쓰는 사람은 알겠지만, 규모가 조금씩 불어나면 불어날수록, 기능을 분리하면 분리할수록 패키지 수는 늘어나고 그에 따른 클래스도 늘어납니다. 게다가 자바는 C++과 다르게 한 파일에 클래스 하나만 정의됩니다. 또 고맙게도 웹 프로젝트라 CSS, JSP, 자바스크립트 파일 등 클라이언트에 보여질 소스들은 각기 다른 폴더에 나뉘어져 들어가 있겠죠.
+자바를 주로 쓰는 사람은 알겠지만, 규모가 조금씩 불어나면 불어날수록, 기능을 분리하면 분리할수록 패키지 수는 늘어나고 그에 따른 클래스도 늘어납니다. 게다가 자바는 C++과 다르게 한 파일에 클래스 하나만 정의됩니다. 또 고맙게도 웹 프로젝트라 CSS, JSP, 자바스크립트 파일 등 클라이언트에 보여질 소스들은 각기 다른 폴더에 나뉘어져 들어가 있을 겁니다.
 
 당시는 급하게 만든 나머지 파일 하나하나를 읽어 들여 라인을 세는 방식이었습니다. 예를 들면, 
 
@@ -66,7 +66,7 @@ int main() {
 }
 ```
 
-오래 전에 작성한 코드라 기억이 가물가물 하군요. 일단 path.txt를 열어둡니다. 그리고 라인을 하나씩 읽어서 [주소][파일명]을 문자열 형식으로 std::vector<string> 형 변수 pathList_에 추가하고 있네요.
+오래 전에 작성한 코드라 기억이 가물가물 합니다. 일단 path.txt를 열어둡니다. 그리고 라인을 하나씩 읽어서 [주소][파일명]을 문자열 형식으로 std::vector<string> 형 변수 pathList_에 추가하고 있네요.
 
 ```
 // Interface
@@ -106,7 +106,7 @@ for (auto itor_ = pathList_.begin(); itor_ != pathList_.end(); itor_++) {
 	}
 ```
 
-라인 하나씩 카운트하고 그냥 출력해줍니다. csv 형식으로 저장도 하네요. 저걸 돌려보면 
+라인 하나씩 카운트하고 그냥 출력해줍니다. csv 형식으로 저장도 합니다. 저걸 돌려보면 
 
 ![result](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-02.jpg)
 
@@ -115,24 +115,24 @@ for (auto itor_ = pathList_.begin(); itor_ != pathList_.end(); itor_++) {
 
 그런데, 파일 개수가 딱 봐도 너무 많습니다. 그리고 진행 중인 프로젝트인데 수시로 파일 명이 바뀌고, 추가되고, 삭제되고 하지요. 이건 딱 이정도로만 사용하는 게 적당한 것 같습니다. 지금 보니 너무 급히 짜서 어디 재사용할 수도 없는 코드네요.
 
-반 년정도가 지난 지금, 다른 이유로 갑자기 라인 카운터가 필요해졌는데, 그 사이 프로젝트 버전(폴더)라던지 파일 개수라던지, 이름이라던지 너무 많이 바뀌었습니다. path.txt에 작성할 수도 있겠지만 그건 너무 노가다 작업이지요. 게다가 그러기 위해서는 모든 폴더, 모든 파일의 경로와 이름을 작성해야 합니다. 경로나 이름의 철자가 하나라도 틀리면 파일은 읽을 수 없으니 체크도 해 줘야 겠지요. 
+반 년정도가 지난 지금, 다른 이유로 갑자기 라인 카운터가 필요해졌는데, 그 사이 프로젝트 버전(폴더)라던지 파일 개수라던지, 이름이라던지 너무 많이 바뀌었습니다. path.txt에 작성할 수도 있겠지만 그건 너무 노가다 작업입니다. 게다가 그러기 위해서는 모든 폴더, 모든 파일의 경로와 이름을 작성해야 합니다. 경로나 이름의 철자가 하나라도 틀리면 파일은 읽을 수 없으니 체크도 해 줘야 합니다.
 
 ----------------------------------------------------------------------
 
-아무리 생각해도 이건 아닌 것 같습니다. 때 마침 새로운 컴파일러를 얻었으니 이걸 한번 사용해보도록 하지요. 프로그램 목적은 아래와 같이 짜 보고 싶습니다.
+아무리 생각해도 이건 아닌 것 같습니다. 때 마침 새로운 컴파일러를 얻었으니 이걸 한번 사용해보도록 하겠습니다. 프로그램 목적은 아래와 같이 짜 보고 싶습니다.
 
 1. 폴더 명을 지정했을 때, **하위 폴더에 있는 모든 파일**을 보고 싶다.
 2. 모든 파일을 읽을 필요는 없다. 라이브러리 파일 등은 제외해야 하니까. **내가 작성한 소스만 골라** 라인 개수를 세고 싶다.
 
 작년의 조잡한 라인 카운터를 제작할 당시는 1번 이유 때문에 포기했습니다. 일단 컴파일러 버전이 낮아 C++11도 제대로 지원하지 않았기 때문입니다. 첨부한 이미지는 Visual Studio(이하 VS) 2013 버전이지만 일부 라이브러리 문제 때문에 VS Platform Tool은 2010 버전을 사용했었습니다. 즉, 그나마 있던 2013도 에디터로만 이용될 뿐이었습니다. 
 
-기존에 가지고 있던 컴파일러로 1번 관련 작업을 하기 위해서는 WinAPI를 알아야 했습니다. 그 외에 딱히 떠오르는 방법이 없더군요. WinAPI를 공부하면 되지 않느냐? 작은 집을 짓는데 콘크리트 기둥부터 세우는 격이죠. 시간 대비 결과가 뻔했습니다. 필요한 것만 뽑아 쓰면 되지 않느냐? 당시 맡고 있던 프로젝트를 빨리 진행해야 했기에 잠시 짬 날때 할 수 있는 일이 아니죠.
+기존에 가지고 있던 컴파일러로 1번 관련 작업을 하기 위해서는 WinAPI를 알아야 했습니다. 그 외에 딱히 떠오르는 방법이 없었습니다. WinAPI를 공부하면 되지 않느냐? 작은 집을 짓는데 콘크리트 기둥부터 세우는 격입니다. 시간 대비 결과가 뻔했습니다. 필요한 것만 뽑아 쓰면 되지 않느냐? 당시 맡고 있던 프로젝트를 빨리 진행해야 했기에 잠시 짬 날때 할 수 있는 일이 아닙니다.
 
 C++17에는 공식적으로 filesystem 라이브러리가 추가되었습니다. 이 라이브러리는 boost 라이브러리에 있던 것인데, C++17에 와서야 공식적으로 포함되었습니다. 그때 가지고 있던 컴파일러는 C++11 일부까지만 지원했기 때문에 음, 불가능. 
 
 ![vs2017](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-03.jpg)
 
-음, 새로운 컴파일러군요. VS2017 Professional입니다. 얼마 전 우연히 얻게 되었습니다. 그러면 filesystem 라이브러리가 있고, 맡고 있는 프로젝트도 얼추 마무리 단계에 들어갔으니 여유 있을 때 조잡한 라인 카운터를 한번 개선해보도록 하지요.
+음, 새로운 컴파일러입니다. VS2017 Professional입니다. 얼마 전 우연히 얻게 되었습니다. 그러면 filesystem 라이브러리가 있고, 맡고 있는 프로젝트도 얼추 마무리 단계에 들어갔으니 여유 있을 때 조잡한 라인 카운터를 한번 개선해보도록 하겠습니다.
 
 ----------------------------------------------------------------------
 
@@ -154,15 +154,15 @@ filesystem 헤더 안에 정의되고 네임스페이스는 filesystem 이랍니
 
 ![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-07.jpg)
 
-에러가 뜹니다!! 이상하네요. 분명히 filesystem 네임스페이스 안에 정의되어 있다고 공식 레퍼런스에도 써 있건만. 어쩔 수 없으니 헤더를 열어 봅시다. 
+에러가 뜹니다!! 이상합니다. 분명히 filesystem 네임스페이스 안에 정의되어 있다고 공식 레퍼런스에도 써 있건만. 어쩔 수 없으니 헤더를 열어 봅시다. 
 
 ![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-08.jpg)
 
-엥? C++17인데 experimental 이라고?? 믿을 수가 없군요. 샘플로 다른 문서도 열어봅시다. C++17에서 지원하는 것 라이브러리 다른 것들도 열어 보죠 뭐. <variant>, <any>, <optional>을 추가 해보면,
+엥? C++17인데 experimental 이라고?? 믿을 수가 없습니다. 샘플로 다른 문서도 열어봅시다. C++17에서 지원하는 것 라이브러리 다른 것들도 열어 보죠 뭐. <variant>, <any>, <optional>을 추가 해보면,
 
 ![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-09.jpg)
 
-filesystem만 문제가 있습니다. 윈도우라 표준을 따르지 않는다, 실험적이므로 알아서 잘 써라 이런 건가 보네요. 어쨌든 저는 요 놈이 필요하니 쓰려면 어쩔 수 없습니다. 
+filesystem만 문제가 있습니다. 윈도우라 표준을 따르지 않는다, 실험적이므로 알아서 잘 써라 이런 건가 봅니다. 어쨌든 저는 요 놈이 필요하니 쓰려면 어쩔 수 없습니다. 
 
 ```cpp
 #include <filesystem> // experimental since C++17, VS2017
@@ -245,9 +245,9 @@ namespace _jcode {
          inline const std::string isError() {
 ```
 
-ExtensionFinder라는 클래스가 있군요. 제가 작성한겁니다. 여담이지만 간단한 프로그램이라도 저는 래핑 작업을 좋아합니다. 둘러 싸는 작업이죠. 이유는 묻지 마세요. 
+ExtensionFinder라는 클래스가 있습니다. 제가 작성한겁니다. 여담이지만 간단한 프로그램이라도 저는 래핑 작업을 좋아합니다. 둘러 싸는 작업입니다. 이유는 묻지 마세요. 
 
-ExtensonFinder를 보면 매크로로 뭐라뭐라 정의해 두었고 _jcode 라는 네임스페이스에 정의해 두었습니다. 딱 봐도 직관적이군요. RootDirName은 최상위 폴더 명, DirUnderRootList는 최상위 폴더 아래에 있는 폴더들의 리스트 일테고, TargetFileExtension은 조금 이따가 설명하도록 하지요. 
+ExtensonFinder를 보면 매크로로 뭐라뭐라 정의해 두었고 _jcode 라는 네임스페이스에 정의해 두었습니다. 딱 봐도 직관적입니다. RootDirName은 최상위 폴더 명, DirUnderRootList는 최상위 폴더 아래에 있는 폴더들의 리스트 일테고, TargetFileExtension은 조금 이따가 설명하도록 하겠습니다.
 
 
 ## 폴더 순회
@@ -285,11 +285,11 @@ showConsoleRootFolderFileList 함수는 단순히 출력만 하는 디버깅용 
 
 ![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-11.jpg)
 
-std::filesystem::directory_entry 요소를 순회하는 반복자네요. 그렇지만 하위 폴더에 있는 놈들은 순회하지 않는다고 합니다. 예를 들어, 
+std::filesystem::directory_entry 요소를 순회하는 반복자입니다. 그렇지만 하위 폴더에 있는 놈들은 순회하지 않는다고 합니다. 예를 들어, 
 
 ![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-12.jpg)
 
-그림과 같은 폴더가 있다고 합시다. E:\프로젝트\Line_Counter_ 라는 경로를 제시하면, directory_iterator는 E:\프로젝트\Line_Counter_ 바로 밑의 폴더를 훑습니다. 이를 출력하면 하위 폴더의 요소들이 폴더인지, 일반 파일인지 등을 구분하지 않고 말이죠. 분기 없이 단순히 
+그림과 같은 폴더가 있다고 합시다. E:\프로젝트\Line_Counter_ 라는 경로를 제시하면, directory_iterator는 E:\프로젝트\Line_Counter_ 바로 밑의 폴더를 훑습니다. 이를 출력하면 하위 폴더의 요소들이 폴더인지, 일반 파일인지 등을 구분하지 않고 말입니다. 분기 없이 단순히 
 
 ```cpp
 for(auto& file_name : fs::directory_iterator(RootDirName)) {
@@ -318,12 +318,12 @@ E:\프로젝트\Line_Counter_\Line_Counter_.v12.suo
 
 ![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-13.jpg)
 
-File type을 알 수 있는 is_ 시리즈가 있군요. 저는 이 놈이 폴더인지, 일반 파일인지 체크를 해야 하니, 
+File type을 알 수 있는 is_ 시리즈가 있습니다. 저는 이 놈이 폴더인지, 일반 파일인지 체크를 해야 하니, 
 
 
 ![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-14.jpg)
 
-std::filesystem::is_directory() 요 놈을 써 봅시다. 이 함수는 “Checks if the given file status or path corresponds to a directory.” 이네요. 디렉토리인지 아닌지 구분해 주는 놈입니다. 함수의 인자로 들어가는 std::filesystem::path 형은 std::string형와 변환이 가능합니다. 그러면 아까의 코드로 돌아가서, 
+std::filesystem::is_directory() 요 놈을 써 봅시다. 이 함수는 “Checks if the given file status or path corresponds to a directory.” 입니다. 디렉토리인지 아닌지 구분해 주는 놈입니다. 함수의 인자로 들어가는 std::filesystem::path 형은 std::string형와 변환이 가능합니다. 그러면 아까의 코드로 돌아가서, 
 
 
 ```cpp
@@ -337,9 +337,9 @@ else if (fs::is_directory(file_name))
 	; // should be filtered at showConsoleRootFolderFileList() function.
 ```
 
-요로코롬 분기 해 주면 되겠네요. 많은 옵션이 있지만, 파일과 폴더(디렉토리)만 구분되면 되기 때문에 일차적으로 걸러 줍니다. 
+요로코롬 분기 해 주면 됩니다. 많은 옵션이 있지만, 파일과 폴더(디렉토리)만 구분되면 되기 때문에 일차적으로 걸러 줍니다. 
 
-폴더와 파일을 구분하는 법을 알았습니다. 그러면 폴더 내에 하위 폴더, 그리고 파일들이 있을 테니, 일단 폴더들의 절대 경로만 우선적으로 뽑아내야죠. 무식한 이중 for문을 씁시다. 그러면, 
+폴더와 파일을 구분하는 법을 알았습니다. 그러면 폴더 내에 하위 폴더, 그리고 파일들이 있을 테니, 일단 폴더들의 절대 경로만 우선적으로 뽑아내야 합니다. 무식한 이중 for문을 씁시다. 그러면, 
  
 ```cpp
 void _jcode::ExtensionFinder::findUnderRootDirAddr() {
@@ -367,14 +367,14 @@ CONSOLE_OUT_SYSTEM("ExtensonFinder::findUnderRootDirAddr()");
 
 std::list 형식의 DirUnderRootList에 **폴더의 절대경로**만 계속적으로 밀어 넣습니다. std::filesystem::directory_iterator는 const path& 형식을 반환합니다. 따라서 이는 일반 std::string형으로 변환되지 않으므로 dir_name.path().string()으로 변환하여 구겨 넣습니다. 
 
-여기까지 제가 설정한 최상위 폴더 안에 있는 모든 폴더의 절대경로를 뽑았습니다. 여기서 끝나면 안됩니다. 하위 폴더의 모든 소스 파일을 열어 라인을 세는 것이 목적이므로 이번에는 각 폴더 안의 파일의 절대경로를 뽑습니다. 방식은 동일합니다. 단지 is_regular_file() 함수로 걸러주면 되겠죠. 
+여기까지 제가 설정한 최상위 폴더 안에 있는 모든 폴더의 절대경로를 뽑았습니다. 여기서 끝나면 안됩니다. 하위 폴더의 모든 소스 파일을 열어 라인을 세는 것이 목적이므로 이번에는 각 폴더 안의 파일의 절대경로를 뽑습니다. 방식은 동일합니다. 단지 is_regular_file() 함수로 걸러주면 될 겁니다.
 
 
 ## 확장자 구분
 
-하기 전에, 저는 소스파일만 보고 싶습니다. 소스 파일이라는게 다 좋은데, 형식이 많죠. 자바스크립트 파일, C++ 소스, 헤더, CSS, JSP, 자바 등등등... 이 놈들을 개발자들은 확장자로 구분합니다. 즉, 선택적으로 확장자를 뽑아 그 파일만 열어 읽어주면 됩니다. 
+하기 전에, 저는 소스파일만 보고 싶습니다. 소스 파일이라는게 다 좋은데, 형식이 많습니다. 자바스크립트 파일, C++ 소스, 헤더, CSS, JSP, 자바 등등등... 이 놈들을 개발자들은 확장자로 구분합니다. 즉, 선택적으로 확장자를 뽑아 그 파일만 열어 읽어주면 됩니다. 
 
-간단하네요. 확장자를 문자열로 받고, 파싱. 파일의 절대경로를 뽑는 법은 알고 있으니 리스트의 확장자가 맡는지 비교해 주면 되겠죠. 일단 비교구문입니다. 
+간단합니다. 확장자를 문자열로 받고, 파싱. 파일의 절대경로를 뽑는 법은 알고 있으니 리스트의 확장자가 맡는지 비교해 주면 됩니다. 일단 비교구문입니다. 
 
 ```cpp
 bool _jcode::ExtensionFinder::isTargetExtension(const std::string& argAddr)
@@ -384,7 +384,7 @@ bool _jcode::ExtensionFinder::isTargetExtension(const std::string& argAddr)
 
 너무너무 간단한 코드이니 설명은 생략합니다.
 
-우리는 확장자의 목록을 한 줄로 입력받을 겁니다. 스페이스 바 기준으로 단어를 뽀개서 std::vector에다 넣읍시다. 간단하네요.
+우리는 확장자의 목록을 한 줄로 입력받을 겁니다. 스페이스 바 기준으로 단어를 뽀개서 std::vector에다 넣읍시다. 간단합니다.
 
 ```cpp
 void _jcode::ExtensionFinder::setFileTargetExtension(const char* argExtensionStr) {
@@ -410,7 +410,7 @@ void _jcode::ExtensionFinder::setFileTargetExtension(const char* argExtensionStr
 
 여기서 TargetFileExtension은 우리가 선택할 확장자가 문자열로 들어갈 std::vector<std::string>형 멤버 변수입니다. std::istringstream으로 뽁뽁뽁 밀어주면서 분리시키면 됩니다. 
 
-그러면 거의 다 되어 가는군요. 이제 비교해야죠??
+그러면 거의 다 되어 갑니다 이제 비교하면,
 
 ```cpp
 // getFileAddressListExtensionOf
@@ -445,12 +445,12 @@ std::vector<std::vector<std::string>> _jcode::ExtensionFinder::getFileAddrListEx
 };
 ```
 
-아까 작성해 두었던 폴더 명의 리스트가 있었지요. 그 리스트를 돌면서 선택한 확장자와 비교하고, is_directory로 폴더인지 구분하여 파일의 절대경로를 2차원 vector 형식으로 저장합니다. 물론, directory_iterator() 가 쓰였으니 당연히 path().string()으로 push_back() 해 주어야 겠지요. 
+아까 작성해 두었던 폴더 명의 리스트가 있었습니다. 그 리스트를 돌면서 선택한 확장자와 비교하고, is_directory로 폴더인지 구분하여 파일의 절대경로를 2차원 vector 형식으로 저장합니다. 물론, directory_iterator() 가 쓰였으니 당연히 path().string()으로 push_back() 해 주어야 합니다. 
 
 
 ## 라인 카운팅
 
-제가 디자인한 ExtensionFinder 클래스의 최종 목표는 여기까지입니다. getFileAddrListExtension 함수가 메인이라고 할 수 있겠네요. 파일의 절대경로를 2차원 vector 형식으로 저장했으니, 이 목록의 파일을 열어서, 읽어주면 끝이군요!! 읽는건 간단하니 설명 없이 코드만 보겠습니다.
+제가 디자인한 ExtensionFinder 클래스의 최종 목표는 여기까지입니다. getFileAddrListExtension 함수가 메인이라고 할 수 있겠습니다. 파일의 절대경로를 2차원 vector 형식으로 저장했으니, 이 목록의 파일을 열어서, 읽어주면 끝이군요!! 읽는건 간단하니 설명 없이 코드만 보겠습니다.
 
 ```cpp
 long long _jcode::CounterAdv::countListOf(const std::vector<std::vector<std::string>>& argAddrList) {
@@ -478,7 +478,7 @@ long long _jcode::CounterAdv::countListOf(const std::vector<std::vector<std::str
 
 ## 실행해보자!
 
-요약 하자면, 초기 라인 카운터와는 다르게, path.txt를 직접 작성하는 역할을 ExtensionFinder 클래스가 담당하고 있는 구조입니다. 최상위 폴더만 지정하면 아래 폴더를 순회하며 읽어들이죠. filesystem 라이브러리도 쓸만 하네요.
+요약 하자면, 초기 라인 카운터와는 다르게, path.txt를 직접 작성하는 역할을 ExtensionFinder 클래스가 담당하고 있는 구조입니다. 최상위 폴더만 지정하면 아래 폴더를 순회하며 읽어들입니다. filesystem 라이브러리도 쓸만 합니다.
 
 실험해 봅시다. C:\Users\Administrator\Desktop\[ERITER]WRS_Sys\source\final\WRS_Sys 을 최상위 폴더로 지정하고, .xml 확장자만 뽑아 라인 카운팅 하면, 
 
@@ -486,7 +486,7 @@ long long _jcode::CounterAdv::countListOf(const std::vector<std::vector<std::str
 
 ![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-16.jpg)
 
-음!! 잘 되네요. 
+음!! 잘 됩니다!
 
 
 > 필자는 공군 작전정보통신단 체계개발실에서 복무('17~'19)하였습니다. 이 포스트는 작전정보통신단 병사 **프로그래밍 동아리(LINK)** 에서의 활동을 바탕으로 작성한 내용입니다.
