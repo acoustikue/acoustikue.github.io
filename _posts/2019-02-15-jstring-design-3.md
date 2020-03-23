@@ -2,7 +2,7 @@
 layout: post
 title:  "JString Design[3]"
 date:   2019-02-15 09:00:00
-categories: LINK(OICW)
+categories: C/C++
 permalink: /archivers/Jstring_Design_3
 ---
 

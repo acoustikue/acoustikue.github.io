@@ -2,7 +2,7 @@
 layout: post
 title:  "Introduction to Concurrency(Part 1)"
 date:   2019-03-20 09:00:00
-categories: LINK(OICW)
+categories: C/C++
 permalink: /archivers/concurrency_introduction_part_1
 ---
 
