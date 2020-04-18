@@ -231,7 +231,7 @@ module exp_port3 ({a, b}, .c(d))
 
 예를 들어, 
 
-```v
+```verilog
 input a1, a2, en; // 3개의 스칼라 1 비트 포트
 input signed [7:0] a, b; // 2개의 8비트 signed 값을 갖는 포트
 output reg signed [16:0] res; // 데이터형과 signed 속성을 갖는 포트
