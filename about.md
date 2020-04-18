@@ -13,7 +13,7 @@ permalink: /about/
 
 ### Education
 
-- 전기전자공학 전공
+- 연세대학교 전기전자공학부
 
 ### Experience
 
