@@ -41,7 +41,7 @@ Verilog 어휘 규칙은 다음을 따릅니다.
 
 예를 들어 유효한 식별자는 아래와 같습니다.
 
-```v
+```verilog
 shiftreg_a
 busa_index
 error_condition
@@ -50,7 +50,7 @@ _bus3
 n$657
 ```
 
-```v
+```verilog
 // 확장 식별자
 \busa+index
 \-clock
@@ -106,7 +106,7 @@ floating-point number)
 
 실수형 수의 표현 예시는 아래와 같습니다.
 
-```v
+```verilog
 0.5
 679.00123
 3e4
@@ -123,14 +123,14 @@ floating-point number)
 
 다음은 string을 저장 및 출력하는 코드 입니다.
 
-```v
+```verilog
 reg [8*18:1] str1;
 initial begin
 	str1 = "Hello Verilog HDL!";
 end
 ```
 
-```v
+```verilog
 module str_test;
 reg [8*10:1] str1;
 
@@ -151,7 +151,7 @@ Verilog 에서 module은 설계의 기본 단위가 됩니다. 큰 틀에서 아
 
 
 
-```v
+```verilog
 module module_name (port_list);
 	port 선언;
 	reg 선언;
@@ -169,13 +169,13 @@ endmodule
 
 모듈 내의 연결 방법은 다음과 같이 암시적 내부 연결(Implicit Internal Connection)과 명시적 내부 연결(Explicit Internal Connection)이 있습니다. 
 
-```v
+```verilog
 module module_name (port_name, port_name, ... );
 	module_items
 endmodule
 ```
 
-```v
+```verilog
 module module_name (
 	.port_name (signal_name ),
 	.port_name (signal_name ), ... );
@@ -186,7 +186,7 @@ endmodule
 
 다음의 예제를 보면 직관적으로 이해할 수 있습니다.
 
-```v
+```verilog
 module ex1 ( a1, b1, out1);
 	input [3:0] a1, b1;
 	output out1;
@@ -194,7 +194,7 @@ module ex1 ( a1, b1, out1);
 endmodule
 ```
 
-```v
+```verilog
 // 2 input MUX with 2 bit widths
 module ex2 (input wire [1:0] i0, i1, 
 	input wire sel, 
@@ -207,7 +207,7 @@ module ex2 (input wire [1:0] i0, i1,
 endmodule
 ```
 
-```v
+```verilog
 module exp_port1 (.a(n1), .b(n2) );
 // n1, n2는 모듈 내부에서 선언
 // a, b는 포트연결로 정의
