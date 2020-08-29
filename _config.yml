@@ -1,7 +1,7 @@
 # Site settings
-title: "namespace acoustikue"
-title_show: "namespace acoustikue { }"
-url: "https://dev-acoustikue.github.io"
+title: "namespace acoustikue {}"
+title_show: "namespace acoustikue {}"
+url: "https://acoustikue.github.io"
 baseurl: "" 
 description: >
   An experience-hungry engineer dreamer.
@@ -10,7 +10,7 @@ description: >
 email: acoustikue@yonsei.ac.kr # modded by acoustikue
 author: acoustikue
 avatar: "/assets/profile_mod.png"
-profile: An experience-hungry engineer dreamer.
+profile: An engineer dreamer.
 #twitter_username: twitter_username
 #github_username:  dev-acoustikue
 
@@ -19,7 +19,7 @@ logo: "/assets/logo_mod.png"
 
 profile_links:
   Email: "mailto:acoustikue@yonsei.ac.kr"
-  GitHub: "https://github.com/dev-acoustikue"
+  GitHub: "https://github.com/acoustikue"
   # You can add more profile links above, or edit _includes/sidebar.html 
 
 # Comment Service (Disqus)
