@@ -1,10 +1,10 @@
 # Site settings
-title: "namespace acoustikue { }"
-title_show: "namespace acoustikue { }"
+title: "namespace acoustikue"
+title_show: "namespace acoustikue"
 url: "https://acoustikue.github.io"
 baseurl: "" 
 description: >
-  An experience-hungry engineer dreamer.
+  An engineer dreamer.
 
 # modded by acoustikue
 email: acoustikue@yonsei.ac.kr # modded by acoustikue
@@ -31,6 +31,7 @@ excerpt_separator: <!--more-->
 header:
   links:             # Links on the header. Link to in-site page with a slash as prefix
     About: /about/
+    CV: /assets/posts/cv_sukjoon_oh.pdf
     Archiver: /archivers/
     # modded by acoustikue
 
