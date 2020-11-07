@@ -8,6 +8,7 @@
 			font-size:30px;
         	font-weight: bold;
         	margin: 0 -100px;
+            color: #4f5d75;
         	@include media-query($on-palm) {
 				font-size: 30px;
         		/* font-size: 34px; // original, modded by acoustikue */
