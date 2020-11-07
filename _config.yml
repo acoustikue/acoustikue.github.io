@@ -31,7 +31,7 @@ excerpt_separator: <!--more-->
 header:
   links:             # Links on the header. Link to in-site page with a slash as prefix
     About: /about/
-    CV: /assets/posts/cv_sukjoon_oh.pdf
+    CV: /assets/cv_sukjoon_oh.pdf
     Archiver: /archivers/
     # modded by acoustikue
 
