@@ -2,7 +2,7 @@
 layout: post
 title:  "XV6 Scheduler Assignment Guide"
 date:   2020-12-17 09:00:00
-categories: Python
+categories: EEE
 permalink: /archivers/xv6-scheduler-assign-guide
 nocomments: true
 use_math: true 
