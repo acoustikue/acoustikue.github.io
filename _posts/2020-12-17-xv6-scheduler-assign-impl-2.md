@@ -216,9 +216,15 @@ struct proc* dequeue(_queue* q) {
 }
 ```
 
-여기서 is_empty()는 queue가 비었는지 검사하는 함수입니다. 비었다면 1을 반환하기 때문에 미리 오류를 방지하도록 작성했습니다. 이 외에도 Queue 상태를 확인하도록 하는 함수들을 미리 만들어둡니다.
+여기서 is_empty()는 queue가 비었는지 검사하는 함수입니다. 비었다면 1을 반환하기 때문에 미리 오류를 방지하도록 작성했습니다. 이 외에도 Queue 상태를 확인하도록 하는 함수들을 미리 만들어둡니다. color 함수와 uncolor 함수는 이 프로세스가 현재 어느 Queue에 존재하는지 기록/해제하는 함수입니다. 단순히 p_id를 수정해주면 되겠죠. ground 함수는 각 포인터를 0으로 초기화해줍니다.
 
-## To new scheduler!
+```cpp
+int color(struct proc* p, int id) {  p->p_id = id; return id; }
+int uncolor(struct proc* p) {  p->p_id = UD; return UD; }
+int ground(struct proc* p) { p->p_next = p->p_prev = 0; return 0;}
+```
+
+## allocproc()
 
 다시 한 번 상기하자면, 목적은 scheduler() 함수를 교체하는 것입니다. 이전 포스트에서 보았듯, for 문을 돌면서 Round Robin 형태로 프로세스를 순차적으로 CPU에 제공하는 것을 볼 수 있습니다.
 
@@ -285,7 +291,90 @@ xv6를 다루다 보면 예상하지 못한 곳에서 panic이 일어나는 경�
 혹시 모를 경우를 대비해 enqueue도 acquire과 release 사이에 위치시켰습니다.
 
 
+## freeproc()
 
+프로세스가 종료되는 경우 *freeproc()* 함수가 호출됩니다. 여기에서 새로운 함수가 필요한데, 현재 프로세스가 위치해 있는 Queue로 부터 자기 자신을 제거하는 remove 기능입니다. 물론 Queue의 구조 자체가 FIFO 형태이지만 MLFQ에서는 추가적으로 Queue 중간 요소에 대해 제거를 담당하는 기능도 필요합니다. Queue 사이에서는 Round Robin 형태로 돌아가면서 CPU 를 점유하기 때문입니다. 먼저 다 실행해버린 프로세스는 그때 그때 제거해야하죠.
 
+Linked List 이기 때문에 remove는 별 다른 방법이 없습니다. 순차적으로 순회하면서 해당 프로세스를 찾아 제거해야합니다. 
+
+```cpp
+// This function removes a specific element from queue.
+// It is necessary operation, since a process located in the middle of the queue
+// might be freed early. It is not desirable to hold a dead process information
+// in q1 or q2, so it should be removed.
+struct proc* remove(_queue* q, struct proc* tp) { 
+  struct proc* np = q->q_head;
+  // search
+  if (is_empty(q)) { return 0; } // case when empty
+  while (np != tp && np != 0) np = np->p_next; // search for target
+  if (np == 0) { return 0; } // not found
+
+  if (q->q_cnt == 1) { q->q_head = q->q_tail = 0; }
+  else {
+    if (np->p_prev != 0) np->p_prev->p_next = np->p_next;  // not in front
+    if (np->p_next != 0) np->p_next->p_prev = np->p_prev;  // not in rear
+    if (np == q->q_head) q->q_head = np->p_next; 
+    if (np == q->q_tail) q->q_tail = np->p_prev; 
+  }
+
+  // Delete the information needed for queueing.
+  uncolor(np);
+  ground(np);
+
+  q->q_cnt--;
+  return np;
+}
+```
+
+process id로 찾는 것이 아닌 그 struct proc 자체의 주소가 동일한지 파악하는 것이 더 빠릅니다. while 구문에서 확인할 수 있듯이 next pointer로 이동하면서 동일한 주소값을 가지는지 보고 있습니다.
+
+```cpp
+// proc.c
+// free a proc structure and the data hanging from it,
+// including user pages.
+// p->lock must be held.
+static void
+freeproc(struct proc *p)
+{
+#ifdef SUKJOON
+#define RATIO(X) 100 * X / (p->p_ticks[Q2] + p->p_ticks[Q1] + p->p_ticks[Q0])
+  
+  printf("%s (pid=%d): Q2(%d%%), Q1(%d%%), Q0(%d%%)\n",
+         p->name, p->pid, 
+         RATIO(p->p_ticks[Q2]), RATIO(p->p_ticks[Q1]), RATIO(p->p_ticks[Q0]));
+
+  p->p_ticks[Q2] = p->p_ticks[Q1] = p->p_ticks[Q0] = 0;
+  p->p_stp = 0;
+  p->p_intr = 0;
+
+  if (p->state == ZOMBIE) {
+    if (is_q2(p)) remove(&q2, p);
+    else if (is_q1(p)) remove(&q1, p);
+    else if (is_q0(p)) remove(&q0, p);
+  }
+#else
+  // Print out the runtime stats of queue occupancy.
+  printf("%s (pid=%d): Q2(%d%%), Q1(%d%%), Q0(%d%%)\n",
+         p->name, p->pid, 0, 0, 0);
+#endif
+
+  if(p->trapframe)
+    kfree((void*)p->trapframe);
+  p->trapframe = 0;
+  if(p->pagetable)
+    proc_freepagetable(p->pagetable, p->sz);
+  p->pagetable = 0;
+  p->sz = 0;
+  p->pid = 0;
+  p->parent = 0;
+  p->name[0] = 0;
+  p->chan = 0;
+  p->killed = 0;
+  p->xstate = 0;
+  p->state = UNUSED;
+}
+```
+
+*freeproc()*에서는 우선 ZOMBIE 상태인 경우에만 Queue에서 제거시킵니다. UNUSED나 그외의 경우는 *scheduler()* 함수 안에서 한번에 처리하도록 합니다.
 
 (작성중)
