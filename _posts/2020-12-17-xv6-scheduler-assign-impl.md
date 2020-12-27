@@ -20,7 +20,7 @@ xv6는 RISC-V 프로세서를 기반으로 한 연습용 운영체체(OS)입니�
 
 이 과제는 xv6의 스케줄러를 MLFQ 형태로 교체하는 것에 목적을 두고 있습니다. 본래 xv6는 Round Robin으로 프로세스를 관리합니다. Round Robin이란 순차적으로 돌아가면서 CPU를 점유할 기회를 주는 방법을 말합니다. 이에 대한 구현을 간단히 살펴보죠.
 
-```C
+```cpp
 // proc.c
 #include "types.h"
 #include "param.h"
@@ -37,7 +37,7 @@ struct proc proc[NPROC]; // 요놈
 
 *proc.c* 파일의 최상단에 proc 이라는 이름의 구조체가 선언되어 있음을 볼 수 있습니다. proc 구조체는 하나의 프로세스를 나타내는 구조체라고 생각하면 편합니다. proc 구조체는 *proc.h* 헤더에 아래와 같이 선언되어 있습니다. 
 
-```C
+```cpp
 // Per-process state
 struct proc {
   struct spinlock lock;
@@ -66,7 +66,7 @@ struct proc {
 
 열겨형(enum)으로 선언되어 있는 저 *procstate*는 아래와 같이 정의됩니다.
 
-```C
+```cpp
 enum procstate { UNUSED, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 ```
 
@@ -74,7 +74,7 @@ enum procstate { UNUSED, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
 앞서 말했듯이 xv6는 Round Robin 형태로 프로세스를 관리합니다. 이를 구현하기 위해 앞서 언급한 proc 구조체가 필요한 것이죠. NPROC은 xv6가 최대로 관리할 수 있는 프로세스의 수를 의미하며 default로 64로 선언되어 있습니다. 이는 *param.h* 에서 확인할 수 있지요.
 
-```C
+```cpp
 // param.h
 #define NPROC        64  // maximum number of processes
 #define NCPU          8  // maximum number of CPUs
@@ -93,7 +93,7 @@ enum procstate { UNUSED, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
 그러면 xv6 커널에서 부팅과 함께 프로세스를 어떻게 시작하는지 한번 보겠습니다. 우선 커널도 하나의 프로그램이니 시작점을 찾아 검색해봅시다. main 함수는 *main.c* 파일 안에 존재합니다. 총 30줄 정도 되는 짧은 코드를 볼 수 있습니다.
 
-```C
+```cpp
 // main.c
 
 #include "types.h"
@@ -147,7 +147,7 @@ main()
 
 교수님께서 과제 출제를 위해 추가한 몇 가지의 소스는 무시하고, 우선 저의 관심사는 프로세스의 관리, 구조체 proc 리스트의 관리입니다. 우선 시작점에서 page table initializing, trap vector initializing 등은 알아서 하겠거니 제쳐두고 *procinit()* 함수가 가장 눈에 띕니다. 여기서는 proc 리스트를 proc table 이라 부르고 있습니다.
 
-```C
+```cpp
 // initialize the proc table at boot time.
 void
 procinit(void)
@@ -177,7 +177,7 @@ xv6에서 몇몇 함수들은 어셈블리어로 작성되어 있기 때문에 �
 
 모든 함수 호출이 끝나면 main 함수의 마지막에 *scheduler()* 를 호출합니다. scheduler 함수는 *proc.c* 안에서 찾을 수 있습니다. 
 
-```C
+```cpp
 void
 scheduler(void)
 {
@@ -253,7 +253,7 @@ swtch:
 
 뭔가 장황하게 어셈블리어로 작성되어 있습니다. swtch() 함수는 context switch를 담당하는 함수로, 프로세스 정보를 CPU에게 던집니다. 
 
-```C
+```cpp
 swtch(&c->context, &p->context);
 ```
 
@@ -263,4 +263,4 @@ swtch(&c->context, &p->context);
 
 조건을 맞추기 위한 timer 및 syscall은 다음 포스트에서 계속 다루겠습니다.
 
-[XV6 Scheduler Assignment Implementation 1](https://acoustikue.github.io/archivers/xv6-scheduler-assign-impl-2)
+[계속: XV6 Scheduler Assignment Implementation 2](https://acoustikue.github.io/archivers/xv6-scheduler-assign-impl-2)
