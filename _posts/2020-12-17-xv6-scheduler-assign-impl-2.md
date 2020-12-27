@@ -101,7 +101,7 @@ typedef struct __queue {
 별 내용은 없습니다. q_id는 각 Queue의 레벨을 나타내는 확인용 변수이고, q_cnt는 queue 안에 몇 개의 요소를 가지고 있는지 카운트하는 변수입니다.
 
 
-## To New Scheduler!
+## 함수 준비
 
 이 정도면 간단히 새로운 스케줄러를 구성하는 데는 충분합니다. 나머지는 구현하면서 추가하도록 합시다. 
 
@@ -169,5 +169,123 @@ procinit(void)
 #define Q1    1
 #define Q0    0
 ```
+
+그리고 미리 enqueue와 dequeue 작업을 할 수 있도록 함수를 만들어주죠. 간단히 q_head와 q_tail, 그리고 각 프로세스안의 포인터 변수를 서로 연결해주는 작업입니다.
+
+```cpp
+// Queue controls
+// 
+int is_empty(_queue* q) { return (q->q_cnt == 0); } 
+
+struct proc* get_head(_queue* q) { return q->q_head; }
+struct proc* get_tail(_queue* q) { return q->q_tail; }
+int get_cnt(_queue* q) { return q->q_cnt; }
+
+// Simple enqueueing function.
+struct proc* enqueue(_queue* q, struct proc* p) {
+  color(p, q->q_id); // color it first
+  
+  if (is_empty(q)) { ground(p); q->q_head = q->q_tail = p; }
+  else {
+    q->q_tail->p_next = p;
+    p->p_prev = q->q_tail;
+    p->p_next = 0;
+    q->q_tail = p;
+  }
+
+  q->q_cnt++;  
+  return p;
+}
+
+// Simple dequeueing function.
+struct proc* dequeue(_queue* q) {
+  struct proc* p = q->q_head;
+  if (is_empty(q)) return 0;
+
+  // When single element exists
+  if (q->q_cnt == 1) q->q_head = q->q_tail = 0;
+  else {
+    q->q_head = p->p_next;
+    q->q_head->p_prev = 0;
+  }
+  uncolor(p); // remove color
+  ground(p);
+
+  q->q_cnt--;
+  return p;
+}
+```
+
+여기서 is_empty()는 queue가 비었는지 검사하는 함수입니다. 비었다면 1을 반환하기 때문에 미리 오류를 방지하도록 작성했습니다. 이 외에도 Queue 상태를 확인하도록 하는 함수들을 미리 만들어둡니다.
+
+## To new scheduler!
+
+다시 한 번 상기하자면, 목적은 scheduler() 함수를 교체하는 것입니다. 이전 포스트에서 보았듯, for 문을 돌면서 Round Robin 형태로 프로세스를 순차적으로 CPU에 제공하는 것을 볼 수 있습니다.
+
+이 과제에서 요구하는 MLFQ에서는 프로세스가 제일 처음 만들어질 경우 가장 interactive 한 Queue, 즉 Q2에 먼저 집어넣도록 요구합니다. 따라서 프로세스가 생성되는 코드를 찾아 Q2에 밀어넣도록 합시다.
+
+```cpp
+// Look in the process table for an UNUSED proc.
+// If found, initialize state required to run in the kernel,
+// and return with p->lock held.
+// If there are no free procs, or a memory allocation fails, return 0.
+static struct proc*
+allocproc(void)
+{
+  struct proc *p;
+
+  for(p = proc; p < &proc[NPROC]; p++) {
+    acquire(&p->lock);
+    if(p->state == UNUSED) {
+      goto found;
+    } else {
+      release(&p->lock);
+    }
+  }
+  return 0;
+
+found:
+  p->pid = allocpid();
+
+#ifdef SUKJOON
+  enqueue(&q2, p);
+  p->p_ticks[Q2] = p->p_ticks[Q1] = p->p_ticks[Q0] = 0;
+  p->p_stp = ticks;
+  p->p_intr = 0;
+#endif
+
+  // Allocate a trapframe page.
+  if((p->trapframe = (struct trapframe *)kalloc()) == 0){
+    release(&p->lock);
+    return 0;
+  }
+
+  // An empty user page table.
+  p->pagetable = proc_pagetable(p);
+  if(p->pagetable == 0){
+    freeproc(p);
+    release(&p->lock);
+    return 0;
+  }
+
+  // Set up new context to start executing at forkret,
+  // which returns to user space.
+  memset(&p->context, 0, sizeof(p->context));
+  p->context.ra = (uint64)forkret;
+  p->context.sp = p->kstack + PGSIZE;
+
+  return p;
+}
+```
+
+*allocproc()* 함수는 본래 UNUSED로 state되어 있는 struct proc을 proc table에서 찾아 프로세스를 할당합니다. 오랜 만에 goto 문을 볼 수 있네요. 여기서 프로세스가 만들어지므로 다른 건 볼 필요 없고, Q2에 넣어주는 작업만 하면 됩니다. 아까 작성한 enqueue 함수를 사용하도록 하죠. 
+
+xv6를 다루다 보면 예상하지 못한 곳에서 panic이 일어나는 경우가 잦습니다. 대부분의 경우 access하면 안되는 메모리에 접근한 경우입니다. enqueue 함수는 단순히 새로 만들어진 struct proc 의 주소만 queue에 기록하는 것이므로 별 다른 에러를 발생하지 않지만 proc의 내부 변수에 접근하는 경우는 신중해야 합니다. 따라서 이 경우 acquire과 release 함수를 적극 사용하는 것이 좋습니다.
+
+혹시 모를 경우를 대비해 enqueue도 acquire과 release 사이에 위치시켰습니다.
+
+
+
+
 
 (작성중)
