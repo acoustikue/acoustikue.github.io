@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "XV6 Scheduler Assignment Implementation 2"
-date:   2020-12-18 09:00:00
+date:   2020-12-18 13:00:00
 categories: EEE
 permalink: /archivers/xv6-scheduler-assign-impl-2
 nocomments: false
@@ -591,3 +591,97 @@ struct proc* run_this(struct proc* p) {
 
 *run_this()* 는 *rt*만 업데이트 할 뿐, priority boosting *pb*는 scheduler 함수 안에서 독립적으로 업데이트 됩니다. 
 
+
+## yield()
+
+*yield()* 함수는 CPU가 설정된 time slice 가 지나면 호출되는 함수 입니다. 원형을 보면 단순합니다. 현재 실행중인 proc의 정보를 가져오고 state를 RUNNABLE로 교체합니다. 앞서 보았던 *sched()* 함수는 scheduler 로 돌아가는 함수입니다. 
+
+```cpp
+// Give up the CPU for one scheduling round.
+void
+yield(void)
+{
+  struct proc *p = myproc();
+  acquire(&p->lock);
+  p->state = RUNNABLE;
+
+  sched();
+  release(&p->lock);
+}
+```
+
+이 과제에서 구현하는 MLFQ는 Q2에 process를 실행하는 경우 한 time slice를 모두 사용한다면 Q1으로 내려야 합니다. 그러기 위해서는 현재 실행중인 proc이 Q2에 있어야 합니다. 만일 Q1의 proc을 돌리고 있다면 SLEEP state로 변하지 않는 이상 그대로 Q1에 남아있으면 되기 때문에 건들지 않아도 됩니다. 하나의 if문으로 control이 가능합니다. 
+
+p_intr 변수는 조금 후에 설명하겠습니다.
+
+```cpp
+// Give up the CPU for one scheduling round.
+void
+yield(void)
+{
+  struct proc *p = myproc();
+  acquire(&p->lock);
+  p->state = RUNNABLE;
+
+#ifdef SUKJOON
+  if (is_q2(p) && p->p_intr == 0) __RE_MOVE___(p, &q2, &q1);
+  //if (is_q0(p)) __RE_MOVE___(p, &q0, &q1);
+  if (p->p_intr == 1) p->p_intr = 0;
+#endif
+
+  sched();
+  release(&p->lock);
+}
+```
+
+## interrupt: syscall()
+
+Interrupt가 걸린다는 이야기는 syscall 호출이 일어난다는 말입니다. Interrupt가 잦을 수록 (예: 사용자와의 상호 작용, 키보드를 누르는 행위) Interactive한 작업이 됩니다. Interactive한 작업은 Q2위에 두어서 먼저 처리해야 사용자가 delay를 거의 느낄 수 없겠죠. 따라서 Q0 또는 Q1에 있는 process 중 syscall을 호출하는 process는 Q2로 바로 옮겨두어야 합니다. 
+
+*syscall()* 함수는 *syscall.c* 파일에 정의되어 있습니다. 우선, 이제까지 작업한 변수나 함수의 원형은 *proc.c*에 정의되어 있으므로 extern으로 먼저 알려줍니다.
+
+```cpp
+// syscall.c
+extern _queue q2;
+extern _queue q1;
+extern _queue q0;
+
+extern int             is_q2(struct proc*);
+extern int             is_q1(struct proc*);
+extern int             is_q0(struct proc*);
+
+extern struct proc*    enqueue(_queue*, struct proc*);
+extern struct proc*    dequeue(_queue*);
+extern struct proc*    remove(_queue*, struct proc*);
+extern void            show_queue_status();
+extern int             record_tick(struct proc*, int); 
+```
+
+ 그리고 syscall 함수 중간에 옮겨주는 작업을 추가해 주면 완성입니다.
+
+ ```cpp
+void
+syscall(void)
+{
+  int num;
+  struct proc *p = myproc();
+
+  num = p->trapframe->a7;
+  if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
+    p->trapframe->a0 = syscalls[num]();
+  } else {
+    printf("%d %s: unknown sys call %d\n",
+            p->pid, p->name, num);
+    p->trapframe->a0 = -1;
+  }
+  
+#ifdef SUKJOON
+  acquire(&p->lock);
+  if (is_q2(p)) { }
+  if (is_q1(p)) { remove(&q1, p); enqueue(&q2, p); }
+  if (is_q0(p)) { remove(&q0, p); enqueue(&q2, p); }
+  p->p_intr = 1; // Mark that interrupt has been occurred.
+  release(&p->lock);
+#endif
+}
+ ```
