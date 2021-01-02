@@ -377,4 +377,217 @@ freeproc(struct proc *p)
 
 *freeproc()*에서는 우선 ZOMBIE 상태인 경우에만 Queue에서 제거시킵니다. UNUSED나 그외의 경우는 *scheduler()* 함수 안에서 한번에 처리하도록 합니다.
 
-(작성중)
+
+## scheduler()
+
+이제 본격적으로 *scheduler()* 함수를 재작성 해보겠습니다. 앞선 포스트에서 확인할 수 있듯이 kernel 프로그램 시작점 *main()*은 끝에 *scheduler()*를 호출하는 것으로 함수가 끝납니다. 외부 인터럽트, 또는 치명적인 오류(잘못된 메모리 접근 등등)가 있는 경우에는 *scheduler()* 함수가 멈추면서 프로그램이 종료됩니다. MLFQ도 이러한 조건을 일단 만족해주어야 합니다.
+
+```cpp
+void
+scheduler(void)
+{
+#ifdef SUKJOON
+  mlfq_like();
+#else
+}
+```
+
+헷갈리지 않게 *mlfq_like()* 함수를 별도로 만들어 작성해 보도록 하겠습니다. 
+
+
+### mlfq_like(): Q2와 Q1
+
+*mlfq_like()* 함수는 다행스럽게도 두 개의 Queue에 대해서만 요소 이동을 수행해주면 됩니다. 조건에서는 세 개의 Queue가 있지만 Q0는 SLEEP state의 process를 기록하는 용도이기 때문에 사실 Q0는 Queue 형태가 아니라도 상관없습니다. 오히려 SLEEP 상태에서 벗어나는 경우 그 process를 이동시켜야 하기 때문에 search operation을 하는 경우 리스트를 다 훓어야 하는 상황이 생길겁니다. 
+
+일단은 조건에 맞추어 Q0도 Queue 형태를 갖게끔 해 봅시다.
+
+
+```cpp
+void mlfq_like() {
+  struct proc *p;
+  struct proc* rt = get_head(&q2); // run this
+  struct proc* pb = get_head(&q1); // priority boost role (modified)
+  struct cpu *c = mycpu(); // cpu information
+  c->proc = 0;
+```
+
+세 개의 포인터 변수를 선언해 주겠습니다. struct proc* p는 기존 scheduler 함수와 동일하게 proc table을 순회하는 용도로 사용하는 변수입니다. struct proc* rt는 *run this* 약자로 다음 CPU에 넣어 줄 process를 가리키는 변수입니다. struct proc* pb는 priority boost의 약자로 Q1에서 머물고 있는 프로세스를 주기적으로 실행시키기 위한 변수입니다. 
+
+*main()*에서 첫 프로세스를 만들면 Q2에 올라가게 됩니다. 이는 당연한게, 앞서 *procinit()* 함수를 수정하면서 제일 먼저 Q2에 집어넣도록 만들어 두었기 때문입니다. 따라서 scheduler 함수에 처음 진입하게 되면 적어도 하나의 프로세스는 Q2에 올라가 있는 상태가 되므로 Q2의 프로세스를 먼저 CPU에 제공해주면 됩니다. 
+
+```cpp
+  for(;;){
+    intr_on(); // Avoid deadlock by ensuring that devices can interrupt.
+
+    // If the system is on a boot at first, the queue will hold zero pointer. 
+    // Kerneltrap initiates when accessing an unknown process, 
+    // thus rt should never be zero.
+    if (rt != 0) {
+      acquire(&rt->lock);
+
+      for(p = proc; p < &proc[NPROC]; p++) {
+        // This is for searching.
+```
+
+인터럽트를 enable 시켜주고 acquire을 해 줍니다. *rt* 변수는 항상 CPU에 던저 줄 process를 가리키고 있으니 *rt*에 대한 lock을 aquire 해 줍니다. 물론 rt가 비정상적인 값이면 panic을 마구 뿜어대기 때문에 이에 대한 예외처리도 같이 해 줍니다. 
+
+```cpp
+        else if (  p == rt && is_q2(p) ) { // case when it is time for q2 to run.
+          if(p->state == RUNNABLE) { __CONTEXT_SWITCH__(c, p); }
+          else if (p->state == SLEEPING || p->state == ZOMBIE) { __RE_MOVE___(p, &q2, &q0); }
+          else if (p->state == UNUSED) { remove(&q2, p); }
+          break;
+        }
+```
+
+priority boost가 아닌 경우, 즉 *rt*를 CPU에 제공해 주는 경우를 먼저 보겠습니다. 코드는 굉장히 간단하죠? SLEEPING과 UNUSED의 경우는 scheduler 함수 안에서 처리하는 것이 더 간단하기 때문에 else if 로 넣어줍니다. 만일 proc table을 순회하면서 찾은 process 정보가 state가 RUNNABLE 하고 Q2안에 존재한다면 p를 CPU에게 제공해주면 됩니다. 
+
+context switch 시키는 코드는 기존 scheduler 함수에서 사용된 것과 동일합니다. 너무 길어서 매크로로 작성했어요. 간단하게 봅시다. 
+
+```cpp
+#define __CONTEXT_SWITCH__(C, P) \
+                                        do { P->state = RUNNING; C->proc = P; swtch(&C->context, &P->context); C->proc = 0; } while(0)
+#define __DE_MOVE___(P, SRC, DST)       do { dequeue(SRC); enqueue(DST, P); } while(0)
+#define __RE_MOVE___(P, SRC, DST)       do { enqueue(DST, remove(SRC, P)); } while(0)
+
+```
+
+*MOVE* 시리즈 매크로는 Queue 사이에 process를 간단하게 이동시키기 위한 매크로입니다. 앞서 구현해두었던 dequeue, enqueuem, remove를 잘 조합하면 위와 같이 작성 가능합니다. Q2와 Q1사이를 이동하는 경우에는 **d**equeue 시킨 후 **e**nqueue를 해주어야 하니 __DE_MOVE___를 사용하면 되고, SLEEP 상태에서 벗어나는 경우 Q0에서 Q2 또는 Q1으로 이동시켜야 하니 **r**emove와 **e**nqueue를 사용해아겠죠. 이 때는 __RE_MOVE____를 사용하면 됩니다. 
+
+Q2에 존재하는 process 를 실행시켰으면 Q1도 동일하게 실행시켜주면 되겠지요. 큰 틀에서 코드는 동일합니다. p가 현재 돌려야 할 process, *rt*이고 Q1에 존재하면 context switch 시켜주면 됩니다. 이는 Q2에 프로세스가 존재하지 않을 때 아래 level Queue를 보아야 하는 경우입니다. 
+
+```cpp
+        else if (  p == rt && is_q1(p) ) { // case when it is time for q2 to run.
+          if(p->state == RUNNABLE) { __CONTEXT_SWITCH__(c, p); }
+          else if (p->state == SLEEPING || p->state == ZOMBIE) { __RE_MOVE___(p, &q1, &q0); }
+          else if (p->state == UNUSED) { remove(&q1, p); }  
+          break;
+        }
+```
+
+
+### mlfq_like(): Priority Boost
+
+조금 복잡한 경우는 Priority Boost인 경우입니다. RUNNABLE이 아닌 state에서는 위의 Q2와 Q1의 경우와 동일하지만 *pb*가 가리키는 값을 설정하는 과정에서 부가적인 행동을 해 주어야 합니다. *pb*는 *rt*와 독립적으로 업데이트 해 주어야 하므로 context switch가 끝난 직후의 시점에서 새로운 값으로 바꾸어주는게 편합니다. *pb*는 Q1 안에서 Round Robin 형식으로 돌아가기 때문에 리스트의 끝 (p_next 포인터가 0로 묶여있는 경우)에 다다르면 Q1의 제일 처음으로 바꾸어 주면 됩니다. 조금은 복잡하지만 또 생각해보면 그렇게 어려운 경우는 아닙니다.
+
+```cpp
+        // First case: priority boosting
+        // This assignment does not actually implement priority boosting, but
+        // a different and similar way of preventing starvation.
+        if (pb != 0 && p->p_next == 0 && is_q2(p)) {
+          // This is the case when rt(run this pointer) is at the end of the q2.
+          // It should run the process located in q1, but not changing its position.
+          if (pb->state == RUNNABLE) {
+            __CONTEXT_SWITCH__(c, pb); // defined in macro.
+            pb = pb->p_next;
+            if (pb == 0) pb = get_head(&q1);
+          }
+          else if (p->state == SLEEPING || p->state == ZOMBIE) { __RE_MOVE___(p, &q1, &q0); }
+          else if (p->state == UNUSED) { remove(&q1, p); }
+          break;
+        }
+```
+
+### mlfq_like()
+
+이 모든걸 합하면 아래와 같이 작성됩니다. 
+
+```cpp
+void mlfq_like() {
+  struct proc *p;
+  struct proc* rt = get_head(&q2); // run this
+  struct proc* pb = get_head(&q1); // priority boost role (modified)
+  struct cpu *c = mycpu(); // cpu information
+  c->proc = 0;
+
+  for(;;){
+    intr_on(); // Avoid deadlock by ensuring that devices can interrupt.
+
+    // If the system is on a boot at first, the queue will hold zero pointer. 
+    // Kerneltrap initiates when accessing an unknown process, 
+    // thus rt should never be zero.
+    if (rt != 0) {
+      acquire(&rt->lock);
+
+      for(p = proc; p < &proc[NPROC]; p++) {
+        // This is for searching.
+
+        // First case: priority boosting
+        // This assignment does not actually implement priority boosting, but
+        // a different and similar way of preventing starvation.
+        if (pb != 0 && p->p_next == 0 && is_q2(p)) {
+          // This is the case when rt(run this pointer) is at the end of the q2.
+          // It should run the process located in q1, but not changing its position.
+          if (pb->state == RUNNABLE) {
+            __CONTEXT_SWITCH__(c, pb); // defined in macro.
+            pb = pb->p_next;
+            if (pb == 0) pb = get_head(&q1);
+          }
+          else if (p->state == SLEEPING || p->state == ZOMBIE) { __RE_MOVE___(p, &q1, &q0); }
+          else if (p->state == UNUSED) { remove(&q1, p); }
+          break;
+        }
+        // For this operation, pb pointer exists for always pointing at the process ready to 
+        // run at the next priority boost.
+
+        else if (  p == rt && is_q2(p) ) { // case when it is time for q2 to run.
+          if(p->state == RUNNABLE) { __CONTEXT_SWITCH__(c, p); }
+          else if (p->state == SLEEPING || p->state == ZOMBIE) { __RE_MOVE___(p, &q2, &q0); }
+          else if (p->state == UNUSED) { remove(&q2, p); }
+          break;
+        }
+        else if (  p == rt && is_q1(p) ) { // case when it is time for q2 to run.
+          if(p->state == RUNNABLE) { __CONTEXT_SWITCH__(c, p); }
+          else if (p->state == SLEEPING || p->state == ZOMBIE) { __RE_MOVE___(p, &q1, &q0); }
+          else if (p->state == UNUSED) { remove(&q1, p); }  
+          break;
+        }
+      }  
+      release(&rt->lock);
+    }
+    // run_this() function is the key point of this function. 
+    // This is the one that actually decides what to run next.
+    rt = run_this(rt);    
+  }
+}
+```
+
+### run_this()
+
+*mlfq_like()* 함수에서 빠진 것이 있습니다. 바로 다음 *rt*, 어떠한 프로세스를 돌릴 건지 *rt* 값을 업데이트 해 주는 부분이죠. 조건문이 많아 아래 코드는 복잡해 보이지만 간단합니다. 순서대로 따라가 보겠습니다.
+
+
+```cpp
+// 
+// This function is responsible in deciding the next process to run.
+struct proc* run_this(struct proc* p) {
+  struct proc* rp;
+  
+  // If the process is fixed to 0, the kernaltrap will be on. 
+  // Thus, it should be prevented.
+  if (p == 0) return get_head(&q2);
+  acquire(&p->lock);
+
+  if (p->p_next == 0) { // case when at the end of loop
+    if (!is_empty(&q2)) rp = get_head(&q2);
+    else rp = get_head(&q1);
+    // If it is the end of the queue, 
+    // the next process to run is always the head of the queue.
+    // This holds true only when q2 is not empty.
+  } else {
+    if (!is_empty(&q2)) { // Case when q2 is empty, which is q1's turn.
+      if (is_q1(p)) rp = get_head(&q2);
+      else rp = p->p_next;
+    } else rp = p->p_next;
+  }
+  release(&p->lock);
+  return rp;
+}
+```
+
+인자로 들어오는 *p*는 기존 *rt*값이 들어와주면 됩니다. proc 구조체 값을 읽는 것이므로 혹시 모를 panic을 대비 해 acquire lock 시켜줍니다. 
+
+다음 요소를 가리키는 p_next가 0으로 묶여 있다면 리스트의 끝에 다다른 것 일테니, 이 경우는 맨 처음 요소로 업데이트 해 줍니다. 물론, Queue가 비어있지 않은 것을 확인하고 업데이트 해 주어야 합니다. Q2가 비어있는 경우 Q1의 head 요소로 업데이트 해 주면 되고, Q2가 비어있지 않는 경우에는 Q2가 우선순위를 가지고 있으므로 무조건 Q2로 업데이트 시켜줍니다. 그래서 크게 Q2가 비어있는지의 여부가 가장 외부에 있는 if의 조건으로 들어갑니다. 
+
+*run_this()* 는 *rt*만 업데이트 할 뿐, priority boosting *pb*는 scheduler 함수 안에서 독립적으로 업데이트 됩니다. 
+
