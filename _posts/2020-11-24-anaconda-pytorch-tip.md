@@ -2,7 +2,7 @@
 layout: post
 title:  "[메모] PyTorch Windows 10 Anaconda 에서 사용하기"
 date:   2020-11-24 13:00:00
-categories: EEE
+categories: Python
 permalink: /archivers/pytorch-anaconda-tip
 nocomments: false
 use_math: true 
