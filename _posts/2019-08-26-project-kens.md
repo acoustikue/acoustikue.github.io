@@ -22,7 +22,7 @@ First download the project to **Desktop/git**
 
 ```bash
 pi@raspberrypi:~ $ cd Desktop
-pi@raspberrypi:~ $ git clone https://github.com/dev-acoustikue/project_kens/
+pi@raspberrypi:~ $ git clone https://github.com/sjoon-oh/project_kens/
 ```
 
 Make directory below Desktop folder, naming as project_kens_log. This is where log files will be stored. This is highly suggested.

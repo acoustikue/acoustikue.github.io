@@ -12,7 +12,7 @@ use_math: true
 
 ## 구현하기에 앞서
 
-우선 주요 목표는 다시 한 번, Round Robin의 디폴트 스케줄러를 MLFQ(Multi Level Feedback Queue) 스타일의 스케줄러로 변경하는 것입니다. 여기서 '스타일'이라고 함은, 완벽한 MLFQ가 아니라 과제를 위해 몇 가지 조건이 추가되었기 때문에 사용한 용어입니다. 이에 대한 조건은 이 [포스트](https://acoustikue.github.io/archivers/xv6-scheduler-assign-guide)에서 확인할 수 있습니다.
+우선 주요 목표는 다시 한 번, Round Robin의 디폴트 스케줄러를 MLFQ(Multi Level Feedback Queue) 스타일의 스케줄러로 변경하는 것입니다. 여기서 '스타일'이라고 함은, 완벽한 MLFQ가 아니라 과제를 위해 몇 가지 조건이 추가되었기 때문에 사용한 용어입니다. 이에 대한 조건은 이 [포스트](https://sjoon-oh.github.io/archivers/xv6-scheduler-assign-guide)에서 확인할 수 있습니다.
 
 MLFQ는 거창하게 Multi Level이 붙었지만 단순히 여러 개의 Queue만 있으면 이 Queue 사이를 이동하는 행위만 정의해주면 됩니다. Queue는 일반적으로 Linked List를 이용하므로 저도 Linked List를 이용하는게 좋을 것 같습니다.
 

@@ -1,25 +1,25 @@
 # Site settings
 title: "namespace acoustikue"
 title_show: "namespace acoustikue"
-url: "https://acoustikue.github.io"
+url: "https://sjoon-oh.github.io"
 baseurl: "" 
 description: >
   An engineer dreamer.
 
 # modded by acoustikue
-email: acoustikue@yonsei.ac.kr # modded by acoustikue
-author: acoustikue
+email: sjoon.oh@pm.me # modded by acoustikue
+author: SukJoon Oh
 avatar: "/assets/profile_mod.png"
 profile: An engineer dreamer.
 #twitter_username: twitter_username
-#github_username:  dev-acoustikue
+#github_username:  
 
 # added by acoustikue
 logo: "/assets/logo_mod.png"
 
 profile_links:
-  Email: "mailto:acoustikue@yonsei.ac.kr"
-  GitHub: "https://github.com/acoustikue"
+  Email: "mailto:sjoon.oh@pm.me"
+  GitHub: "https://github.com/sjoon-oh"
   # You can add more profile links above, or edit _includes/sidebar.html 
 
 # Comment Service (Disqus)

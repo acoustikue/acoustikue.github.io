@@ -10,7 +10,7 @@ use_math: true
 
 # [Operating System] XV6 Scheduler Assignment Implementation
 
-본 포스트는 제가 2020년 2학기에 수강한 운영체제론 수업에서 네 번째 프로그래밍 과제를 기반으로 하고 있습니다. 한 학기 동안 진행했던 총 7개의 과제 중 가장 많은 오류를 겪었고, 또 그만큼 OS에 대한 감각을 익히는데 가장 큰 도움이 되었던 과제였습니다. 지금부터 설명하는 xv6 구조에 더해 작성하는 코드의 의도를 파악하기 힘든경우 가볍게 넘어가셔도 무방하며, 과제에서 요구하는 가이드라인은 [xv6-scheduler-assign-guide](https://acoustikue.github.io/archivers/xv6-scheduler-assign-guide) 포스트의 Goal 부분을 참고하시면 이해에 도움이 되실 것 같습니다. 본 포스트에서는 Linux 환경에서 xv6를 사용하였으며, 설치 및 이용에 대한 설명은 제공하지 않습니다.
+본 포스트는 제가 2020년 2학기에 수강한 운영체제론 수업에서 네 번째 프로그래밍 과제를 기반으로 하고 있습니다. 한 학기 동안 진행했던 총 7개의 과제 중 가장 많은 오류를 겪었고, 또 그만큼 OS에 대한 감각을 익히는데 가장 큰 도움이 되었던 과제였습니다. 지금부터 설명하는 xv6 구조에 더해 작성하는 코드의 의도를 파악하기 힘든경우 가볍게 넘어가셔도 무방하며, 과제에서 요구하는 가이드라인은 [xv6-scheduler-assign-guide](https://sjoon-oh.github.io/archivers/xv6-scheduler-assign-guide) 포스트의 Goal 부분을 참고하시면 이해에 도움이 되실 것 같습니다. 본 포스트에서는 Linux 환경에서 xv6를 사용하였으며, 설치 및 이용에 대한 설명은 제공하지 않습니다.
 
 xv6는 RISC-V 프로세서를 기반으로 한 연습용 운영체체(OS)입니다. 2006년에 MIT PDOS lab에서 자체로 개발했습니다. xv6에 대한 자세한 사용법, 또는 가이드는 [링크](https://pdos.csail.mit.edu/6.828/2018/xv6.html)를 참고하면 좋을 것 같습니다. PDF 파일 형태로 제공하고 있으며 과제할 때 코드의 의도와 용도를 파악할 때 도움을 많이 받았습니다.
 
@@ -263,4 +263,4 @@ swtch(&c->context, &p->context);
 
 조건을 맞추기 위한 timer 및 syscall은 다음 포스트에서 계속 다루겠습니다.
 
-[계속: XV6 Scheduler Assignment Implementation 2](https://acoustikue.github.io/archivers/xv6-scheduler-assign-impl-2)
+[계속: XV6 Scheduler Assignment Implementation 2](https://sjoon-oh.github.io/archivers/xv6-scheduler-assign-impl-2)

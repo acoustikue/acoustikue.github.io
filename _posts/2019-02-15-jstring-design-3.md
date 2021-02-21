@@ -519,4 +519,4 @@ PRINT_NORMAL_MSG(life_life_is_a_highway_lyrics_3);
 
 > 필자는 공군 작전정보통신단 체계개발실에서 복무('17~'19)하였습니다. 이 포스트는 작전정보통신단 병사 **프로그래밍 동아리(LINK)** 에서의 활동을 바탕으로 작성한 내용입니다.
 
-[다음 포스트: JString Design[4]](https://dev-acoustikue.github.io/archivers/Jstring_Design_4)
+[다음 포스트: JString Design[4]](https://sjoon-oh.github.io/archivers/Jstring_Design_4)

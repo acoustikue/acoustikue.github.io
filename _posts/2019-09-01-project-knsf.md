@@ -32,7 +32,7 @@ First download the project to any directory.
 
 ```bash
 pi@raspberrypi:~ $ cd Desktop
-pi@raspberrypi:~ $ git clone https://github.com/dev-acoustikue/knsf
+pi@raspberrypi:~ $ git clone https://github.com/sjoon-oh/knsf
 ```
 
 Make any directory for logs. This is an option.

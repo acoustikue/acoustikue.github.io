@@ -5,7 +5,7 @@ nocomments: true
 permalink: /about/
 ---
 
-## acoustikue's devlog
+## sjoon-oh's devlog
 
 개발 일지 및 잡다한 일상 기록입니다.
 
@@ -77,14 +77,14 @@ July, 2018 To March, 2019
 
 #### Toy Projects
 
-- ERITER 프로젝트, [Line Counter](https://acoustikue.github.io/archivers/filesystem_library_introduction) ([Repository](https://github.com/acoustikue/eriter_free_line_counter_2))
-- (구)건국대학교 수강신청 보조 프로그램 [AutoKupis2](https://acoustikue.github.io/archivers/python-project-auto-2) ([Repository](https://github.com/acoustikue/auto_kupis_2))(PyQt)
-- (구)건국대학교 수강신청 잔여석 알림 서비스 KNSL ([Repository](https://github.com/acoustikue/klns_open)) (Python)
-- (구)건국대학교 공지사항 알림 서비스 [KENS/KNS](https://acoustikue.github.io/archivers/python-project-kens) ([Repository](https://github.com/acoustikue/kens_public)) (Python, Telegram-bot)
-- (구)건국대학교 공지사항 알림 서비스 [KNSF](https://acoustikue.github.io/archivers/python-project-knsf) ([Repository](https://github.com/acoustikue/knsf)) (Python, Web-push)
-- 연세대학교 공지사항 알림 서비스 [YNSF](https://acoustikue.github.io/archivers/python-project-ynsf) ([Repository](https://github.com/acoustikue/ynsf_open))
+- ERITER 프로젝트, [Line Counter](https://sjoon-oh.github.io/archivers/filesystem_library_introduction) ([Repository](https://github.com/sjoon-oh/eriter_free_line_counter_2))
+- (구)건국대학교 수강신청 보조 프로그램 [AutoKupis2](https://sjoon-oh.github.io/archivers/python-project-auto-2) ([Repository](https://github.com/sjoon-oh/auto_kupis_2))(PyQt)
+- (구)건국대학교 수강신청 잔여석 알림 서비스 KNSL ([Repository](https://github.com/sjoon-oh/klns_open)) (Python)
+- (구)건국대학교 공지사항 알림 서비스 [KENS/KNS](https://sjoon-oh.github.io/archivers/python-project-kens) ([Repository](https://github.com/sjoon-oh/kens_public)) (Python, Telegram-bot)
+- (구)건국대학교 공지사항 알림 서비스 [KNSF](https://sjoon-oh.github.io/archivers/python-project-knsf) ([Repository](https://github.com/sjoon-oh/knsf)) (Python, Web-push)
+- 연세대학교 공지사항 알림 서비스 [YNSF](https://sjoon-oh.github.io/archivers/python-project-ynsf) ([Repository](https://github.com/sjoon-oh/ynsf_open))
 - 연세대학교 YSCEC 알림 서비스 NYSCEC (Selenium)
 - 연세대학교 YSCEC 알림 서비스 NYSCEC2 (Python, Designed for AWS)
-- 연세대학교 YSCEC 알림 서비스 [NYSCEC3](https://acoustikue.github.io/archivers/nyscec3) ([Repository](https://github.com/acoustikue/nyscec3)) (Python, Designed for Github Action)
+- 연세대학교 YSCEC 알림 서비스 [NYSCEC3](https://sjoon-oh.github.io/archivers/nyscec3) ([Repository](https://github.com/sjoon-oh/nyscec3)) (Python, Designed for Github Action)
 
 
