@@ -86,5 +86,5 @@ July, 2018 To March, 2019
 - 연세대학교 YSCEC 알림 서비스 NYSCEC (Selenium)
 - 연세대학교 YSCEC 알림 서비스 NYSCEC2 (Python, Designed for AWS)
 - 연세대학교 YSCEC 알림 서비스 [NYSCEC3](https://sjoon-oh.github.io/archivers/nyscec3) ([Repository](https://github.com/sjoon-oh/nyscec3)) (Python, Designed for Github Action)
-
+- 연세대학교 LUS 알림 서비스 NLUS3 (Github Action) [NLUS3](https://sjoon-oh.github.io/archivers/nlus3) ([Repository](https://github.com/sjoon-oh/nlus3))
 
