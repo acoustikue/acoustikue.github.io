@@ -2,7 +2,7 @@
 layout: post
 title:  "아치(Arch) 리눅스 설치기"
 date:   2021-03-29 09:00:00
-categories: Python
+categories: Linux
 permalink: /archivers/arch-installation
 nocomments: false
 use_math: true 
