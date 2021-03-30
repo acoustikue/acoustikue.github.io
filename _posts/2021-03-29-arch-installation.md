@@ -63,7 +63,7 @@ $ timedatectl status # Sync와 NTP가 켜져있는지 확인
 
 | Mount point |	Partition |	Partition type | size |
 |---|---|---|---|
-| /mnt/boot | /dev/sda1 | EFI system partition | 1G |
+| /mnt/efi | /dev/sda1 | EFI system partition | 1G |
 | [SWAP] | /dev/sda2 | Linux swap | 24G |
 | /mnt | /dev/sda3 | Linux x86-64 root (/) | Remainder |
 
@@ -105,7 +105,7 @@ $ swapon /dev/sda2
 # 마운트
 $ mount /dev/sda3 /mnt
 $ mkdir /mnt/boot
-$ mount /dev/sda1 /mnt/boot
+$ mount /dev/sda1 /mnt/efi
 ```
 
 ### 패키지 설치
@@ -166,7 +166,7 @@ USER ALL=(ALL) ALL
 $ pacman -Sy
 $ pacman -S grub efibootmgr
 
-$ grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=arch
+$ grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=arch
 $ grub-mkconfig -o /boot/grub/grub.cfg
 ```
 
@@ -189,8 +189,8 @@ $ reboot
 
 ```bash
 # Option 1 Full Installation
-$ pacman -S --needed xorg sddm
-$ pacman -S --needed plasma kde-application
+# $ pacman -S --needed xorg sddm
+# $ pacman -S --needed plasma kde-application
 
 # Option 2 Lightweight Installation
 $ pacman -S xorg-server plasma konsole dolphin ark firefox
