@@ -104,7 +104,7 @@ $ swapon /dev/sda2
 
 # 마운트
 $ mount /dev/sda3 /mnt
-$ mkdir /mnt/boot
+$ mkdir /mnt/efi
 $ mount /dev/sda1 /mnt/efi
 ```
 
