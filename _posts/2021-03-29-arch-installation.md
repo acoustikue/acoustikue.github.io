@@ -140,10 +140,20 @@ $ hwclock --systohc
 $ passwd
 ```
 
-시스템 이름 설정
+시스템의 이름을 설정하기 위해 /etc/hostname을 수정합니다. 
+
 ```bash
 $ echo "mypc" > /etc/hostname
 ```
+
+시스템의 로컬 라우팅 테이블을 설정합니다. /etc/hosts 파일에 아래와 같이 수정합니다.
+
+```
+127.0.0.1	localhost
+::1		localhost
+127.0.1.1	[mypc].localdomain	[mypc]
+```
+
 
 일반 사용자 설정
 ```bash
@@ -193,10 +203,60 @@ $ reboot
 # $ pacman -S --needed plasma kde-application
 
 # Option 2 Lightweight Installation
-$ pacman -S xorg-server plasma konsole dolphin ark firefox
+$ pacman -Syu
+$ pacman -S xorg-server plasma konsole dolphin ark firefox gwenview 
+
+# Dev tools
+$ pacman -S git kdevelop visual-studio-code-bin octave
+
+# Korean Font
+$ pacman -S adobe-source-han-sans-kr-fonts
+$ pacman -S fcitx-im fcitx-hangul kcm-fcitx
+
+# Office tools
+$ pacman -S okular libreoffice-still
+
+# Java
+$ pacman -S jdk8-openjdk
+
+# Telegram
+$ pacman -S telegram-desktop
 
 $ systemctl enable sddm
 $ reboot
+```
+
+## 추가 유틸리티 설치 (KDE)
+
+### Microcode
+```bash
+$ pacman -S intel-ucode
+$ grub-mkconfig -o /boot/grub/grub.cfg
+```
+
+### Gwenview (영상 편집 프로그램)
+```bash
+$ pacman -S obs-studio
+```
+
+### Latte Dock
+```bash
+$ pacman -S latte-dock
+```
+
+### Darktable & GIMP (사진 편집 프로그램)
+```bash
+$ pacman -S darktable gimp
+```
+
+### Brave Browser
+```bash
+$ cd ~/Downloads
+$ git clone https://aur.archlinux.org/yay.git
+$ cd ~/Downloads/yay
+$ makepkg -si
+
+$ yay -S brave-bin
 ```
 
 그러면 험난한 아치 리눅스 설치가 완료됩니다.
