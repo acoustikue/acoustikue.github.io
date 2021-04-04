@@ -259,11 +259,23 @@ $ makepkg -si
 $ yay -S brave-bin
 ```
 
+### NordVPN
+```bash
+$ yay -S nordvpn-bin
+$ groupadd -r nordvpn
+$ gpasswd -a [USERNAME] nordvpn
+
+$ nordvpn login
+$ nordvpn set technology nordlynx # Enable NordLynx(Wireguard)
+$ nordvpn connect [[country]/[server]/[country_code]/[city] or [country] [city]]
+# for example: nordvpn connect Japan
+
+$ nordvpn status
+
+$ nordvpn disconnect
+$ nordvpn logout
+```
+
 그러면 험난한 아치 리눅스 설치가 완료됩니다.
 
 ![screenshot](/assets/posts/2021-03-29-arch-installation/installed.png)
-
-
-
-
-
