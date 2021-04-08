@@ -204,7 +204,7 @@ $ reboot
 
 # Option 2 Lightweight Installation
 $ pacman -Syu
-$ pacman -S xorg-server plasma konsole dolphin ark firefox gwenview 
+$ pacman -S xorg-server plasma konsole dolphin ark firefox gwenview spectacle
 
 # Dev tools
 $ pacman -S git kdevelop visual-studio-code-bin octave
@@ -276,13 +276,14 @@ $ nordvpn disconnect
 $ nordvpn logout
 ```
 
-### Kdenlive & OBS Studio
+### Kdenlive & OBS Studio & Spectacle
 ```bash
 $ pacman -S obs-studio
 $ pacman -S kdenlive
+$ pacman -S spectacle # 스크린샷
 ```
 ###
 
 그러면 험난한 아치 리눅스 설치가 완료됩니다.
 
-![screenshot](/assets/posts/2021-03-29-arch-installation/installed.png)
+![screenshot](/assets/posts/2021-03-29-arch-installation/installed2.png)
