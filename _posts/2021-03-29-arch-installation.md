@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "아치(Arch) 리눅스 설치기"
+title:  "아치(Arch) 리눅스 설치기 (업데이트)"
 date:   2021-03-29 09:00:00
 categories: Linux
 permalink: /archivers/arch-installation
@@ -234,9 +234,9 @@ $ pacman -S intel-ucode
 $ grub-mkconfig -o /boot/grub/grub.cfg
 ```
 
-### Gwenview (영상 편집 프로그램)
+### Gwenview (이미지 뷰어)
 ```bash
-$ pacman -S obs-studio
+$ pacman -S gwenview
 ```
 
 ### Latte Dock
@@ -275,6 +275,13 @@ $ nordvpn status
 $ nordvpn disconnect
 $ nordvpn logout
 ```
+
+### Kdenlive & OBS Studio
+```bash
+$ pacman -S obs-studio
+$ pacman -S kdenlive
+```
+###
 
 그러면 험난한 아치 리눅스 설치가 완료됩니다.
 
