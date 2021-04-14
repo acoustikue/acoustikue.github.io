@@ -171,6 +171,8 @@ Edit mode에서 Dock 형식으로 지정합니다.
 
 Edit mode에서 Panel 형식으로 지정합니다. 그리고 아래 스크린샷과 같이 Pannel에서 Global Menu 위젯을 추가합니다. Global Menu 위젯은 KDE에 기본적으로 포함되어 있습니다.
 
+추가적으로 우측 상단에 Netspeed Widget 을 추가해줍니다.
+
 ![ld3](/assets/posts/2021-04-08-arch-kde-themes/latte3.png)
 
 Behavior 탭에서는 Dodge Maximized 선택하고 그 외 설정은 건들지 않습니다. 
