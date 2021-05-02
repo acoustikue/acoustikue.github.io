@@ -226,7 +226,9 @@ $ systemctl enable sddm
 $ reboot
 ```
 
-## 추가 유틸리티 설치 (KDE)
+## 추가 유틸리티 설치 (pacman)
+
+아래 유틸리티는 제가 유용하게 사용하는 프로그램 모음입니다.
 
 ### Microcode
 ```bash
@@ -247,16 +249,6 @@ $ pacman -S latte-dock
 ### Darktable & GIMP (사진 편집 프로그램)
 ```bash
 $ pacman -S darktable gimp
-```
-
-### Brave Browser
-```bash
-$ cd ~/Downloads
-$ git clone https://aur.archlinux.org/yay.git
-$ cd ~/Downloads/yay
-$ makepkg -si
-
-$ yay -S brave-bin
 ```
 
 ### NordVPN
@@ -282,7 +274,52 @@ $ pacman -S obs-studio
 $ pacman -S kdenlive
 $ pacman -S spectacle # 스크린샷
 ```
-###
+### Docker
+```bash
+$ pacman -S docker
+$ sudo useradd -aG docker (사용자 이름)
+
+$ systemctl start docker.service
+$ systemctl enable docker.service
+```
+
+## AUR
+### yay 설치 
+```bash
+$ git clone https://aur.archlinux.org/yay.git
+$ cd yay
+$ makepkg -si
+```
+
+### Brave Browser
+```bash
+$ yay -S brave-bin
+```
+
+### Bitwarden
+```bash
+$ yay -S bitwarden-bin
+```
+
+### Freetube
+```bash
+$ yay -S freetube-bin
+```
+
+### pCloud Drive
+```bash
+$ yay -S pcloud-drive
+```
+
+### Timeshift
+```bash
+$ git clone https://aur.archlinux.org/timeshift.git
+$ cd timeshift
+$ makepkg -si
+
+$ sudo timeshift –create –comments “Fresh install”
+$ sudo timeshift –restore
+```
 
 그러면 험난한 아치 리눅스 설치가 완료됩니다.
 
