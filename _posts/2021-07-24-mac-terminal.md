@@ -2,7 +2,7 @@
 layout: post
 title:  "[mac] 터미널 lsd"
 date:   2021-07-24 11:00:00
-categories: Rust
+categories: Linux
 permalink: /archivers/mac-term-settings
 nocomments: false
 use_math: true 
