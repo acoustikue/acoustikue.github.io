@@ -66,7 +66,7 @@ int main() {
 }
 ```
 
-오래 전에 작성한 코드라 기억이 가물가물 합니다. 일단 path.txt를 열어둡니다. 그리고 라인을 하나씩 읽어서 [주소][파일명]을 문자열 형식으로 std::vector<string> 형 변수 pathList_에 추가하고 있네요.
+오래 전에 작성한 코드라 기억이 가물가물 합니다. 일단 path.txt를 열어둡니다. 그리고 라인을 하나씩 읽어서 [주소][파일명]을 문자열 형식으로 `std::vector<string>` 형 변수 pathList_에 추가하고 있네요.
 
 ```
 // Interface
@@ -128,11 +128,11 @@ for (auto itor_ = pathList_.begin(); itor_ != pathList_.end(); itor_++) {
 
 기존에 가지고 있던 컴파일러로 1번 관련 작업을 하기 위해서는 WinAPI를 알아야 했습니다. 그 외에 딱히 떠오르는 방법이 없었습니다. WinAPI를 공부하면 되지 않느냐? 작은 집을 짓는데 콘크리트 기둥부터 세우는 격입니다. 시간 대비 결과가 뻔했습니다. 필요한 것만 뽑아 쓰면 되지 않느냐? 당시 맡고 있던 프로젝트를 빨리 진행해야 했기에 잠시 짬 날때 할 수 있는 일이 아닙니다.
 
-C++17에는 공식적으로 filesystem 라이브러리가 추가되었습니다. 이 라이브러리는 boost 라이브러리에 있던 것인데, C++17에 와서야 공식적으로 포함되었습니다. 그때 가지고 있던 컴파일러는 C++11 일부까지만 지원했기 때문에 음, 불가능. 
+C++17에는 공식적으로 `filesystem` 라이브러리가 추가되었습니다. 이 라이브러리는 boost 라이브러리에 있던 것인데, C++17에 와서야 공식적으로 포함되었습니다. 그때 가지고 있던 컴파일러는 C++11 일부까지만 지원했기 때문에 음, 불가능. 
 
 ![vs2017](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-03.jpg)
 
-음, 새로운 컴파일러입니다. VS2017 Professional입니다. 얼마 전 우연히 얻게 되었습니다. 그러면 filesystem 라이브러리가 있고, 맡고 있는 프로젝트도 얼추 마무리 단계에 들어갔으니 여유 있을 때 조잡한 라인 카운터를 한번 개선해보도록 하겠습니다.
+음, 새로운 컴파일러입니다. VS2017 Professional입니다. 얼마 전 우연히 얻게 되었습니다. 그러면 `filesystem` 라이브러리가 있고, 맡고 있는 프로젝트도 얼추 마무리 단계에 들어갔으니 여유 있을 때 조잡한 라인 카운터를 한번 개선해보도록 하겠습니다.
 
 ----------------------------------------------------------------------
 
@@ -158,7 +158,7 @@ filesystem 헤더 안에 정의되고 네임스페이스는 filesystem 이랍니
 
 ![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-08.jpg)
 
-엥? C++17인데 experimental 이라고?? 믿을 수가 없습니다. 샘플로 다른 문서도 열어봅시다. C++17에서 지원하는 것 라이브러리 다른 것들도 열어 보죠 뭐. <variant>, <any>, <optional>을 추가 해보면,
+엥? C++17인데 `experimental` 이라고?? 믿을 수가 없습니다. 샘플로 다른 문서도 열어봅시다. C++17에서 지원하는 것 라이브러리 다른 것들도 열어 보죠 뭐. <variant>, <any>, <optional>을 추가 해보면,
 
 ![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-09.jpg)
 
@@ -180,9 +180,9 @@ namespace fs = std::experimental::filesystem;
 
 ## 본격적으로 디자인 해 보자!
 
-우선, 이 놈의 목적을 위한 첫 번째 단계는, **어느 특정 폴더(그 하위의 무수히 많은 폴더 포함) 안에 있는 파일을 읽어 와야 한다는 것입니다.** 어차피 파일을 열어서 라인 수를 세고, 닫고, 또 다시 열고 세고, 닫고 하는 데에는 [절대경로][파일명]이 필요하니 문자열로 받아 std::vector<std::string> 이나 std::list<std::string>에 담아 두는 것으로 합시다. 
+우선, 이 놈의 목적을 위한 첫 번째 단계는, **어느 특정 폴더(그 하위의 무수히 많은 폴더 포함) 안에 있는 파일을 읽어 와야 한다는 것입니다.** 어차피 파일을 열어서 라인 수를 세고, 닫고, 또 다시 열고 세고, 닫고 하는 데에는 [절대경로][파일명]이 필요하니 문자열로 받아 `std::vector<std::string>` 이나 `std::list<std::string>`에 담아 두는 것으로 합시다. 
   
-그러려면 최상위 루트 폴더, 즉 프로젝트 폴더 명을 지정 할 수 있어야 겠지요. 간단히 std::string 인스턴스에 받아 둡니다. 
+그러려면 최상위 루트 폴더, 즉 프로젝트 폴더 명을 지정 할 수 있어야 겠지요. 간단히 `std::string` 인스턴스에 받아 둡니다. 
 
 ```cpp
 std::string DirectoryName = "";
@@ -245,14 +245,14 @@ namespace _jcode {
          inline const std::string isError() {
 ```
 
-ExtensionFinder라는 클래스가 있습니다. 제가 작성한겁니다. 여담이지만 간단한 프로그램이라도 저는 래핑 작업을 좋아합니다. 둘러 싸는 작업입니다. 이유는 묻지 마세요. 
+`ExtensionFinder`라는 클래스가 있습니다. 제가 작성한겁니다. 여담이지만 간단한 프로그램이라도 저는 래핑 작업을 좋아합니다. 둘러 싸는 작업입니다. 이유는 묻지 마세요. 
 
-ExtensonFinder를 보면 매크로로 뭐라뭐라 정의해 두었고 _jcode 라는 네임스페이스에 정의해 두었습니다. 딱 봐도 직관적입니다. RootDirName은 최상위 폴더 명, DirUnderRootList는 최상위 폴더 아래에 있는 폴더들의 리스트 일테고, TargetFileExtension은 조금 이따가 설명하도록 하겠습니다.
+`ExtensonFinder`를 보면 매크로로 뭐라뭐라 정의해 두었고 `_jcode` 라는 네임스페이스에 정의해 두었습니다. 딱 봐도 직관적입니다. `RootDirName`은 최상위 폴더 명, `DirUnderRootList`는 최상위 폴더 아래에 있는 폴더들의 리스트 일테고, `TargetFileExtension`은 조금 이따가 설명하도록 하겠습니다.
 
 
 ## 폴더 순회
 
-하위 폴더에 있는 파일을 보려면 최상위 폴더 아래에 있는 폴더 들 또한 순회해야 합니다. 여기서부터 filesystem 라이브러리가 도와 줄 겁니다. 순회하는 방법은 아래와 같습니다. 
+하위 폴더에 있는 파일을 보려면 최상위 폴더 아래에 있는 폴더 들 또한 순회해야 합니다. 여기서부터 `filesystem` 라이브러리가 도와 줄 겁니다. 순회하는 방법은 아래와 같습니다. 
 
 ```cpp
 void _jcode::ExtensionFinder::showConsoleRootFolderFileList() const {
@@ -281,15 +281,15 @@ void _jcode::ExtensionFinder::showConsoleRootFolderFileList() const {
 };
 ```
 
-showConsoleRootFolderFileList 함수는 단순히 출력만 하는 디버깅용 함수입니다. 여기서 집중해야 할 부분은 붉게 표시한 부분입니다. 레퍼런스를 보면, 
+`showConsoleRootFolderFileList` 함수는 단순히 출력만 하는 디버깅용 함수입니다. 여기서 집중해야 할 부분은 붉게 표시한 부분입니다. 레퍼런스를 보면, 
 
 ![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-11.jpg)
 
-std::filesystem::directory_entry 요소를 순회하는 반복자입니다. 그렇지만 하위 폴더에 있는 놈들은 순회하지 않는다고 합니다. 예를 들어, 
+`std::filesystem::directory_entry` 요소를 순회하는 반복자입니다. 그렇지만 하위 폴더에 있는 놈들은 순회하지 않는다고 합니다. 예를 들어, 
 
 ![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-12.jpg)
 
-그림과 같은 폴더가 있다고 합시다. E:\프로젝트\Line_Counter_ 라는 경로를 제시하면, directory_iterator는 E:\프로젝트\Line_Counter_ 바로 밑의 폴더를 훑습니다. 이를 출력하면 하위 폴더의 요소들이 폴더인지, 일반 파일인지 등을 구분하지 않고 말입니다. 분기 없이 단순히 
+그림과 같은 폴더가 있다고 합시다. E:\프로젝트\Line_Counter_ 라는 경로를 제시하면, `directory_iterator`는 E:\프로젝트\Line_Counter_ 바로 밑의 폴더를 훑습니다. 이를 출력하면 하위 폴더의 요소들이 폴더인지, 일반 파일인지 등을 구분하지 않고 말입니다. 분기 없이 단순히 
 
 ```cpp
 for(auto& file_name : fs::directory_iterator(RootDirName)) {
@@ -323,7 +323,7 @@ File type을 알 수 있는 is_ 시리즈가 있습니다. 저는 이 놈이 폴
 
 ![capture](/assets/posts/2019-01-10-filesystem-library-introduction/2019-01-10-14.jpg)
 
-std::filesystem::is_directory() 요 놈을 써 봅시다. 이 함수는 “Checks if the given file status or path corresponds to a directory.” 입니다. 디렉토리인지 아닌지 구분해 주는 놈입니다. 함수의 인자로 들어가는 std::filesystem::path 형은 std::string형와 변환이 가능합니다. 그러면 아까의 코드로 돌아가서, 
+`std::filesystem::is_directory()` 요 놈을 써 봅시다. 이 함수는 “Checks if the given file status or path corresponds to a directory.” 입니다. 디렉토리인지 아닌지 구분해 주는 놈입니다. 함수의 인자로 들어가는 `std::filesystem::path` 형은 `std::string`형와 변환이 가능합니다. 그러면 아까의 코드로 돌아가서, 
 
 
 ```cpp
@@ -365,9 +365,9 @@ CONSOLE_OUT_SYSTEM("ExtensonFinder::findUnderRootDirAddr()");
 }
 ```
 
-std::list 형식의 DirUnderRootList에 **폴더의 절대경로**만 계속적으로 밀어 넣습니다. std::filesystem::directory_iterator는 const path& 형식을 반환합니다. 따라서 이는 일반 std::string형으로 변환되지 않으므로 dir_name.path().string()으로 변환하여 구겨 넣습니다. 
+`std::list` 형식의 `DirUnderRootList`에 **폴더의 절대경로**만 계속적으로 밀어 넣습니다. `std::filesystem::directory_iterator`는 `const path&` 형식을 반환합니다. 따라서 이는 일반 std::string형으로 변환되지 않으므로 `dir_name.path().string()`으로 변환하여 구겨 넣습니다. 
 
-여기까지 제가 설정한 최상위 폴더 안에 있는 모든 폴더의 절대경로를 뽑았습니다. 여기서 끝나면 안됩니다. 하위 폴더의 모든 소스 파일을 열어 라인을 세는 것이 목적이므로 이번에는 각 폴더 안의 파일의 절대경로를 뽑습니다. 방식은 동일합니다. 단지 is_regular_file() 함수로 걸러주면 될 겁니다.
+여기까지 제가 설정한 최상위 폴더 안에 있는 모든 폴더의 절대경로를 뽑았습니다. 여기서 끝나면 안됩니다. 하위 폴더의 모든 소스 파일을 열어 라인을 세는 것이 목적이므로 이번에는 각 폴더 안의 파일의 절대경로를 뽑습니다. 방식은 동일합니다. 단지 `is_regular_file()` 함수로 걸러주면 될 겁니다.
 
 
 ## 확장자 구분
@@ -408,7 +408,7 @@ void _jcode::ExtensionFinder::setFileTargetExtension(const char* argExtensionStr
 };
 ```
 
-여기서 TargetFileExtension은 우리가 선택할 확장자가 문자열로 들어갈 std::vector<std::string>형 멤버 변수입니다. std::istringstream으로 뽁뽁뽁 밀어주면서 분리시키면 됩니다. 
+여기서 `TargetFileExtension`은 우리가 선택할 확장자가 문자열로 들어갈 `std::vector<std::string>`형 멤버 변수입니다. `std::istringstream`으로 뽁뽁뽁 밀어주면서 분리시키면 됩니다. 
 
 그러면 거의 다 되어 갑니다 이제 비교하면,
 
@@ -445,12 +445,12 @@ std::vector<std::vector<std::string>> _jcode::ExtensionFinder::getFileAddrListEx
 };
 ```
 
-아까 작성해 두었던 폴더 명의 리스트가 있었습니다. 그 리스트를 돌면서 선택한 확장자와 비교하고, is_directory로 폴더인지 구분하여 파일의 절대경로를 2차원 vector 형식으로 저장합니다. 물론, directory_iterator() 가 쓰였으니 당연히 path().string()으로 push_back() 해 주어야 합니다. 
+아까 작성해 두었던 폴더 명의 리스트가 있었습니다. 그 리스트를 돌면서 선택한 확장자와 비교하고, `is_directory`로 폴더인지 구분하여 파일의 절대경로를 2차원 `vector` 형식으로 저장합니다. 물론, `directory_iterator()` 가 쓰였으니 당연히 `path().string()`으로 `push_back()` 해 주어야 합니다. 
 
 
 ## 라인 카운팅
 
-제가 디자인한 ExtensionFinder 클래스의 최종 목표는 여기까지입니다. getFileAddrListExtension 함수가 메인이라고 할 수 있겠습니다. 파일의 절대경로를 2차원 vector 형식으로 저장했으니, 이 목록의 파일을 열어서, 읽어주면 끝이군요!! 읽는건 간단하니 설명 없이 코드만 보겠습니다.
+제가 디자인한 `ExtensionFinder` 클래스의 최종 목표는 여기까지입니다. `getFileAddrListExtension` 함수가 메인이라고 할 수 있겠습니다. 파일의 절대경로를 2차원 vector 형식으로 저장했으니, 이 목록의 파일을 열어서, 읽어주면 끝이군요!! 읽는건 간단하니 설명 없이 코드만 보겠습니다.
 
 ```cpp
 long long _jcode::CounterAdv::countListOf(const std::vector<std::vector<std::string>>& argAddrList) {
@@ -478,7 +478,7 @@ long long _jcode::CounterAdv::countListOf(const std::vector<std::vector<std::str
 
 ## 실행해보자!
 
-요약 하자면, 초기 라인 카운터와는 다르게, path.txt를 직접 작성하는 역할을 ExtensionFinder 클래스가 담당하고 있는 구조입니다. 최상위 폴더만 지정하면 아래 폴더를 순회하며 읽어들입니다. filesystem 라이브러리도 쓸만 합니다.
+요약 하자면, 초기 라인 카운터와는 다르게, path.txt를 직접 작성하는 역할을 `ExtensionFinder` 클래스가 담당하고 있는 구조입니다. 최상위 폴더만 지정하면 아래 폴더를 순회하며 읽어들입니다. `filesystem` 라이브러리도 쓸만 합니다.
 
 실험해 봅시다. C:\Users\Administrator\Desktop\[ERITER]WRS_Sys\source\final\WRS_Sys 을 최상위 폴더로 지정하고, .xml 확장자만 뽑아 라인 카운팅 하면, 
 

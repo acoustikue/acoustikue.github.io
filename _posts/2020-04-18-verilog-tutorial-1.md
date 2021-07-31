@@ -223,7 +223,7 @@ module exp_port3 ({a, b}, .c(d))
 
 포트는 아래와 같은 형식으로 선언하며 방향은 다음과 같습니다. 
 
-> port_direction data_type signed [port_size] port_name, port_name, .. ;
+> `port_direction data_type signed [port_size] port_name, port_name, .. ;`
 
 - input : 스칼라(scalar)나 벡터(vector)의 입력 포트 선언
 - output : 스칼라(scalar)나 벡터(vector)의 출력 포트 선언
