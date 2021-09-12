@@ -321,6 +321,12 @@ $ sudo timeshift –create –comments “Fresh install”
 $ sudo timeshift –restore
 ```
 
+### Nerd Font
+```bash
+$ yay -S nerd-fonts-jetbrains-mono
+```
+가장 좋아하는 font 입니다.
+
 그러면 험난한 아치 리눅스 설치가 완료됩니다.
 
 ![screenshot](/assets/posts/2021-03-29-arch-installation/installed2.png)
