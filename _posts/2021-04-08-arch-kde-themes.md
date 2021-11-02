@@ -8,7 +8,7 @@ nocomments: false
 use_math: true 
 ---
 
-# 아치(Arch) KDE 데스크탑 환경 설정기
+# 아치(Arch) KDE 데스크탑 환경 설정기 (업데이트)
 
 이전 [포스트](https://sjoon-oh.github.io/archivers/arch-installation)에서 아치 리눅스 설치 과정을 다루었습니다. 이 포스트에서는 KDE 환경을 제 스타일에 맞게 꾸미는 과정을 다루었습니다. KDE 버전은 아래와 같습니다.
 
@@ -144,6 +144,10 @@ $ makepkg -si
 ```bash
 $ yay -S latte-dock-git
 ```
+
+### ### Latte Dock 설치 (New)
+
+21.11.02. 기준 확인해보니 pacman 으로 0.10 이상이 업데이트 되었습니다. 위의 과정은 단순하게 pacman으로 설치해 주시면 됩니다.
 ### 하단 Latte Dock
 
 Behavior 탭에서는 Dodge Maximized 선택하고 그 외 설정은 건들지 않습니다. 
