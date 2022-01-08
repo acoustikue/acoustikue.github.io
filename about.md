@@ -5,19 +5,19 @@ nocomments: true
 permalink: /about/
 ---
 
-## sjoon-oh's devlog
+## sjoon's devlog
 
 개발 일지 및 잡다한 일상 기록입니다.
 
 ### Education
 
 - 건국대학교 전기전자공학부, March, 2016 To February, 2020
-- 연세대학교 전기전자공학부, March, 2020 To Present
+- 연세대학교 전기전자공학부, March, 2020 To Feburary, 2022
 
 ### Interests
 
 Computer Architecture, Embedded Systems, Parallel Computing, Managed Language
-Multi Cores, Neural Processing Unit, Deep Learning, Neural Network
+Multi Cores, Neural Processing Unit
 
 ### RESEARCH SKILLS
 
@@ -25,17 +25,6 @@ Multi Cores, Neural Processing Unit, Deep Learning, Neural Network
 - C/C++
 - Python
 - Java
-
-#### Tools/Framework Experience
-
-- *Desktop Application:* Microsoft Foundation Class, PyQt
-- *Web:* JSP, Flask, Django REST, Spring Framework, Firebase Cloud Messaging
-- *Database:* MySQL, MongoDB, SQLite3
-- *IaaS:* Amazon Web Service EC2, Lightsail
-- *Simulator:* Cadence OrCAD, GNU Octave, Quartus
-- *Hardware:* AVR, RaspberryPi
-- *More:* Hadoop, Spark MLlib
-
 
 ### Work Experience
 
@@ -48,32 +37,6 @@ Multi Cores, Neural Processing Unit, Deep Learning, Neural Network
 - 레이더 서버 교육/통역 (By IAI ELTA, C/UNIX/Motif)
 
 July, 2017 To June, 2019
-
-### ACTIVITIES
-#### Volunteer
-부락복지회관 - 저소득 가정 중학생 교육 (영어, 수학)   
-July, 2018 To March, 2019
-
-#### Club
-전기전자공학부 학술소모임 *x[deca]*, March, 2016 To February, 2017
-- 졸업작품전시회 참가: AVR controlled Mini-plotter
-- Advanced C/C++ Programming Seminar 진행
-- OpenCV on RaspberryPi Seminar
-- ARM Coretex-M3 Study  
-
-프로그래밍 동아리 *LINK*, September, 2017 To June, 2019
-- 알고리즘 스터디, *주간 박종우*
-
-봉사 동아리 *부락*, September, 2017 To June, 2019
-
-로봇 제작 동아리 *로보인*, September, 2020 To Present
-
-#### Hackathon
-- 제 1회 공군 창의혁신 아이디어 해커톤, May, 2018  
-군수물자 예측 시스템, Collaborative Filtering, Spark MLlib
-
-- KU 메디컬 해커톤, October, 2020 To Present  
-척추 질환 관리 플랫폼 - 하드웨어/모바일 어플리케이션, Django REST API
 
 #### Toy Projects
 
