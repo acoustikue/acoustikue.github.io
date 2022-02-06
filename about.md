@@ -11,13 +11,14 @@ permalink: /about/
 
 ### Education
 
-- 건국대학교 전기전자공학부, March, 2016 To February, 2020
+- 한국과학기술원 전기및전자공학부, March, 2022 To Present <br>Advisor: Professor Youjip Won
 - 연세대학교 전기전자공학부, March, 2020 To Feburary, 2022
+- 건국대학교 전기전자공학부, March, 2016 To February, 2020
 
 ### Interests
 
 Computer Architecture, Embedded Systems, Parallel Computing, Managed Language
-Multi Cores, Neural Processing Unit
+Multi Cores
 
 ### RESEARCH SKILLS
 
@@ -31,10 +32,10 @@ Multi Cores, Neural Processing Unit
 #### 공군 작전사령부 예하 작전정보통신단
 단본부 체계개발실 방공유도탄체계팀 (OICW, 오산기지)
 
-- 윈도우 어플리케이션: 실시간 로깅 시스템 멀티쓰레드 변경 프로젝트 (C/C++/MFC)
-- 웹 기반 어플리케이션: 클라이언트/서버 구조 변경 프로젝트 (Java/JSP/Javascript/MySQL)
+- 윈도우 어플리케이션: 실시간 로깅 시스템 멀티쓰레드 변경 프로젝트 (C / C++ / MFC)
+- 웹 기반 어플리케이션: 클라이언트 / 서버 구조 변경 프로젝트 (Java / JSP / Javascript / MySQL)
 - 데이터 교환 체계 유지/보수
-- 레이더 서버 교육/통역 (By IAI ELTA, C/UNIX/Motif)
+- 레이더 서버 유지보수 교육 통역 (By IAI ELTA, C / UNIX / Motif)
 
 July, 2017 To June, 2019
 
