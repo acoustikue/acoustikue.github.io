@@ -1,14 +1,14 @@
 ---
 layout: post
 title:  "Analysis: Mobibench & Filebench"
-date:   2022-02-12 09:00:00
+date:   2022-02-16 09:00:00
 categories: Linux
 permalink: /archivers/mobibench-filebench
 nocomments: true
 use_math: true 
 ---
 
-# Essential Tools
+# Essential Tools 1 & 2: Mobibench and Filebench
 
 > 신입생 세미나 5: Benchmark & Analysis
 > 
