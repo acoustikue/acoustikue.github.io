@@ -268,16 +268,18 @@ $ nordvpn disconnect
 $ nordvpn logout
 ```
 
-### Kdenlive & OBS Studio & Spectacle
+### Kdenlive & OBS Studio & Spectacle 및 기타 유틸리티
 ```bash
 $ pacman -S obs-studio
 $ pacman -S kdenlive
 $ pacman -S spectacle # 스크린샷
+
+$ pacman -S vivaldi
 ```
 ### Docker
 ```bash
 $ pacman -S docker
-$ sudo useradd -aG docker (사용자 이름)
+$ sudo useradd -aG docker $USER
 
 $ systemctl start docker.service
 $ systemctl enable docker.service
@@ -306,9 +308,9 @@ $ yay -S bitwarden-bin
 $ yay -S freetube-bin
 ```
 
-### pCloud Drive
+### pCloud Drive & Protonmail Bridge
 ```bash
-$ yay -S pcloud-drive
+$ yay -S pcloud-drive protonmail-bridge-bin
 ```
 
 ### Timeshift
