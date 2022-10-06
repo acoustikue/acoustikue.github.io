@@ -87,4 +87,4 @@ $ db.notice.insert({}) # insert your element
 ## Update logs
 
 2020.01. <b>Version: 0.1.0va</b>
-- Project YNSF initiated, author(SukJoon Oh, acoustikue)
+- Project YNSF initiated, author(SukJoon Oh)

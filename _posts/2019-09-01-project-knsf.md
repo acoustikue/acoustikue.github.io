@@ -159,4 +159,4 @@ Note that all files are encoded in UTF-8.
 ## Update logs
 
 2019.08.28. <b>Version: 0.1.0va</b>
-- Project KNSF initiated, author(SukJoon Oh, acoustikue)
+- Project KNSF initiated, author(SukJoon Oh)

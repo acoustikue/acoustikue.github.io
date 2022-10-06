@@ -147,7 +147,7 @@ Figure below describes memory use checked by *cron service status* command.
 ## Update logs
 
 2019.08.21. <b>Version: 0.1.0va</b>
-- Project KENS initiated, author(SukJoon Oh, acoustikue)
+- Project KENS initiated, author(SukJoon Oh)
 
 2019.08.24. <b>Version: 0.1.1va</b>
 - Telegram ID saving function added. No more receiving only recent ID's, preventing skipping sending messages for random ID's.

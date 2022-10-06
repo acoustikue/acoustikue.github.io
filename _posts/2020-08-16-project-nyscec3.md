@@ -434,7 +434,7 @@ This will show your main page. Happy scraping!
 ## Update logs
 
 2020.07.31. <b>Version: 0.1.0va</b>
-- NYSCEC initiated, author(SukJoon Oh, acoustikue)
+- NYSCEC initiated, author(SukJoon Oh)
 
 2020.08.
 - Project updated to NYSCEC2.
